@@ -102,6 +102,7 @@ export function renderIntro(ctx) {
   const { content, refs } = ctx;
   const n = content.narrative;
   refs.main.innerHTML = "";
+  delete refs.main.dataset.level;
 
   const view = el("section");
   view.append(
@@ -140,6 +141,8 @@ export function renderIntro(ctx) {
 export function renderLevel(level, ctx) {
   const { refs, run } = ctx;
   refs.main.innerHTML = "";
+  // Each room carries its own visual identity; CSS keys off this attribute.
+  refs.main.dataset.level = level.id;
 
   const view = el("section");
   view.append(
@@ -160,10 +163,14 @@ export function renderLevel(level, ctx) {
     view.append(skills);
   }
 
-  (level.media ?? []).forEach((m) => {
-    const rendered = renderMediaAsText(m);
-    if (rendered) view.append(rendered);
-  });
+  const mediaItems = (level.media ?? [])
+    .map((m) => renderMediaAsText(m))
+    .filter(Boolean);
+  if (mediaItems.length) {
+    const collection = el("div", { className: "media-collection" });
+    collection.append(...mediaItems);
+    view.append(collection);
+  }
 
   (level.companionLines ?? []).forEach((line) => {
     view.append(renderCompanionLine(line, ctx));
@@ -383,6 +390,7 @@ export function renderInterlude(level, ctx, onContinue) {
   const { refs } = ctx;
   const interlude = level.interlude;
   refs.main.innerHTML = "";
+  delete refs.main.dataset.level;
 
   const view = el("section", { className: "interlude" });
   view.append(
@@ -431,6 +439,7 @@ export function renderFinale(ctx) {
   const { content, refs, run } = ctx;
   const finale = content.finale;
   refs.main.innerHTML = "";
+  delete refs.main.dataset.level;
 
   const view = el("section");
   view.append(
@@ -555,6 +564,7 @@ function renderMetaLock(metaLock, ctx) {
     ctx.run.vaultOpened = true;
     announce("Every key turns at once. The final door opens.");
     renderFinale(ctx);
+    renderSpine(ctx);
     moveFocusTo(ctx.refs.main.querySelector("h2"));
   });
 
@@ -641,26 +651,42 @@ function renderSpine(ctx) {
       refs.spineList.append(item);
     });
 
-  // Keyring
+  // Keyring. Alphabetical, never earn order: earn order next to the spine's
+  // room order would hand the meta-lock's answer to anyone who can read the
+  // rail. At the sealed vault the list disappears entirely for the same
+  // reason; the puzzle is remembering which discipline belonged to which room.
   refs.keysSummary.textContent = `Keys banked: ${run.keys.length} of ${total}`;
   refs.keysList.innerHTML = "";
+  const atSealedVault =
+    run.view === "finale" && content.finale.metaLock && !run.vaultOpened;
+  if (atSealedVault) {
+    refs.keysList.append(
+      el("li", {
+        className: "spine-item",
+        textContent: `${run.keys.length} keys, in hand. They belong to the door now.`,
+      }),
+    );
+    return;
+  }
   if (run.keys.length === 0) {
     refs.keysList.append(
       el("li", { className: "spine-item", textContent: "No keys yet." }),
     );
   }
-  run.keys.forEach((key) => {
-    const item = el("li", { className: "spine-item is-restored" });
-    item.append(
-      el("span", {
-        className: "spine-marker",
-        textContent: "⚿",
-        attrs: { "aria-hidden": "true" },
-      }),
-      el("span", { textContent: key.label }),
-    );
-    refs.keysList.append(item);
-  });
+  [...run.keys]
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .forEach((key) => {
+      const item = el("li", { className: "spine-item is-restored" });
+      item.append(
+        el("span", {
+          className: "spine-marker",
+          textContent: "⚿",
+          attrs: { "aria-hidden": "true" },
+        }),
+        el("span", { textContent: key.label }),
+      );
+      refs.keysList.append(item);
+    });
 }
 
 /* ---------- Shared helpers ---------- */

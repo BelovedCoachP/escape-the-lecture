@@ -183,7 +183,9 @@ a { color: var(--brand-blue); }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--brand-purple);
+  /* Lightened from --brand-purple, which sits at 3.9:1 on navy and fails AA
+     at this size. Saturated brand purple stays for borders and large art. */
+  color: #BE93F0;
 }
 
 .view-title {
@@ -422,6 +424,132 @@ textarea {
 label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
 
 .char-count { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+/* ---------- Room identities ----------
+   Each level carries its own visual treatment, keyed on main[data-level].
+   Navy still leads everywhere; the room decides the supporting voice.
+   Every accent used for text at body size is AA-checked against its
+   background. Meaning never rides on the color alone. */
+
+.media-collection {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Level 1, The Invisible Image: the gallery. Exhibit frames, pink light. */
+[data-level="invisible-image"] .view-eyebrow { color: var(--brand-pink); }
+
+[data-level="invisible-image"] .media-collection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+@media (max-width: 699px) {
+  [data-level="invisible-image"] .media-collection {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+[data-level="invisible-image"] .media-item {
+  margin: 0;
+  border-top: 3px solid var(--brand-pink);
+  background: rgba(229, 99, 181, 0.06);
+}
+
+[data-level="invisible-image"] .challenge-card {
+  border-left: 3px solid rgba(229, 99, 181, 0.45);
+}
+
+/* Level 2, The Color Chamber: the spectrum strip does the room's talking. */
+[data-level="color-chamber"] .view-eyebrow { color: var(--brand-blue); }
+
+[data-level="color-chamber"] .challenge-card,
+[data-level="color-chamber"] .media-item {
+  position: relative;
+  overflow: hidden;
+}
+
+[data-level="color-chamber"] .challenge-card::before,
+[data-level="color-chamber"] .media-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--brand-blue), var(--brand-purple), var(--brand-pink));
+}
+
+/* Level 3, The Caption Conspiracy: the theater. Letterboxed, monospaced. */
+[data-level="caption-conspiracy"] .view-eyebrow { color: #7CC5FF; }
+
+[data-level="caption-conspiracy"] .media-item,
+[data-level="caption-conspiracy"] .challenge-card {
+  background: #0B1120;
+  border-color: rgba(124, 197, 255, 0.3);
+}
+
+[data-level="caption-conspiracy"] .media-item p:not(.media-kind),
+[data-level="caption-conspiracy"] .option-list {
+  font-family: ui-monospace, Consolas, "Cascadia Mono", monospace;
+  font-size: 0.95rem;
+}
+
+[data-level="caption-conspiracy"] .media-kind { color: #7CC5FF; }
+
+/* Level 4, The Document Labyrinth: the artifacts are paper. The broken
+   document renders light-on-dark hall, dark-on-light page. AURA stays
+   dark glass so the machine reads as a visitor on the page. */
+[data-level="document-labyrinth"] .view-eyebrow { color: var(--porcelain); }
+
+[data-level="document-labyrinth"] .media-item,
+[data-level="document-labyrinth"] .challenge-card {
+  background: var(--porcelain);
+  color: #0F172A;
+  border-color: rgba(15, 23, 42, 0.25);
+}
+
+[data-level="document-labyrinth"] .media-item p,
+[data-level="document-labyrinth"] .challenge-card h3,
+[data-level="document-labyrinth"] .challenge-card .option-list {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+[data-level="document-labyrinth"] .challenge-card .card-eyebrow,
+[data-level="document-labyrinth"] .challenge-card .placeholder-note,
+[data-level="document-labyrinth"] .media-item .media-kind {
+  color: #334155;
+}
+
+[data-level="document-labyrinth"] .media-item details,
+[data-level="document-labyrinth"] .challenge-card details {
+  background: rgba(15, 23, 42, 0.05);
+  border-color: rgba(15, 23, 42, 0.2);
+}
+
+[data-level="document-labyrinth"] .companion-line {
+  background: #0F172A;
+  color: var(--porcelain);
+}
+
+/* Level 5, The Prompt Reactor: the console. Monospace, purple glow. */
+[data-level="prompt-reactor"] .view-eyebrow { color: #BE93F0; }
+
+[data-level="prompt-reactor"] .challenge-card {
+  border-color: rgba(155, 77, 234, 0.55);
+  box-shadow: 0 0 28px rgba(155, 77, 234, 0.12);
+}
+
+[data-level="prompt-reactor"] .challenge-card h3,
+[data-level="prompt-reactor"] .option-list {
+  font-family: ui-monospace, Consolas, "Cascadia Mono", monospace;
+}
+
+[data-level="prompt-reactor"] .challenge-card h3::before {
+  content: "> ";
+  color: #BE93F0;
+}
 
 /* Fatal / validation failure screen */
 .fatal {
