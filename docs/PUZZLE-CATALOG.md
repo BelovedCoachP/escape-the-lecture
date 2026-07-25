@@ -4,6 +4,14 @@ Scoping document, 2026-07-25. Written against the Breakout EDU digital puzzle ca
 
 This document decides what the Exemplar builds. The faculty Template is unchanged and still exposes exactly three types: `choice`, `sequence`, `response`.
 
+## 0. Difficulty principle
+
+The audience is adults, mostly faculty. Calibrate every puzzle to challenge an adult, not to guarantee completion.
+
+- **A hint narrows the search space. It never contains the answer.** Not at any tier. Escalating hints move from reframing (what kind of thing is being asked) to focusing (which part of the room's work matters) to strong scaffold (the shape of the answer), and stop there.
+- The no-dead-end guarantee comes from structure, not from answer giveaways: unlimited attempts, no timer, nothing lost on a wrong try, and codes that are honestly derivable from work the player has already done.
+- If a puzzle cannot be made challenging without becoming unfair, fix the puzzle, not the hints.
+
 ---
 
 ## 1. The finding that matters most

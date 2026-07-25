@@ -231,9 +231,9 @@
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["describe"],
         "hints": [
-          "One word, and it is a verb. It is what alt text does for an image and what a long description does for a chart.",
-          "Every challenge in this room asked you to put what you saw into words a screen reader can carry.",
-          "The word is DESCRIBE."
+          "The Archivist wants a discipline, not a technology. Think about what this room asked of you, not what it asked about.",
+          "One word, and it is a verb. The divider, the diagram, the photo, the chart: every challenge had you do the same thing to each of them.",
+          "It is the act that alt text performs for an image and a long description performs for a chart. Say it as a command."
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       }
@@ -265,7 +265,7 @@
       "lock": {
         "prompt": "STUB. The Archivist asks for the discipline of the Color Chamber.",
         "acceptedCodes": ["distinguish"],
-        "hints": ["STUB hint one", "STUB hint two", "The word is DISTINGUISH."],
+        "hints": ["STUB hint one.", "STUB. One word, a verb: the act of telling required information apart from optional."],
         "wrongText": "STUB. The door does not move."
       }
     },
@@ -296,7 +296,7 @@
       "lock": {
         "prompt": "STUB. The Archivist asks for the discipline of the Caption Conspiracy.",
         "acceptedCodes": ["transcribe"],
-        "hints": ["STUB hint one", "STUB hint two", "The word is TRANSCRIBE."],
+        "hints": ["STUB hint one.", "STUB. One word, a verb: the act of carrying speech across into text."],
         "wrongText": "STUB. The door does not move."
       }
     },
@@ -330,7 +330,7 @@
       "lock": {
         "prompt": "STUB. The Archivist asks for the discipline of the Document Labyrinth.",
         "acceptedCodes": ["structure"],
-        "hints": ["STUB hint one", "STUB hint two", "The word is STRUCTURE."],
+        "hints": ["STUB hint one.", "STUB. One word, and this time it is both a noun and a verb: what headings, lists, and reading order give a document."],
         "wrongText": "STUB. The door does not move."
       }
     },
@@ -361,7 +361,7 @@
       "lock": {
         "prompt": "STUB. The Archivist asks for the discipline of the Prompt Reactor.",
         "acceptedCodes": ["instruct"],
-        "hints": ["STUB hint one", "STUB hint two", "The word is INSTRUCT."],
+        "hints": ["STUB hint one.", "STUB. One word, a verb: what a well-written prompt does to a machine that a vague one fails to do."],
         "wrongText": "STUB. The door does not move."
       }
     }
@@ -383,7 +383,7 @@
       ],
       "hints": [
         "Each key names the discipline its room taught. Match the verb to the repair you made there.",
-        "Describe the images. Distinguish the colors. Transcribe the speech. Structure the document. Instruct the machine."
+        "If two keys both feel right for a room, ask which repair could not have happened without that exact verb. Your banked evidence names what each room actually required of you."
       ],
       "wrongText": "One or more keys sit in the wrong door. The Archivist says nothing. It has waited ten years; it can wait while you try again."
     },

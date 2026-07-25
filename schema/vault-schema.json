@@ -112,7 +112,7 @@
 
     "lock": {
       "type": "object",
-      "description": "v1.1. The level's exit. Appears when every challenge in the level is solved; the player derives the code from the room's work and enters it to restore the shelf. Attempts are unlimited, nothing is timed, and the final hint always reveals the code, because a lock a learner cannot eventually open is a dead end, not a puzzle.",
+      "description": "v1.1. The level's exit. Appears when every challenge in the level is solved; the player derives the code from the room's work and enters it to restore the shelf. Audience is adults: hints narrow the search space and never contain the answer. The no-dead-end guarantee comes from unlimited attempts, no timer, and codes that are honestly derivable from the room's work.",
       "required": ["prompt", "acceptedCodes", "hints"],
       "additionalProperties": false,
       "properties": {
@@ -273,7 +273,7 @@
           "minItems": 1,
           "maxItems": 3,
           "items": { "type": "string" },
-          "description": "Escalating tiers, always available, never penalized. This is the competence-support mechanic from SDT, and it is why hints are required rather than optional."
+          "description": "Escalating tiers, always available, never penalized. This is the competence-support mechanic from SDT, and it is why hints are required rather than optional. A hint narrows the search space; it never contains the answer. The audience is adults and the puzzles should challenge them."
         }
       }
     },
