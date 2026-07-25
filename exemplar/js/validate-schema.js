@@ -37,7 +37,7 @@ var require_ucs2length = __commonJS({
 // scripts/.validator-src.mjs
 var validate = validate20;
 var validator_src_default = validate20;
-var schema31 = { "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://learnaiid.com/schemas/escape-room/v1.json", "title": "Escape the Lecture: Escape Room Content Schema v1", "description": "Single content contract for both renderers. The Exemplar (The AI Archivist and the Lost Learning Vault) and the faculty Template consume identical data. Accessibility fields are structurally required, not advisory: a room that omits them will not validate, and therefore will not publish.", "type": "object", "required": ["schemaVersion", "meta", "narrative", "levels", "finale", "a11y"], "additionalProperties": false, "properties": { "schemaVersion": { "const": "1.0" }, "meta": { "type": "object", "required": ["id", "title", "author", "renderer"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{3,60}$" }, "title": { "type": "string", "minLength": 1, "maxLength": 90 }, "subtitle": { "type": "string", "maxLength": 140 }, "author": { "type": "string", "minLength": 1 }, "course": { "type": "string", "description": "Course or context this room supports." }, "objective": { "type": "string", "description": "The single learning objective this room is aligned to. Required by the template form; this is the field that keeps faculty honest.", "maxLength": 400 }, "renderer": { "enum": ["exemplar", "template"], "description": "Which skin consumes this content. The spine is identical either way." }, "brandFooter": { "type": "string", "description": "Attribution line. In the Exemplar this is the only place LearnAIID appears." } } }, "narrative": { "type": "object", "required": ["premise", "roleTitle", "successCondition"], "additionalProperties": false, "properties": { "premise": { "type": "string", "minLength": 1 }, "roleTitle": { "type": "string", "description": "What the player is called. Exemplar: Accessibility Intelligence Agent." }, "successCondition": { "type": "string", "description": "Replaces the countdown. State the condition under which the vault opens. Never a clock. WCAG 2.2.1 is satisfied by having no time limit at all." }, "openingMedia": { "$ref": "#/$defs/video" }, "companion": { "$ref": "#/$defs/companion" } } }, "levels": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/level" } }, "finale": { "type": "object", "required": ["title", "prompt", "rubric", "closingText"], "additionalProperties": false, "properties": { "title": { "type": "string" }, "setup": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "replayEvidence": { "type": "boolean", "default": true, "description": "Solo play requires this. The renderer replays every evidenceFragment the player banked before asking for the recommendation, standing in for the team deliberation the original team design assumed." }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "acceptedPositions": { "type": "array", "description": "There is no single correct answer. These are defensible stances the player can compare their own against.", "items": { "type": "object", "required": ["label", "summary"], "properties": { "label": { "type": "string" }, "summary": { "type": "string" } } } }, "closingText": { "type": "string" }, "closingMedia": { "$ref": "#/$defs/video" } } }, "a11y": { "type": "object", "description": "Compliance assertions the renderer must honor. These are const, not boolean, so a non-compliant configuration cannot be expressed in valid content.", "required": ["audioAutoplay", "colorOnlySignals", "keyboardAlternatives", "reducedMotion", "timeLimit"], "additionalProperties": false, "properties": { "audioAutoplay": { "const": false, "description": "WCAG 1.4.2. Also blocked by browsers inside an LMS iframe, so this is a correctness fix and a compatibility fix at once." }, "colorOnlySignals": { "const": false, "description": "WCAG 1.4.1. Every state change carries a text or shape signal alongside color." }, "keyboardAlternatives": { "const": true, "description": "WCAG 2.1.1. Applies hardest to the sequence challenge, which must be operable without dragging." }, "reducedMotion": { "const": "respected", "description": "prefers-reduced-motion disables ambient motion and transitions." }, "timeLimit": { "const": "none", "description": "WCAG 2.2.1 is satisfied by absence. Faculty may add a timer downstream at their own risk." }, "targetLevel": { "const": "WCAG 2.1 AA" } } } }, "$defs": { "companion": { "type": "object", "description": "The unreliable AI narrator. Exemplar: AURA. The template exposes a simplified version so faculty rooms can carry the same mechanic.", "required": ["name", "textAlwaysVisible"], "additionalProperties": false, "properties": { "name": { "type": "string" }, "portrait": { "$ref": "#/$defs/image" }, "voiced": { "type": "boolean", "default": false }, "textAlwaysVisible": { "const": true, "description": "Speech is never audio-only. The transcript is on screen at all times, not behind a toggle." } } }, "companionLine": { "type": "object", "description": "One utterance from the companion. The confidence figure is the running joke and the thesis: confidence is not correctness.", "required": ["id", "text", "accurate"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "confidence": { "type": "number", "minimum": 0, "maximum": 100, "description": "Displayed to the player. Deliberately precise and deliberately unearned." }, "accurate": { "type": "boolean", "description": "Authoring truth, not player-facing. The renderer uses it to decide when to surface the tell." }, "tell": { "type": "string", "description": "What gives the error away once the player knows to look. Revealed after the challenge resolves, never before." }, "audioSrc": { "type": "string" }, "captionsSrc": { "type": "string" } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions." } }, { "if": { "properties": { "accurate": { "const": false } }, "required": ["accurate"] }, "then": { "required": ["tell"], "description": "If the companion is wrong, the content must say how the player could have caught it. Otherwise the mechanic is just noise." } }] }, "level": { "type": "object", "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" }, "order": { "type": "integer", "minimum": 1 }, "title": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" }, "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." }, "skillTaught": { "type": "array", "items": { "type": "string" }, "description": "Named so the room can be audited against its own claims." }, "ambientAudio": { "$ref": "#/$defs/audio" }, "media": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" }] } }, "companionLines": { "type": "array", "items": { "$ref": "#/$defs/companionLine" } }, "challenges": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/challenge" } }, "evidenceFragment": { "type": "string", "minLength": 1, "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring." }, "unlockText": { "type": "string", "minLength": 1 }, "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." } } }, "challenge": { "oneOf": [{ "$ref": "#/$defs/choiceChallenge" }, { "$ref": "#/$defs/sequenceChallenge" }, { "$ref": "#/$defs/responseChallenge" }] }, "challengeBase": { "type": "object", "properties": { "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "string" }, "description": "Escalating tiers, always available, never penalized. This is the competence-support mechanic from SDT, and it is why hints are required rather than optional." } } }, "choiceChallenge": { "type": "object", "required": ["type", "id", "prompt", "options", "hints"], "additionalProperties": false, "properties": { "type": { "const": "choice" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "selectMultiple": { "type": "boolean", "default": false }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "options": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "type": "object", "required": ["id", "text", "correct", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "correct": { "type": "boolean" }, "feedback": { "type": "string", "minLength": 1, "description": "Required on every option, including correct ones. A wrong answer with no explanation is a dead end, not a puzzle." } } } } } }, "sequenceChallenge": { "type": "object", "required": ["type", "id", "prompt", "items", "correctOrder", "hints", "keyboardInstructions"], "additionalProperties": false, "properties": { "type": { "const": "sequence" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "items": { "type": "array", "minItems": 3, "maxItems": 10, "items": { "type": "object", "required": ["id", "text"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 } } } }, "correctOrder": { "type": "array", "minItems": 3, "items": { "type": "string" } }, "keyboardInstructions": { "type": "string", "minLength": 1, "description": "Required. Drag and drop is the visual affordance, never the only one. Every sequence must be reorderable with keys alone, and the instructions for doing so must be authored, not generated." }, "explanation": { "type": "string", "description": "Why this order and not another. Shown on resolution." } } }, "responseChallenge": { "type": "object", "description": "Free text. Deliberately not autograded. The companion assesses first, confidently and often wrongly, then the expert rubric appears beside it and the player scores their own work against both. This is the thesis as a mechanic, and it is the reason the template needs no API key.", "required": ["type", "id", "prompt", "rubric", "exemplarAnswer", "hints"], "additionalProperties": false, "properties": { "type": { "const": "response" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer", "default": 600 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "exemplarAnswer": { "type": "string", "minLength": 1, "description": "The expert answer, revealed after submission. Not a key. A comparison." } } }, "rubric": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["criterion", "lookFor"], "additionalProperties": false, "properties": { "criterion": { "type": "string", "minLength": 1 }, "lookFor": { "type": "string", "minLength": 1 }, "commonMiss": { "type": "string" } } } }, "image": { "type": "object", "required": ["kind", "src", "decorative"], "additionalProperties": false, "properties": { "kind": { "const": "image" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "decorative": { "type": "boolean" }, "alt": { "type": "string" }, "longDescription": { "type": "string", "description": "Required for charts, diagrams, and anything carrying data. Alt text names it; this explains it." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "decorative": { "const": false } }, "required": ["decorative"] }, "then": { "required": ["alt"], "properties": { "alt": { "minLength": 1 } } } }, { "if": { "properties": { "decorative": { "const": true } }, "required": ["decorative"] }, "then": { "properties": { "alt": { "const": "" } } } }] }, "video": { "type": "object", "description": "Captions and a transcript are required siblings of src. There is no valid way to author a video without them.", "required": ["kind", "src", "captionsSrc", "transcript"], "additionalProperties": false, "properties": { "kind": { "const": "video" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "poster": { "type": "string" }, "captionsSrc": { "type": "string", "minLength": 1 }, "transcript": { "type": "string", "minLength": 1 }, "audioDescriptionSrc": { "type": "string" }, "describedTranscript": { "type": "string", "description": "Required when the video carries meaning visually and no separate described track is supplied." }, "carriesVisualMeaning": { "type": "boolean", "default": true } }, "allOf": [{ "if": { "properties": { "carriesVisualMeaning": { "const": true } }, "required": ["carriesVisualMeaning"] }, "then": { "anyOf": [{ "required": ["audioDescriptionSrc"] }, { "required": ["describedTranscript"] }] } }] }, "audio": { "type": "object", "required": ["kind", "src", "role", "autoplay"], "additionalProperties": false, "properties": { "kind": { "const": "audio" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "role": { "enum": ["ambient", "cue", "speech"] }, "autoplay": { "const": false }, "loop": { "type": "boolean", "default": false }, "title": { "type": "string", "description": "Player-facing label on the control." }, "visualCue": { "type": "string", "description": "Required for role=cue. The text or shape shown alongside the sound so it is never the only signal." }, "transcript": { "type": "string", "description": "Required for role=speech." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "role": { "const": "cue" } }, "required": ["role"] }, "then": { "required": ["visualCue"], "properties": { "visualCue": { "minLength": 1 } } } }, { "if": { "properties": { "role": { "const": "speech" } }, "required": ["role"] }, "then": { "required": ["transcript"], "properties": { "transcript": { "minLength": 1 } } } }] } } };
+var schema31 = { "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://learnaiid.com/schemas/escape-room/v1.json", "title": "Escape the Lecture: Escape Room Content Schema v1", "description": "Single content contract for both renderers. The Exemplar (The AI Archivist and the Lost Learning Vault) and the faculty Template consume identical data. Accessibility fields are structurally required, not advisory: a room that omits them will not validate, and therefore will not publish.", "type": "object", "required": ["schemaVersion", "meta", "narrative", "levels", "finale", "a11y"], "additionalProperties": false, "properties": { "schemaVersion": { "enum": ["1.0", "1.1"] }, "meta": { "type": "object", "required": ["id", "title", "author", "renderer"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{3,60}$" }, "title": { "type": "string", "minLength": 1, "maxLength": 90 }, "subtitle": { "type": "string", "maxLength": 140 }, "author": { "type": "string", "minLength": 1 }, "course": { "type": "string", "description": "Course or context this room supports." }, "objective": { "type": "string", "description": "The single learning objective this room is aligned to. Required by the template form; this is the field that keeps faculty honest.", "maxLength": 400 }, "renderer": { "enum": ["exemplar", "template"], "description": "Which skin consumes this content. The spine is identical either way." }, "brandFooter": { "type": "string", "description": "Attribution line. In the Exemplar this is the only place LearnAIID appears." } } }, "narrative": { "type": "object", "required": ["premise", "roleTitle", "successCondition"], "additionalProperties": false, "properties": { "premise": { "type": "string", "minLength": 1 }, "roleTitle": { "type": "string", "description": "What the player is called. Exemplar: Accessibility Intelligence Agent." }, "successCondition": { "type": "string", "description": "Replaces the countdown. State the condition under which the vault opens. Never a clock. WCAG 2.2.1 is satisfied by having no time limit at all." }, "openingMedia": { "$ref": "#/$defs/video" }, "companion": { "$ref": "#/$defs/companion" } } }, "levels": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/level" } }, "finale": { "type": "object", "required": ["title", "prompt", "rubric", "closingText"], "additionalProperties": false, "properties": { "title": { "type": "string" }, "setup": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "replayEvidence": { "type": "boolean", "default": true, "description": "Solo play requires this. The renderer replays every evidenceFragment the player banked before asking for the recommendation, standing in for the team deliberation the original team design assumed." }, "metaLock": { "$ref": "#/$defs/metaLock" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "acceptedPositions": { "type": "array", "description": "There is no single correct answer. These are defensible stances the player can compare their own against.", "items": { "type": "object", "required": ["label", "summary"], "properties": { "label": { "type": "string" }, "summary": { "type": "string" } } } }, "closingText": { "type": "string" }, "closingMedia": { "$ref": "#/$defs/video" } } }, "a11y": { "type": "object", "description": "Compliance assertions the renderer must honor. These are const, not boolean, so a non-compliant configuration cannot be expressed in valid content.", "required": ["audioAutoplay", "colorOnlySignals", "keyboardAlternatives", "reducedMotion", "timeLimit"], "additionalProperties": false, "properties": { "audioAutoplay": { "const": false, "description": "WCAG 1.4.2. Also blocked by browsers inside an LMS iframe, so this is a correctness fix and a compatibility fix at once." }, "colorOnlySignals": { "const": false, "description": "WCAG 1.4.1. Every state change carries a text or shape signal alongside color." }, "keyboardAlternatives": { "const": true, "description": "WCAG 2.1.1. Applies hardest to the sequence challenge, which must be operable without dragging." }, "reducedMotion": { "const": "respected", "description": "prefers-reduced-motion disables ambient motion and transitions." }, "timeLimit": { "const": "none", "description": "WCAG 2.2.1 is satisfied by absence. Faculty may add a timer downstream at their own risk." }, "targetLevel": { "const": "WCAG 2.1 AA" } } } }, "$defs": { "lock": { "type": "object", "description": "v1.1. The level's exit. Appears when every challenge in the level is solved; the player derives the code from the room's work and enters it to restore the shelf. Attempts are unlimited, nothing is timed, and the final hint always reveals the code, because a lock a learner cannot eventually open is a dead end, not a puzzle.", "required": ["prompt", "acceptedCodes", "hints"], "additionalProperties": false, "properties": { "prompt": { "type": "string", "minLength": 1, "description": "The Archivist's challenge. The straight man speaks at the door." }, "inputLabel": { "type": "string", "description": "Label on the code field. Defaults to 'Vault key'." }, "acceptedCodes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "description": "Accepted answers. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous variants here." }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "wrongText": { "type": "string", "description": "Shown on an incorrect attempt. Never punitive: nothing is lost, nothing is timed." }, "successText": { "type": "string", "description": "Optional extra beat on success; unlockText still plays." } } }, "metaLock": { "type": "object", "description": "v1.1. The multi-stage collection meta-puzzle at the Final Vault: every key banked across the rooms must be placed in its keyway before the last door moves. This is what makes the ending earned rather than announced.", "required": ["prompt", "slots", "hints"], "additionalProperties": false, "properties": { "prompt": { "type": "string", "minLength": 1 }, "slots": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["label", "keyLabel"], "additionalProperties": false, "properties": { "label": { "type": "string", "minLength": 1, "description": "Keyway name the player sees. Exemplar: the room title." }, "keyLabel": { "type": "string", "minLength": 1, "description": "The rewardLabel of the key that belongs here." } } } }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "wrongText": { "type": "string" } } }, "companion": { "type": "object", "description": "The unreliable AI narrator. Exemplar: AURA. The template exposes a simplified version so faculty rooms can carry the same mechanic.", "required": ["name", "textAlwaysVisible"], "additionalProperties": false, "properties": { "name": { "type": "string" }, "portrait": { "$ref": "#/$defs/image" }, "voiced": { "type": "boolean", "default": false }, "textAlwaysVisible": { "const": true, "description": "Speech is never audio-only. The transcript is on screen at all times, not behind a toggle." } } }, "companionLine": { "type": "object", "description": "One utterance from the companion. The confidence figure is the running joke and the thesis: confidence is not correctness.", "required": ["id", "text", "accurate"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "confidence": { "type": "number", "minimum": 0, "maximum": 100, "description": "Displayed to the player. Deliberately precise and deliberately unearned." }, "accurate": { "type": "boolean", "description": "Authoring truth, not player-facing. The renderer uses it to decide when to surface the tell." }, "tell": { "type": "string", "description": "What gives the error away once the player knows to look. Revealed after the challenge resolves, never before." }, "audioSrc": { "type": "string" }, "captionsSrc": { "type": "string" } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions." } }, { "if": { "properties": { "accurate": { "const": false } }, "required": ["accurate"] }, "then": { "required": ["tell"], "description": "If the companion is wrong, the content must say how the player could have caught it. Otherwise the mechanic is just noise." } }] }, "level": { "type": "object", "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" }, "order": { "type": "integer", "minimum": 1 }, "title": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" }, "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." }, "skillTaught": { "type": "array", "items": { "type": "string" }, "description": "Named so the room can be audited against its own claims." }, "ambientAudio": { "$ref": "#/$defs/audio" }, "media": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" }] } }, "companionLines": { "type": "array", "items": { "$ref": "#/$defs/companionLine" } }, "challenges": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/challenge" } }, "evidenceFragment": { "type": "string", "minLength": 1, "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring." }, "unlockText": { "type": "string", "minLength": 1 }, "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." }, "lock": { "$ref": "#/$defs/lock" } } }, "challenge": { "oneOf": [{ "$ref": "#/$defs/choiceChallenge" }, { "$ref": "#/$defs/sequenceChallenge" }, { "$ref": "#/$defs/responseChallenge" }] }, "challengeBase": { "type": "object", "properties": { "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "string" }, "description": "Escalating tiers, always available, never penalized. This is the competence-support mechanic from SDT, and it is why hints are required rather than optional." } } }, "choiceChallenge": { "type": "object", "required": ["type", "id", "prompt", "options", "hints"], "additionalProperties": false, "properties": { "type": { "const": "choice" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "selectMultiple": { "type": "boolean", "default": false }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "options": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "type": "object", "required": ["id", "text", "correct", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "correct": { "type": "boolean" }, "feedback": { "type": "string", "minLength": 1, "description": "Required on every option, including correct ones. A wrong answer with no explanation is a dead end, not a puzzle." } } } } } }, "sequenceChallenge": { "type": "object", "required": ["type", "id", "prompt", "items", "correctOrder", "hints", "keyboardInstructions"], "additionalProperties": false, "properties": { "type": { "const": "sequence" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "items": { "type": "array", "minItems": 3, "maxItems": 10, "items": { "type": "object", "required": ["id", "text"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 } } } }, "correctOrder": { "type": "array", "minItems": 3, "items": { "type": "string" } }, "keyboardInstructions": { "type": "string", "minLength": 1, "description": "Required. Drag and drop is the visual affordance, never the only one. Every sequence must be reorderable with keys alone, and the instructions for doing so must be authored, not generated." }, "explanation": { "type": "string", "description": "Why this order and not another. Shown on resolution." } } }, "responseChallenge": { "type": "object", "description": "Free text. Deliberately not autograded. The companion assesses first, confidently and often wrongly, then the expert rubric appears beside it and the player scores their own work against both. This is the thesis as a mechanic, and it is the reason the template needs no API key.", "required": ["type", "id", "prompt", "rubric", "exemplarAnswer", "hints"], "additionalProperties": false, "properties": { "type": { "const": "response" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer", "default": 600 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "exemplarAnswer": { "type": "string", "minLength": 1, "description": "The expert answer, revealed after submission. Not a key. A comparison." } } }, "rubric": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["criterion", "lookFor"], "additionalProperties": false, "properties": { "criterion": { "type": "string", "minLength": 1 }, "lookFor": { "type": "string", "minLength": 1 }, "commonMiss": { "type": "string" } } } }, "image": { "type": "object", "required": ["kind", "src", "decorative"], "additionalProperties": false, "properties": { "kind": { "const": "image" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "decorative": { "type": "boolean" }, "alt": { "type": "string" }, "longDescription": { "type": "string", "description": "Required for charts, diagrams, and anything carrying data. Alt text names it; this explains it." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "decorative": { "const": false } }, "required": ["decorative"] }, "then": { "required": ["alt"], "properties": { "alt": { "minLength": 1 } } } }, { "if": { "properties": { "decorative": { "const": true } }, "required": ["decorative"] }, "then": { "properties": { "alt": { "const": "" } } } }] }, "video": { "type": "object", "description": "Captions and a transcript are required siblings of src. There is no valid way to author a video without them.", "required": ["kind", "src", "captionsSrc", "transcript"], "additionalProperties": false, "properties": { "kind": { "const": "video" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "poster": { "type": "string" }, "captionsSrc": { "type": "string", "minLength": 1 }, "transcript": { "type": "string", "minLength": 1 }, "audioDescriptionSrc": { "type": "string" }, "describedTranscript": { "type": "string", "description": "Required when the video carries meaning visually and no separate described track is supplied." }, "carriesVisualMeaning": { "type": "boolean", "default": true } }, "allOf": [{ "if": { "properties": { "carriesVisualMeaning": { "const": true } }, "required": ["carriesVisualMeaning"] }, "then": { "anyOf": [{ "required": ["audioDescriptionSrc"] }, { "required": ["describedTranscript"] }] } }] }, "audio": { "type": "object", "required": ["kind", "src", "role", "autoplay"], "additionalProperties": false, "properties": { "kind": { "const": "audio" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "role": { "enum": ["ambient", "cue", "speech"] }, "autoplay": { "const": false }, "loop": { "type": "boolean", "default": false }, "title": { "type": "string", "description": "Player-facing label on the control." }, "visualCue": { "type": "string", "description": "Required for role=cue. The text or shape shown alongside the sound so it is never the only signal." }, "transcript": { "type": "string", "description": "Required for role=speech." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "role": { "const": "cue" } }, "required": ["role"] }, "then": { "required": ["visualCue"], "properties": { "visualCue": { "minLength": 1 } } } }, { "if": { "properties": { "role": { "const": "speech" } }, "required": ["role"] }, "then": { "required": ["transcript"], "properties": { "transcript": { "minLength": 1 } } } }] } } };
 var schema32 = { "type": "object", "description": "Captions and a transcript are required siblings of src. There is no valid way to author a video without them.", "required": ["kind", "src", "captionsSrc", "transcript"], "additionalProperties": false, "properties": { "kind": { "const": "video" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "poster": { "type": "string" }, "captionsSrc": { "type": "string", "minLength": 1 }, "transcript": { "type": "string", "minLength": 1 }, "audioDescriptionSrc": { "type": "string" }, "describedTranscript": { "type": "string", "description": "Required when the video carries meaning visually and no separate described track is supplied." }, "carriesVisualMeaning": { "type": "boolean", "default": true } }, "allOf": [{ "if": { "properties": { "carriesVisualMeaning": { "const": true } }, "required": ["carriesVisualMeaning"] }, "then": { "anyOf": [{ "required": ["audioDescriptionSrc"] }, { "required": ["describedTranscript"] }] } }] };
 var pattern4 = new RegExp("^[a-z0-9-]{3,60}$", "u");
 var func1 = require_ucs2length().default;
@@ -423,7 +423,7 @@ function validate21(data, { instancePath = "", parentData, parentDataProperty, r
   return errors === 0;
 }
 validate21.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-var schema35 = { "type": "object", "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" }, "order": { "type": "integer", "minimum": 1 }, "title": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" }, "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." }, "skillTaught": { "type": "array", "items": { "type": "string" }, "description": "Named so the room can be audited against its own claims." }, "ambientAudio": { "$ref": "#/$defs/audio" }, "media": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" }] } }, "companionLines": { "type": "array", "items": { "$ref": "#/$defs/companionLine" } }, "challenges": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/challenge" } }, "evidenceFragment": { "type": "string", "minLength": 1, "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring." }, "unlockText": { "type": "string", "minLength": 1 }, "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." } } };
+var schema35 = { "type": "object", "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" }, "order": { "type": "integer", "minimum": 1 }, "title": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" }, "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." }, "skillTaught": { "type": "array", "items": { "type": "string" }, "description": "Named so the room can be audited against its own claims." }, "ambientAudio": { "$ref": "#/$defs/audio" }, "media": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" }] } }, "companionLines": { "type": "array", "items": { "$ref": "#/$defs/companionLine" } }, "challenges": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/challenge" } }, "evidenceFragment": { "type": "string", "minLength": 1, "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring." }, "unlockText": { "type": "string", "minLength": 1 }, "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." }, "lock": { "$ref": "#/$defs/lock" } } };
 var schema36 = { "type": "object", "required": ["kind", "src", "role", "autoplay"], "additionalProperties": false, "properties": { "kind": { "const": "audio" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "role": { "enum": ["ambient", "cue", "speech"] }, "autoplay": { "const": false }, "loop": { "type": "boolean", "default": false }, "title": { "type": "string", "description": "Player-facing label on the control." }, "visualCue": { "type": "string", "description": "Required for role=cue. The text or shape shown alongside the sound so it is never the only signal." }, "transcript": { "type": "string", "description": "Required for role=speech." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "role": { "const": "cue" } }, "required": ["role"] }, "then": { "required": ["visualCue"], "properties": { "visualCue": { "minLength": 1 } } } }, { "if": { "properties": { "role": { "const": "speech" } }, "required": ["role"] }, "then": { "required": ["transcript"], "properties": { "transcript": { "minLength": 1 } } } }] };
 var pattern5 = new RegExp("^[a-z0-9-]{2,40}$", "u");
 function validate25(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
@@ -1815,6 +1815,211 @@ function validate24(data, { instancePath = "", parentData, parentDataProperty, r
   return errors === 0;
 }
 validate24.evaluated = { "dynamicProps": true, "dynamicItems": false };
+function validate32(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
+  let vErrors = null;
+  let errors = 0;
+  const evaluated0 = validate32.evaluated;
+  if (evaluated0.dynamicProps) {
+    evaluated0.props = void 0;
+  }
+  if (evaluated0.dynamicItems) {
+    evaluated0.items = void 0;
+  }
+  if (data && typeof data == "object" && !Array.isArray(data)) {
+    if (data.prompt === void 0) {
+      const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "prompt" }, message: "must have required property 'prompt'" };
+      if (vErrors === null) {
+        vErrors = [err0];
+      } else {
+        vErrors.push(err0);
+      }
+      errors++;
+    }
+    if (data.acceptedCodes === void 0) {
+      const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "acceptedCodes" }, message: "must have required property 'acceptedCodes'" };
+      if (vErrors === null) {
+        vErrors = [err1];
+      } else {
+        vErrors.push(err1);
+      }
+      errors++;
+    }
+    if (data.hints === void 0) {
+      const err2 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "hints" }, message: "must have required property 'hints'" };
+      if (vErrors === null) {
+        vErrors = [err2];
+      } else {
+        vErrors.push(err2);
+      }
+      errors++;
+    }
+    for (const key0 in data) {
+      if (!(key0 === "prompt" || key0 === "inputLabel" || key0 === "acceptedCodes" || key0 === "hints" || key0 === "wrongText" || key0 === "successText")) {
+        const err3 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
+        if (vErrors === null) {
+          vErrors = [err3];
+        } else {
+          vErrors.push(err3);
+        }
+        errors++;
+      }
+    }
+    if (data.prompt !== void 0) {
+      let data0 = data.prompt;
+      if (typeof data0 === "string") {
+        if (func1(data0) < 1) {
+          const err4 = { instancePath: instancePath + "/prompt", schemaPath: "#/properties/prompt/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+          if (vErrors === null) {
+            vErrors = [err4];
+          } else {
+            vErrors.push(err4);
+          }
+          errors++;
+        }
+      } else {
+        const err5 = { instancePath: instancePath + "/prompt", schemaPath: "#/properties/prompt/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+        if (vErrors === null) {
+          vErrors = [err5];
+        } else {
+          vErrors.push(err5);
+        }
+        errors++;
+      }
+    }
+    if (data.inputLabel !== void 0) {
+      if (typeof data.inputLabel !== "string") {
+        const err6 = { instancePath: instancePath + "/inputLabel", schemaPath: "#/properties/inputLabel/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+        if (vErrors === null) {
+          vErrors = [err6];
+        } else {
+          vErrors.push(err6);
+        }
+        errors++;
+      }
+    }
+    if (data.acceptedCodes !== void 0) {
+      let data2 = data.acceptedCodes;
+      if (Array.isArray(data2)) {
+        if (data2.length < 1) {
+          const err7 = { instancePath: instancePath + "/acceptedCodes", schemaPath: "#/properties/acceptedCodes/minItems", keyword: "minItems", params: { limit: 1 }, message: "must NOT have fewer than 1 items" };
+          if (vErrors === null) {
+            vErrors = [err7];
+          } else {
+            vErrors.push(err7);
+          }
+          errors++;
+        }
+        const len0 = data2.length;
+        for (let i0 = 0; i0 < len0; i0++) {
+          let data3 = data2[i0];
+          if (typeof data3 === "string") {
+            if (func1(data3) < 1) {
+              const err8 = { instancePath: instancePath + "/acceptedCodes/" + i0, schemaPath: "#/properties/acceptedCodes/items/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+              if (vErrors === null) {
+                vErrors = [err8];
+              } else {
+                vErrors.push(err8);
+              }
+              errors++;
+            }
+          } else {
+            const err9 = { instancePath: instancePath + "/acceptedCodes/" + i0, schemaPath: "#/properties/acceptedCodes/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err9];
+            } else {
+              vErrors.push(err9);
+            }
+            errors++;
+          }
+        }
+      } else {
+        const err10 = { instancePath: instancePath + "/acceptedCodes", schemaPath: "#/properties/acceptedCodes/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+        if (vErrors === null) {
+          vErrors = [err10];
+        } else {
+          vErrors.push(err10);
+        }
+        errors++;
+      }
+    }
+    if (data.hints !== void 0) {
+      let data4 = data.hints;
+      if (Array.isArray(data4)) {
+        if (data4.length > 3) {
+          const err11 = { instancePath: instancePath + "/hints", schemaPath: "#/$defs/challengeBase/properties/hints/maxItems", keyword: "maxItems", params: { limit: 3 }, message: "must NOT have more than 3 items" };
+          if (vErrors === null) {
+            vErrors = [err11];
+          } else {
+            vErrors.push(err11);
+          }
+          errors++;
+        }
+        if (data4.length < 1) {
+          const err12 = { instancePath: instancePath + "/hints", schemaPath: "#/$defs/challengeBase/properties/hints/minItems", keyword: "minItems", params: { limit: 1 }, message: "must NOT have fewer than 1 items" };
+          if (vErrors === null) {
+            vErrors = [err12];
+          } else {
+            vErrors.push(err12);
+          }
+          errors++;
+        }
+        const len1 = data4.length;
+        for (let i1 = 0; i1 < len1; i1++) {
+          if (typeof data4[i1] !== "string") {
+            const err13 = { instancePath: instancePath + "/hints/" + i1, schemaPath: "#/$defs/challengeBase/properties/hints/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err13];
+            } else {
+              vErrors.push(err13);
+            }
+            errors++;
+          }
+        }
+      } else {
+        const err14 = { instancePath: instancePath + "/hints", schemaPath: "#/$defs/challengeBase/properties/hints/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+        if (vErrors === null) {
+          vErrors = [err14];
+        } else {
+          vErrors.push(err14);
+        }
+        errors++;
+      }
+    }
+    if (data.wrongText !== void 0) {
+      if (typeof data.wrongText !== "string") {
+        const err15 = { instancePath: instancePath + "/wrongText", schemaPath: "#/properties/wrongText/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+        if (vErrors === null) {
+          vErrors = [err15];
+        } else {
+          vErrors.push(err15);
+        }
+        errors++;
+      }
+    }
+    if (data.successText !== void 0) {
+      if (typeof data.successText !== "string") {
+        const err16 = { instancePath: instancePath + "/successText", schemaPath: "#/properties/successText/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+        if (vErrors === null) {
+          vErrors = [err16];
+        } else {
+          vErrors.push(err16);
+        }
+        errors++;
+      }
+    }
+  } else {
+    const err17 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+    if (vErrors === null) {
+      vErrors = [err17];
+    } else {
+      vErrors.push(err17);
+    }
+    errors++;
+  }
+  validate32.errors = vErrors;
+  return errors === 0;
+}
+validate32.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
 function validate23(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   let vErrors = null;
   let errors = 0;
@@ -3389,6 +3594,12 @@ function validate23(data, { instancePath = "", parentData, parentDataProperty, r
         errors++;
       }
     }
+    if (data.lock !== void 0) {
+      if (!validate32(data.lock, { instancePath: instancePath + "/lock", parentData: data, parentDataProperty: "lock", rootData, dynamicAnchors })) {
+        vErrors = vErrors === null ? validate32.errors : vErrors.concat(validate32.errors);
+        errors = vErrors.length;
+      }
+    }
   } else {
     const err125 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
     if (vErrors === null) {
@@ -3402,6 +3613,253 @@ function validate23(data, { instancePath = "", parentData, parentDataProperty, r
   return errors === 0;
 }
 validate23.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
+function validate35(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
+  let vErrors = null;
+  let errors = 0;
+  const evaluated0 = validate35.evaluated;
+  if (evaluated0.dynamicProps) {
+    evaluated0.props = void 0;
+  }
+  if (evaluated0.dynamicItems) {
+    evaluated0.items = void 0;
+  }
+  if (data && typeof data == "object" && !Array.isArray(data)) {
+    if (data.prompt === void 0) {
+      const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "prompt" }, message: "must have required property 'prompt'" };
+      if (vErrors === null) {
+        vErrors = [err0];
+      } else {
+        vErrors.push(err0);
+      }
+      errors++;
+    }
+    if (data.slots === void 0) {
+      const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "slots" }, message: "must have required property 'slots'" };
+      if (vErrors === null) {
+        vErrors = [err1];
+      } else {
+        vErrors.push(err1);
+      }
+      errors++;
+    }
+    if (data.hints === void 0) {
+      const err2 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "hints" }, message: "must have required property 'hints'" };
+      if (vErrors === null) {
+        vErrors = [err2];
+      } else {
+        vErrors.push(err2);
+      }
+      errors++;
+    }
+    for (const key0 in data) {
+      if (!(key0 === "prompt" || key0 === "slots" || key0 === "hints" || key0 === "wrongText")) {
+        const err3 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
+        if (vErrors === null) {
+          vErrors = [err3];
+        } else {
+          vErrors.push(err3);
+        }
+        errors++;
+      }
+    }
+    if (data.prompt !== void 0) {
+      let data0 = data.prompt;
+      if (typeof data0 === "string") {
+        if (func1(data0) < 1) {
+          const err4 = { instancePath: instancePath + "/prompt", schemaPath: "#/properties/prompt/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+          if (vErrors === null) {
+            vErrors = [err4];
+          } else {
+            vErrors.push(err4);
+          }
+          errors++;
+        }
+      } else {
+        const err5 = { instancePath: instancePath + "/prompt", schemaPath: "#/properties/prompt/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+        if (vErrors === null) {
+          vErrors = [err5];
+        } else {
+          vErrors.push(err5);
+        }
+        errors++;
+      }
+    }
+    if (data.slots !== void 0) {
+      let data1 = data.slots;
+      if (Array.isArray(data1)) {
+        if (data1.length < 2) {
+          const err6 = { instancePath: instancePath + "/slots", schemaPath: "#/properties/slots/minItems", keyword: "minItems", params: { limit: 2 }, message: "must NOT have fewer than 2 items" };
+          if (vErrors === null) {
+            vErrors = [err6];
+          } else {
+            vErrors.push(err6);
+          }
+          errors++;
+        }
+        const len0 = data1.length;
+        for (let i0 = 0; i0 < len0; i0++) {
+          let data2 = data1[i0];
+          if (data2 && typeof data2 == "object" && !Array.isArray(data2)) {
+            if (data2.label === void 0) {
+              const err7 = { instancePath: instancePath + "/slots/" + i0, schemaPath: "#/properties/slots/items/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
+              if (vErrors === null) {
+                vErrors = [err7];
+              } else {
+                vErrors.push(err7);
+              }
+              errors++;
+            }
+            if (data2.keyLabel === void 0) {
+              const err8 = { instancePath: instancePath + "/slots/" + i0, schemaPath: "#/properties/slots/items/required", keyword: "required", params: { missingProperty: "keyLabel" }, message: "must have required property 'keyLabel'" };
+              if (vErrors === null) {
+                vErrors = [err8];
+              } else {
+                vErrors.push(err8);
+              }
+              errors++;
+            }
+            for (const key1 in data2) {
+              if (!(key1 === "label" || key1 === "keyLabel")) {
+                const err9 = { instancePath: instancePath + "/slots/" + i0, schemaPath: "#/properties/slots/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
+                if (vErrors === null) {
+                  vErrors = [err9];
+                } else {
+                  vErrors.push(err9);
+                }
+                errors++;
+              }
+            }
+            if (data2.label !== void 0) {
+              let data3 = data2.label;
+              if (typeof data3 === "string") {
+                if (func1(data3) < 1) {
+                  const err10 = { instancePath: instancePath + "/slots/" + i0 + "/label", schemaPath: "#/properties/slots/items/properties/label/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (vErrors === null) {
+                    vErrors = [err10];
+                  } else {
+                    vErrors.push(err10);
+                  }
+                  errors++;
+                }
+              } else {
+                const err11 = { instancePath: instancePath + "/slots/" + i0 + "/label", schemaPath: "#/properties/slots/items/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err11];
+                } else {
+                  vErrors.push(err11);
+                }
+                errors++;
+              }
+            }
+            if (data2.keyLabel !== void 0) {
+              let data4 = data2.keyLabel;
+              if (typeof data4 === "string") {
+                if (func1(data4) < 1) {
+                  const err12 = { instancePath: instancePath + "/slots/" + i0 + "/keyLabel", schemaPath: "#/properties/slots/items/properties/keyLabel/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (vErrors === null) {
+                    vErrors = [err12];
+                  } else {
+                    vErrors.push(err12);
+                  }
+                  errors++;
+                }
+              } else {
+                const err13 = { instancePath: instancePath + "/slots/" + i0 + "/keyLabel", schemaPath: "#/properties/slots/items/properties/keyLabel/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err13];
+                } else {
+                  vErrors.push(err13);
+                }
+                errors++;
+              }
+            }
+          } else {
+            const err14 = { instancePath: instancePath + "/slots/" + i0, schemaPath: "#/properties/slots/items/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+            if (vErrors === null) {
+              vErrors = [err14];
+            } else {
+              vErrors.push(err14);
+            }
+            errors++;
+          }
+        }
+      } else {
+        const err15 = { instancePath: instancePath + "/slots", schemaPath: "#/properties/slots/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+        if (vErrors === null) {
+          vErrors = [err15];
+        } else {
+          vErrors.push(err15);
+        }
+        errors++;
+      }
+    }
+    if (data.hints !== void 0) {
+      let data5 = data.hints;
+      if (Array.isArray(data5)) {
+        if (data5.length > 3) {
+          const err16 = { instancePath: instancePath + "/hints", schemaPath: "#/$defs/challengeBase/properties/hints/maxItems", keyword: "maxItems", params: { limit: 3 }, message: "must NOT have more than 3 items" };
+          if (vErrors === null) {
+            vErrors = [err16];
+          } else {
+            vErrors.push(err16);
+          }
+          errors++;
+        }
+        if (data5.length < 1) {
+          const err17 = { instancePath: instancePath + "/hints", schemaPath: "#/$defs/challengeBase/properties/hints/minItems", keyword: "minItems", params: { limit: 1 }, message: "must NOT have fewer than 1 items" };
+          if (vErrors === null) {
+            vErrors = [err17];
+          } else {
+            vErrors.push(err17);
+          }
+          errors++;
+        }
+        const len1 = data5.length;
+        for (let i1 = 0; i1 < len1; i1++) {
+          if (typeof data5[i1] !== "string") {
+            const err18 = { instancePath: instancePath + "/hints/" + i1, schemaPath: "#/$defs/challengeBase/properties/hints/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err18];
+            } else {
+              vErrors.push(err18);
+            }
+            errors++;
+          }
+        }
+      } else {
+        const err19 = { instancePath: instancePath + "/hints", schemaPath: "#/$defs/challengeBase/properties/hints/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+        if (vErrors === null) {
+          vErrors = [err19];
+        } else {
+          vErrors.push(err19);
+        }
+        errors++;
+      }
+    }
+    if (data.wrongText !== void 0) {
+      if (typeof data.wrongText !== "string") {
+        const err20 = { instancePath: instancePath + "/wrongText", schemaPath: "#/properties/wrongText/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+        if (vErrors === null) {
+          vErrors = [err20];
+        } else {
+          vErrors.push(err20);
+        }
+        errors++;
+      }
+    }
+  } else {
+    const err21 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+    if (vErrors === null) {
+      vErrors = [err21];
+    } else {
+      vErrors.push(err21);
+    }
+    errors++;
+  }
+  validate35.errors = vErrors;
+  return errors === 0;
+}
+validate35.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
 function validate20(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   ;
   let vErrors = null;
@@ -3480,8 +3938,9 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
       }
     }
     if (data.schemaVersion !== void 0) {
-      if ("1.0" !== data.schemaVersion) {
-        const err7 = { instancePath: instancePath + "/schemaVersion", schemaPath: "#/properties/schemaVersion/const", keyword: "const", params: { allowedValue: "1.0" }, message: "must be equal to constant" };
+      let data0 = data.schemaVersion;
+      if (!(data0 === "1.0" || data0 === "1.1")) {
+        const err7 = { instancePath: instancePath + "/schemaVersion", schemaPath: "#/properties/schemaVersion/enum", keyword: "enum", params: { allowedValues: schema31.properties.schemaVersion.enum }, message: "must be equal to one of the allowed values" };
         if (vErrors === null) {
           vErrors = [err7];
         } else {
@@ -4237,14 +4696,20 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
+        if (data28.metaLock !== void 0) {
+          if (!validate35(data28.metaLock, { instancePath: instancePath + "/finale/metaLock", parentData: data28, parentDataProperty: "metaLock", rootData, dynamicAnchors })) {
+            vErrors = vErrors === null ? validate35.errors : vErrors.concat(validate35.errors);
+            errors = vErrors.length;
+          }
+        }
         if (data28.companionAssessment !== void 0) {
-          let data33 = data28.companionAssessment;
-          const _errs78 = errors;
-          let valid14 = true;
+          let data34 = data28.companionAssessment;
           const _errs79 = errors;
-          if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
+          let valid14 = true;
+          const _errs80 = errors;
+          if (data34 && typeof data34 == "object" && !Array.isArray(data34)) {
             let missing1;
-            if (data33.audioSrc === void 0 && (missing1 = "audioSrc")) {
+            if (data34.audioSrc === void 0 && (missing1 = "audioSrc")) {
               const err74 = {};
               if (vErrors === null) {
                 vErrors = [err74];
@@ -4254,19 +4719,19 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               errors++;
             }
           }
-          var _valid2 = _errs79 === errors;
-          errors = _errs78;
+          var _valid2 = _errs80 === errors;
+          errors = _errs79;
           if (vErrors !== null) {
-            if (_errs78) {
-              vErrors.length = _errs78;
+            if (_errs79) {
+              vErrors.length = _errs79;
             } else {
               vErrors = null;
             }
           }
           if (_valid2) {
-            const _errs80 = errors;
-            if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
-              if (data33.captionsSrc === void 0) {
+            const _errs81 = errors;
+            if (data34 && typeof data34 == "object" && !Array.isArray(data34)) {
+              if (data34.captionsSrc === void 0) {
                 const err75 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/0/then/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
                 if (vErrors === null) {
                   vErrors = [err75];
@@ -4276,7 +4741,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            var _valid2 = _errs80 === errors;
+            var _valid2 = _errs81 === errors;
             valid14 = _valid2;
           }
           if (!valid14) {
@@ -4288,12 +4753,12 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             }
             errors++;
           }
-          const _errs82 = errors;
-          let valid15 = true;
           const _errs83 = errors;
-          if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
+          let valid15 = true;
+          const _errs84 = errors;
+          if (data34 && typeof data34 == "object" && !Array.isArray(data34)) {
             let missing2;
-            if (data33.accurate === void 0 && (missing2 = "accurate")) {
+            if (data34.accurate === void 0 && (missing2 = "accurate")) {
               const err77 = {};
               if (vErrors === null) {
                 vErrors = [err77];
@@ -4302,8 +4767,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             } else {
-              if (data33.accurate !== void 0) {
-                if (false !== data33.accurate) {
+              if (data34.accurate !== void 0) {
+                if (false !== data34.accurate) {
                   const err78 = {};
                   if (vErrors === null) {
                     vErrors = [err78];
@@ -4315,19 +4780,19 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
             }
           }
-          var _valid3 = _errs83 === errors;
-          errors = _errs82;
+          var _valid3 = _errs84 === errors;
+          errors = _errs83;
           if (vErrors !== null) {
-            if (_errs82) {
-              vErrors.length = _errs82;
+            if (_errs83) {
+              vErrors.length = _errs83;
             } else {
               vErrors = null;
             }
           }
           if (_valid3) {
-            const _errs85 = errors;
-            if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
-              if (data33.tell === void 0) {
+            const _errs86 = errors;
+            if (data34 && typeof data34 == "object" && !Array.isArray(data34)) {
+              if (data34.tell === void 0) {
                 const err79 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/1/then/required", keyword: "required", params: { missingProperty: "tell" }, message: "must have required property 'tell'" };
                 if (vErrors === null) {
                   vErrors = [err79];
@@ -4337,7 +4802,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            var _valid3 = _errs85 === errors;
+            var _valid3 = _errs86 === errors;
             valid15 = _valid3;
           }
           if (!valid15) {
@@ -4349,8 +4814,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             }
             errors++;
           }
-          if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
-            if (data33.id === void 0) {
+          if (data34 && typeof data34 == "object" && !Array.isArray(data34)) {
+            if (data34.id === void 0) {
               const err81 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "id" }, message: "must have required property 'id'" };
               if (vErrors === null) {
                 vErrors = [err81];
@@ -4359,7 +4824,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            if (data33.text === void 0) {
+            if (data34.text === void 0) {
               const err82 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
               if (vErrors === null) {
                 vErrors = [err82];
@@ -4368,7 +4833,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            if (data33.accurate === void 0) {
+            if (data34.accurate === void 0) {
               const err83 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "accurate" }, message: "must have required property 'accurate'" };
               if (vErrors === null) {
                 vErrors = [err83];
@@ -4377,7 +4842,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            for (const key5 in data33) {
+            for (const key5 in data34) {
               if (!(key5 === "id" || key5 === "text" || key5 === "confidence" || key5 === "accurate" || key5 === "tell" || key5 === "audioSrc" || key5 === "captionsSrc")) {
                 const err84 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key5 }, message: "must NOT have additional properties" };
                 if (vErrors === null) {
@@ -4388,8 +4853,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data33.id !== void 0) {
-              if (typeof data33.id !== "string") {
+            if (data34.id !== void 0) {
+              if (typeof data34.id !== "string") {
                 const err85 = { instancePath: instancePath + "/finale/companionAssessment/id", schemaPath: "#/$defs/companionLine/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err85];
@@ -4399,10 +4864,10 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data33.text !== void 0) {
-              let data36 = data33.text;
-              if (typeof data36 === "string") {
-                if (func1(data36) < 1) {
+            if (data34.text !== void 0) {
+              let data37 = data34.text;
+              if (typeof data37 === "string") {
+                if (func1(data37) < 1) {
                   const err86 = { instancePath: instancePath + "/finale/companionAssessment/text", schemaPath: "#/$defs/companionLine/properties/text/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                   if (vErrors === null) {
                     vErrors = [err86];
@@ -4421,10 +4886,10 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data33.confidence !== void 0) {
-              let data37 = data33.confidence;
-              if (typeof data37 == "number") {
-                if (data37 > 100 || isNaN(data37)) {
+            if (data34.confidence !== void 0) {
+              let data38 = data34.confidence;
+              if (typeof data38 == "number") {
+                if (data38 > 100 || isNaN(data38)) {
                   const err88 = { instancePath: instancePath + "/finale/companionAssessment/confidence", schemaPath: "#/$defs/companionLine/properties/confidence/maximum", keyword: "maximum", params: { comparison: "<=", limit: 100 }, message: "must be <= 100" };
                   if (vErrors === null) {
                     vErrors = [err88];
@@ -4433,7 +4898,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                   }
                   errors++;
                 }
-                if (data37 < 0 || isNaN(data37)) {
+                if (data38 < 0 || isNaN(data38)) {
                   const err89 = { instancePath: instancePath + "/finale/companionAssessment/confidence", schemaPath: "#/$defs/companionLine/properties/confidence/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
                   if (vErrors === null) {
                     vErrors = [err89];
@@ -4452,8 +4917,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data33.accurate !== void 0) {
-              if (typeof data33.accurate !== "boolean") {
+            if (data34.accurate !== void 0) {
+              if (typeof data34.accurate !== "boolean") {
                 const err91 = { instancePath: instancePath + "/finale/companionAssessment/accurate", schemaPath: "#/$defs/companionLine/properties/accurate/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
                 if (vErrors === null) {
                   vErrors = [err91];
@@ -4463,8 +4928,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data33.tell !== void 0) {
-              if (typeof data33.tell !== "string") {
+            if (data34.tell !== void 0) {
+              if (typeof data34.tell !== "string") {
                 const err92 = { instancePath: instancePath + "/finale/companionAssessment/tell", schemaPath: "#/$defs/companionLine/properties/tell/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err92];
@@ -4474,8 +4939,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data33.audioSrc !== void 0) {
-              if (typeof data33.audioSrc !== "string") {
+            if (data34.audioSrc !== void 0) {
+              if (typeof data34.audioSrc !== "string") {
                 const err93 = { instancePath: instancePath + "/finale/companionAssessment/audioSrc", schemaPath: "#/$defs/companionLine/properties/audioSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err93];
@@ -4485,8 +4950,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data33.captionsSrc !== void 0) {
-              if (typeof data33.captionsSrc !== "string") {
+            if (data34.captionsSrc !== void 0) {
+              if (typeof data34.captionsSrc !== "string") {
                 const err94 = { instancePath: instancePath + "/finale/companionAssessment/captionsSrc", schemaPath: "#/$defs/companionLine/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err94];
@@ -4507,9 +4972,9 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           }
         }
         if (data28.rubric !== void 0) {
-          let data42 = data28.rubric;
-          if (Array.isArray(data42)) {
-            if (data42.length < 2) {
+          let data43 = data28.rubric;
+          if (Array.isArray(data43)) {
+            if (data43.length < 2) {
               const err96 = { instancePath: instancePath + "/finale/rubric", schemaPath: "#/$defs/rubric/minItems", keyword: "minItems", params: { limit: 2 }, message: "must NOT have fewer than 2 items" };
               if (vErrors === null) {
                 vErrors = [err96];
@@ -4518,11 +4983,11 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            const len1 = data42.length;
+            const len1 = data43.length;
             for (let i1 = 0; i1 < len1; i1++) {
-              let data43 = data42[i1];
-              if (data43 && typeof data43 == "object" && !Array.isArray(data43)) {
-                if (data43.criterion === void 0) {
+              let data44 = data43[i1];
+              if (data44 && typeof data44 == "object" && !Array.isArray(data44)) {
+                if (data44.criterion === void 0) {
                   const err97 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/required", keyword: "required", params: { missingProperty: "criterion" }, message: "must have required property 'criterion'" };
                   if (vErrors === null) {
                     vErrors = [err97];
@@ -4531,7 +4996,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                   }
                   errors++;
                 }
-                if (data43.lookFor === void 0) {
+                if (data44.lookFor === void 0) {
                   const err98 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/required", keyword: "required", params: { missingProperty: "lookFor" }, message: "must have required property 'lookFor'" };
                   if (vErrors === null) {
                     vErrors = [err98];
@@ -4540,7 +5005,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                   }
                   errors++;
                 }
-                for (const key6 in data43) {
+                for (const key6 in data44) {
                   if (!(key6 === "criterion" || key6 === "lookFor" || key6 === "commonMiss")) {
                     const err99 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key6 }, message: "must NOT have additional properties" };
                     if (vErrors === null) {
@@ -4551,10 +5016,10 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     errors++;
                   }
                 }
-                if (data43.criterion !== void 0) {
-                  let data44 = data43.criterion;
-                  if (typeof data44 === "string") {
-                    if (func1(data44) < 1) {
+                if (data44.criterion !== void 0) {
+                  let data45 = data44.criterion;
+                  if (typeof data45 === "string") {
+                    if (func1(data45) < 1) {
                       const err100 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/criterion", schemaPath: "#/$defs/rubric/items/properties/criterion/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                       if (vErrors === null) {
                         vErrors = [err100];
@@ -4573,10 +5038,10 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     errors++;
                   }
                 }
-                if (data43.lookFor !== void 0) {
-                  let data45 = data43.lookFor;
-                  if (typeof data45 === "string") {
-                    if (func1(data45) < 1) {
+                if (data44.lookFor !== void 0) {
+                  let data46 = data44.lookFor;
+                  if (typeof data46 === "string") {
+                    if (func1(data46) < 1) {
                       const err102 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/lookFor", schemaPath: "#/$defs/rubric/items/properties/lookFor/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                       if (vErrors === null) {
                         vErrors = [err102];
@@ -4595,8 +5060,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     errors++;
                   }
                 }
-                if (data43.commonMiss !== void 0) {
-                  if (typeof data43.commonMiss !== "string") {
+                if (data44.commonMiss !== void 0) {
+                  if (typeof data44.commonMiss !== "string") {
                     const err104 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/commonMiss", schemaPath: "#/$defs/rubric/items/properties/commonMiss/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                     if (vErrors === null) {
                       vErrors = [err104];
@@ -4627,13 +5092,13 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           }
         }
         if (data28.acceptedPositions !== void 0) {
-          let data47 = data28.acceptedPositions;
-          if (Array.isArray(data47)) {
-            const len2 = data47.length;
+          let data48 = data28.acceptedPositions;
+          if (Array.isArray(data48)) {
+            const len2 = data48.length;
             for (let i2 = 0; i2 < len2; i2++) {
-              let data48 = data47[i2];
-              if (data48 && typeof data48 == "object" && !Array.isArray(data48)) {
-                if (data48.label === void 0) {
+              let data49 = data48[i2];
+              if (data49 && typeof data49 == "object" && !Array.isArray(data49)) {
+                if (data49.label === void 0) {
                   const err107 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2, schemaPath: "#/properties/finale/properties/acceptedPositions/items/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
                   if (vErrors === null) {
                     vErrors = [err107];
@@ -4642,7 +5107,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                   }
                   errors++;
                 }
-                if (data48.summary === void 0) {
+                if (data49.summary === void 0) {
                   const err108 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2, schemaPath: "#/properties/finale/properties/acceptedPositions/items/required", keyword: "required", params: { missingProperty: "summary" }, message: "must have required property 'summary'" };
                   if (vErrors === null) {
                     vErrors = [err108];
@@ -4651,8 +5116,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                   }
                   errors++;
                 }
-                if (data48.label !== void 0) {
-                  if (typeof data48.label !== "string") {
+                if (data49.label !== void 0) {
+                  if (typeof data49.label !== "string") {
                     const err109 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2 + "/label", schemaPath: "#/properties/finale/properties/acceptedPositions/items/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                     if (vErrors === null) {
                       vErrors = [err109];
@@ -4662,8 +5127,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     errors++;
                   }
                 }
-                if (data48.summary !== void 0) {
-                  if (typeof data48.summary !== "string") {
+                if (data49.summary !== void 0) {
+                  if (typeof data49.summary !== "string") {
                     const err110 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2 + "/summary", schemaPath: "#/properties/finale/properties/acceptedPositions/items/properties/summary/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                     if (vErrors === null) {
                       vErrors = [err110];
@@ -4705,13 +5170,13 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           }
         }
         if (data28.closingMedia !== void 0) {
-          let data52 = data28.closingMedia;
-          const _errs127 = errors;
-          let valid27 = true;
+          let data53 = data28.closingMedia;
           const _errs128 = errors;
-          if (data52 && typeof data52 == "object" && !Array.isArray(data52)) {
+          let valid27 = true;
+          const _errs129 = errors;
+          if (data53 && typeof data53 == "object" && !Array.isArray(data53)) {
             let missing3;
-            if (data52.carriesVisualMeaning === void 0 && (missing3 = "carriesVisualMeaning")) {
+            if (data53.carriesVisualMeaning === void 0 && (missing3 = "carriesVisualMeaning")) {
               const err114 = {};
               if (vErrors === null) {
                 vErrors = [err114];
@@ -4720,8 +5185,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             } else {
-              if (data52.carriesVisualMeaning !== void 0) {
-                if (true !== data52.carriesVisualMeaning) {
+              if (data53.carriesVisualMeaning !== void 0) {
+                if (true !== data53.carriesVisualMeaning) {
                   const err115 = {};
                   if (vErrors === null) {
                     vErrors = [err115];
@@ -4733,22 +5198,22 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
             }
           }
-          var _valid4 = _errs128 === errors;
-          errors = _errs127;
+          var _valid4 = _errs129 === errors;
+          errors = _errs128;
           if (vErrors !== null) {
-            if (_errs127) {
-              vErrors.length = _errs127;
+            if (_errs128) {
+              vErrors.length = _errs128;
             } else {
               vErrors = null;
             }
           }
           if (_valid4) {
-            const _errs130 = errors;
             const _errs131 = errors;
-            let valid29 = false;
             const _errs132 = errors;
-            if (data52 && typeof data52 == "object" && !Array.isArray(data52)) {
-              if (data52.audioDescriptionSrc === void 0) {
+            let valid29 = false;
+            const _errs133 = errors;
+            if (data53 && typeof data53 == "object" && !Array.isArray(data53)) {
+              if (data53.audioDescriptionSrc === void 0) {
                 const err116 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/0/required", keyword: "required", params: { missingProperty: "audioDescriptionSrc" }, message: "must have required property 'audioDescriptionSrc'" };
                 if (vErrors === null) {
                   vErrors = [err116];
@@ -4758,11 +5223,11 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            var _valid5 = _errs132 === errors;
+            var _valid5 = _errs133 === errors;
             valid29 = valid29 || _valid5;
-            const _errs133 = errors;
-            if (data52 && typeof data52 == "object" && !Array.isArray(data52)) {
-              if (data52.describedTranscript === void 0) {
+            const _errs134 = errors;
+            if (data53 && typeof data53 == "object" && !Array.isArray(data53)) {
+              if (data53.describedTranscript === void 0) {
                 const err117 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/1/required", keyword: "required", params: { missingProperty: "describedTranscript" }, message: "must have required property 'describedTranscript'" };
                 if (vErrors === null) {
                   vErrors = [err117];
@@ -4772,7 +5237,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            var _valid5 = _errs133 === errors;
+            var _valid5 = _errs134 === errors;
             valid29 = valid29 || _valid5;
             if (!valid29) {
               const err118 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf", keyword: "anyOf", params: {}, message: "must match a schema in anyOf" };
@@ -4783,16 +5248,16 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             } else {
-              errors = _errs131;
+              errors = _errs132;
               if (vErrors !== null) {
-                if (_errs131) {
-                  vErrors.length = _errs131;
+                if (_errs132) {
+                  vErrors.length = _errs132;
                 } else {
                   vErrors = null;
                 }
               }
             }
-            var _valid4 = _errs130 === errors;
+            var _valid4 = _errs131 === errors;
             valid27 = _valid4;
           }
           if (!valid27) {
@@ -4804,8 +5269,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             }
             errors++;
           }
-          if (data52 && typeof data52 == "object" && !Array.isArray(data52)) {
-            if (data52.kind === void 0) {
+          if (data53 && typeof data53 == "object" && !Array.isArray(data53)) {
+            if (data53.kind === void 0) {
               const err120 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "kind" }, message: "must have required property 'kind'" };
               if (vErrors === null) {
                 vErrors = [err120];
@@ -4814,7 +5279,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            if (data52.src === void 0) {
+            if (data53.src === void 0) {
               const err121 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "src" }, message: "must have required property 'src'" };
               if (vErrors === null) {
                 vErrors = [err121];
@@ -4823,7 +5288,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            if (data52.captionsSrc === void 0) {
+            if (data53.captionsSrc === void 0) {
               const err122 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
               if (vErrors === null) {
                 vErrors = [err122];
@@ -4832,7 +5297,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            if (data52.transcript === void 0) {
+            if (data53.transcript === void 0) {
               const err123 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "transcript" }, message: "must have required property 'transcript'" };
               if (vErrors === null) {
                 vErrors = [err123];
@@ -4841,7 +5306,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            for (const key7 in data52) {
+            for (const key7 in data53) {
               if (!func7.call(schema32.properties, key7)) {
                 const err124 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key7 }, message: "must NOT have additional properties" };
                 if (vErrors === null) {
@@ -4852,8 +5317,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.kind !== void 0) {
-              if ("video" !== data52.kind) {
+            if (data53.kind !== void 0) {
+              if ("video" !== data53.kind) {
                 const err125 = { instancePath: instancePath + "/finale/closingMedia/kind", schemaPath: "#/$defs/video/properties/kind/const", keyword: "const", params: { allowedValue: "video" }, message: "must be equal to constant" };
                 if (vErrors === null) {
                   vErrors = [err125];
@@ -4863,8 +5328,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.id !== void 0) {
-              if (typeof data52.id !== "string") {
+            if (data53.id !== void 0) {
+              if (typeof data53.id !== "string") {
                 const err126 = { instancePath: instancePath + "/finale/closingMedia/id", schemaPath: "#/$defs/video/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err126];
@@ -4874,10 +5339,10 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.src !== void 0) {
-              let data56 = data52.src;
-              if (typeof data56 === "string") {
-                if (func1(data56) < 1) {
+            if (data53.src !== void 0) {
+              let data57 = data53.src;
+              if (typeof data57 === "string") {
+                if (func1(data57) < 1) {
                   const err127 = { instancePath: instancePath + "/finale/closingMedia/src", schemaPath: "#/$defs/video/properties/src/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                   if (vErrors === null) {
                     vErrors = [err127];
@@ -4896,8 +5361,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.poster !== void 0) {
-              if (typeof data52.poster !== "string") {
+            if (data53.poster !== void 0) {
+              if (typeof data53.poster !== "string") {
                 const err129 = { instancePath: instancePath + "/finale/closingMedia/poster", schemaPath: "#/$defs/video/properties/poster/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err129];
@@ -4907,10 +5372,10 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.captionsSrc !== void 0) {
-              let data58 = data52.captionsSrc;
-              if (typeof data58 === "string") {
-                if (func1(data58) < 1) {
+            if (data53.captionsSrc !== void 0) {
+              let data59 = data53.captionsSrc;
+              if (typeof data59 === "string") {
+                if (func1(data59) < 1) {
                   const err130 = { instancePath: instancePath + "/finale/closingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                   if (vErrors === null) {
                     vErrors = [err130];
@@ -4929,10 +5394,10 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.transcript !== void 0) {
-              let data59 = data52.transcript;
-              if (typeof data59 === "string") {
-                if (func1(data59) < 1) {
+            if (data53.transcript !== void 0) {
+              let data60 = data53.transcript;
+              if (typeof data60 === "string") {
+                if (func1(data60) < 1) {
                   const err132 = { instancePath: instancePath + "/finale/closingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                   if (vErrors === null) {
                     vErrors = [err132];
@@ -4951,8 +5416,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.audioDescriptionSrc !== void 0) {
-              if (typeof data52.audioDescriptionSrc !== "string") {
+            if (data53.audioDescriptionSrc !== void 0) {
+              if (typeof data53.audioDescriptionSrc !== "string") {
                 const err134 = { instancePath: instancePath + "/finale/closingMedia/audioDescriptionSrc", schemaPath: "#/$defs/video/properties/audioDescriptionSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err134];
@@ -4962,8 +5427,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.describedTranscript !== void 0) {
-              if (typeof data52.describedTranscript !== "string") {
+            if (data53.describedTranscript !== void 0) {
+              if (typeof data53.describedTranscript !== "string") {
                 const err135 = { instancePath: instancePath + "/finale/closingMedia/describedTranscript", schemaPath: "#/$defs/video/properties/describedTranscript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err135];
@@ -4973,8 +5438,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data52.carriesVisualMeaning !== void 0) {
-              if (typeof data52.carriesVisualMeaning !== "boolean") {
+            if (data53.carriesVisualMeaning !== void 0) {
+              if (typeof data53.carriesVisualMeaning !== "boolean") {
                 const err136 = { instancePath: instancePath + "/finale/closingMedia/carriesVisualMeaning", schemaPath: "#/$defs/video/properties/carriesVisualMeaning/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
                 if (vErrors === null) {
                   vErrors = [err136];
@@ -5005,9 +5470,9 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
       }
     }
     if (data.a11y !== void 0) {
-      let data63 = data.a11y;
-      if (data63 && typeof data63 == "object" && !Array.isArray(data63)) {
-        if (data63.audioAutoplay === void 0) {
+      let data64 = data.a11y;
+      if (data64 && typeof data64 == "object" && !Array.isArray(data64)) {
+        if (data64.audioAutoplay === void 0) {
           const err139 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "audioAutoplay" }, message: "must have required property 'audioAutoplay'" };
           if (vErrors === null) {
             vErrors = [err139];
@@ -5016,7 +5481,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           }
           errors++;
         }
-        if (data63.colorOnlySignals === void 0) {
+        if (data64.colorOnlySignals === void 0) {
           const err140 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "colorOnlySignals" }, message: "must have required property 'colorOnlySignals'" };
           if (vErrors === null) {
             vErrors = [err140];
@@ -5025,7 +5490,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           }
           errors++;
         }
-        if (data63.keyboardAlternatives === void 0) {
+        if (data64.keyboardAlternatives === void 0) {
           const err141 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "keyboardAlternatives" }, message: "must have required property 'keyboardAlternatives'" };
           if (vErrors === null) {
             vErrors = [err141];
@@ -5034,7 +5499,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           }
           errors++;
         }
-        if (data63.reducedMotion === void 0) {
+        if (data64.reducedMotion === void 0) {
           const err142 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "reducedMotion" }, message: "must have required property 'reducedMotion'" };
           if (vErrors === null) {
             vErrors = [err142];
@@ -5043,7 +5508,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           }
           errors++;
         }
-        if (data63.timeLimit === void 0) {
+        if (data64.timeLimit === void 0) {
           const err143 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "timeLimit" }, message: "must have required property 'timeLimit'" };
           if (vErrors === null) {
             vErrors = [err143];
@@ -5052,7 +5517,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           }
           errors++;
         }
-        for (const key8 in data63) {
+        for (const key8 in data64) {
           if (!(key8 === "audioAutoplay" || key8 === "colorOnlySignals" || key8 === "keyboardAlternatives" || key8 === "reducedMotion" || key8 === "timeLimit" || key8 === "targetLevel")) {
             const err144 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key8 }, message: "must NOT have additional properties" };
             if (vErrors === null) {
@@ -5063,8 +5528,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data63.audioAutoplay !== void 0) {
-          if (false !== data63.audioAutoplay) {
+        if (data64.audioAutoplay !== void 0) {
+          if (false !== data64.audioAutoplay) {
             const err145 = { instancePath: instancePath + "/a11y/audioAutoplay", schemaPath: "#/properties/a11y/properties/audioAutoplay/const", keyword: "const", params: { allowedValue: false }, message: "must be equal to constant" };
             if (vErrors === null) {
               vErrors = [err145];
@@ -5074,8 +5539,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data63.colorOnlySignals !== void 0) {
-          if (false !== data63.colorOnlySignals) {
+        if (data64.colorOnlySignals !== void 0) {
+          if (false !== data64.colorOnlySignals) {
             const err146 = { instancePath: instancePath + "/a11y/colorOnlySignals", schemaPath: "#/properties/a11y/properties/colorOnlySignals/const", keyword: "const", params: { allowedValue: false }, message: "must be equal to constant" };
             if (vErrors === null) {
               vErrors = [err146];
@@ -5085,8 +5550,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data63.keyboardAlternatives !== void 0) {
-          if (true !== data63.keyboardAlternatives) {
+        if (data64.keyboardAlternatives !== void 0) {
+          if (true !== data64.keyboardAlternatives) {
             const err147 = { instancePath: instancePath + "/a11y/keyboardAlternatives", schemaPath: "#/properties/a11y/properties/keyboardAlternatives/const", keyword: "const", params: { allowedValue: true }, message: "must be equal to constant" };
             if (vErrors === null) {
               vErrors = [err147];
@@ -5096,8 +5561,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data63.reducedMotion !== void 0) {
-          if ("respected" !== data63.reducedMotion) {
+        if (data64.reducedMotion !== void 0) {
+          if ("respected" !== data64.reducedMotion) {
             const err148 = { instancePath: instancePath + "/a11y/reducedMotion", schemaPath: "#/properties/a11y/properties/reducedMotion/const", keyword: "const", params: { allowedValue: "respected" }, message: "must be equal to constant" };
             if (vErrors === null) {
               vErrors = [err148];
@@ -5107,8 +5572,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data63.timeLimit !== void 0) {
-          if ("none" !== data63.timeLimit) {
+        if (data64.timeLimit !== void 0) {
+          if ("none" !== data64.timeLimit) {
             const err149 = { instancePath: instancePath + "/a11y/timeLimit", schemaPath: "#/properties/a11y/properties/timeLimit/const", keyword: "const", params: { allowedValue: "none" }, message: "must be equal to constant" };
             if (vErrors === null) {
               vErrors = [err149];
@@ -5118,8 +5583,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data63.targetLevel !== void 0) {
-          if ("WCAG 2.1 AA" !== data63.targetLevel) {
+        if (data64.targetLevel !== void 0) {
+          if ("WCAG 2.1 AA" !== data64.targetLevel) {
             const err150 = { instancePath: instancePath + "/a11y/targetLevel", schemaPath: "#/properties/a11y/properties/targetLevel/const", keyword: "const", params: { allowedValue: "WCAG 2.1 AA" }, message: "must be equal to constant" };
             if (vErrors === null) {
               vErrors = [err150];

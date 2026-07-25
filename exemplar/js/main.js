@@ -51,6 +51,7 @@ async function boot(rootEl) {
     goToLevel(ctx, first);
   };
   ctx.actions.advance = () => advance(ctx);
+  ctx.actions.goTo = (order) => goToLevel(ctx, order);
 
   window.addEventListener("hashchange", () => {
     if (ctx.suppressHashEvent) {

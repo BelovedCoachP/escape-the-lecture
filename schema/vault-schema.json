@@ -8,7 +8,7 @@
   "additionalProperties": false,
 
   "properties": {
-    "schemaVersion": { "const": "1.0" },
+    "schemaVersion": { "enum": ["1.0", "1.1"] },
 
     "meta": {
       "type": "object",
@@ -72,6 +72,7 @@
           "default": true,
           "description": "Solo play requires this. The renderer replays every evidenceFragment the player banked before asking for the recommendation, standing in for the team deliberation the original team design assumed."
         },
+        "metaLock": { "$ref": "#/$defs/metaLock" },
         "companionAssessment": { "$ref": "#/$defs/companionLine" },
         "rubric": { "$ref": "#/$defs/rubric" },
         "acceptedPositions": {
@@ -108,6 +109,51 @@
   },
 
   "$defs": {
+
+    "lock": {
+      "type": "object",
+      "description": "v1.1. The level's exit. Appears when every challenge in the level is solved; the player derives the code from the room's work and enters it to restore the shelf. Attempts are unlimited, nothing is timed, and the final hint always reveals the code, because a lock a learner cannot eventually open is a dead end, not a puzzle.",
+      "required": ["prompt", "acceptedCodes", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1, "description": "The Archivist's challenge. The straight man speaks at the door." },
+        "inputLabel": { "type": "string", "description": "Label on the code field. Defaults to 'Vault key'." },
+        "acceptedCodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Accepted answers. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous variants here."
+        },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "wrongText": { "type": "string", "description": "Shown on an incorrect attempt. Never punitive: nothing is lost, nothing is timed." },
+        "successText": { "type": "string", "description": "Optional extra beat on success; unlockText still plays." }
+      }
+    },
+
+    "metaLock": {
+      "type": "object",
+      "description": "v1.1. The multi-stage collection meta-puzzle at the Final Vault: every key banked across the rooms must be placed in its keyway before the last door moves. This is what makes the ending earned rather than announced.",
+      "required": ["prompt", "slots", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1 },
+        "slots": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["label", "keyLabel"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "type": "string", "minLength": 1, "description": "Keyway name the player sees. Exemplar: the room title." },
+              "keyLabel": { "type": "string", "minLength": 1, "description": "The rewardLabel of the key that belongs here." }
+            }
+          }
+        },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "wrongText": { "type": "string" }
+      }
+    },
 
     "companion": {
       "type": "object",
@@ -204,7 +250,8 @@
           "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring."
         },
         "unlockText": { "type": "string", "minLength": 1 },
-        "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." }
+        "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." },
+        "lock": { "$ref": "#/$defs/lock" }
       }
     },
 

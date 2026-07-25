@@ -33,7 +33,11 @@ Each session ends with `npm run validate` green and a vault build-log entry.
 2. Exemplar shell: `index.html`, boot, content load, client-side validation (ajv precompiled to a standalone module by a build script so the runtime stays dependency-free), state, router, hash resume, a11y utilities, brand tokens.
 3. Text-only playable loop across all five levels plus finale, real Level 1 content, stubs elsewhere.
 
-### Session B: the three primitives and the thesis mechanics
+### Session B: puzzle structure and primitives
+
+Re-scoped 2026-07-25 after the Breakout EDU analysis; the full catalog, accessibility filter, and level mapping live in `docs/PUZZLE-CATALOG.md`. B1 (locks, keyring inventory, meta-lock, spine navigation) shipped the same day. B2 and B3 add the six new primitives; B4 rebuilds Level 1 as the interactive proof. The original Session B items below fold into those.
+
+### Session B (original scope): the three primitives and the thesis mechanics
 1. `choice`, `sequence`, `response` renderers against Level 1 real content. Keyboard reorder path first; it is the accessibility demo.
 2. Companion system: `speak`, confidence badge, `revealTell`, `auraReact`.
 3. Evidence bank and finale replay, accepted positions, closing.

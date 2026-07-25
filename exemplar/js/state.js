@@ -8,6 +8,9 @@ export function createRun() {
     currentLevelOrder: 1,
     completed: {}, // levelId -> array of completed challenge ids
     evidence: [], // { levelId, fragment } in the order banked
+    keys: [], // { levelId, label } banked when a lock opens; the keyring
+    locksOpened: {}, // levelId -> true once the level's lock is opened
+    vaultOpened: false, // the finale meta-lock
     hintUsage: {}, // challengeId -> count (never penalized; tracked for Session B)
     finaleSubmitted: false,
   };
@@ -18,9 +21,45 @@ export function markChallengeComplete(run, levelId, challengeId) {
   if (!list.includes(challengeId)) list.push(challengeId);
 }
 
-export function isLevelComplete(run, level) {
+export function challengesComplete(run, level) {
   const list = run.completed[level.id] ?? [];
   return level.challenges.every((c) => list.includes(c.id));
+}
+
+// A level is restored when its challenges are solved AND its lock, if it has
+// one, has been opened. The lock is the level's exit, not a fourth challenge.
+export function isLevelRestored(run, level) {
+  return (
+    challengesComplete(run, level) &&
+    (!level.lock || run.locksOpened[level.id] === true)
+  );
+}
+
+export function openLock(run, level) {
+  run.locksOpened[level.id] = true;
+  if (level.rewardLabel) bankKey(run, level.id, level.rewardLabel);
+}
+
+export function bankKey(run, levelId, label) {
+  if (!run.keys.some((k) => k.levelId === levelId)) {
+    run.keys.push({ levelId, label });
+  }
+}
+
+// Highest level order the player may enter: one past the last restored level.
+export function maxUnlockedOrder(run, content) {
+  const orders = content.levels.map((l) => l.order).sort((a, b) => a - b);
+  let max = orders[0];
+  for (const order of orders) {
+    const level = content.levels.find((l) => l.order === order);
+    if (isLevelRestored(run, level)) {
+      const next = orders.find((o) => o > order);
+      max = next ?? order;
+    } else {
+      break;
+    }
+  }
+  return max;
 }
 
 export function bankEvidence(run, levelId, fragment) {
@@ -31,7 +70,7 @@ export function bankEvidence(run, levelId, fragment) {
 
 export function getProgress(run, content) {
   const total = content.levels.length;
-  const done = content.levels.filter((l) => isLevelComplete(run, l)).length;
+  const done = content.levels.filter((l) => isLevelRestored(run, l)).length;
   return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
 }
 
@@ -64,6 +103,7 @@ export function applyResume(run, resume, content) {
     if (level.order < upTo) {
       run.completed[level.id] = level.challenges.map((c) => c.id);
       bankEvidence(run, level.id, level.evidenceFragment);
+      openLock(run, level);
     }
   }
 }

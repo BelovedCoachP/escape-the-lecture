@@ -5,9 +5,12 @@
 
 import {
   markChallengeComplete,
-  isLevelComplete,
+  challengesComplete,
+  isLevelRestored,
+  openLock,
   bankEvidence,
   getProgress,
+  maxUnlockedOrder,
 } from "../state.js";
 import { announce, moveFocusTo } from "../a11y.js";
 
@@ -71,6 +74,16 @@ export function mountShell(rootEl, content) {
   );
   rail.append(spinePanel);
 
+  const keysSummary = el("p", { className: "spine-summary" });
+  const keysList = el("ul", { className: "spine-list key-list" });
+  const keysPanel = el("section", { className: "panel" });
+  keysPanel.append(
+    el("h2", { className: "panel-label", textContent: "Keyring" }),
+    keysSummary,
+    keysList,
+  );
+  rail.append(keysPanel);
+
   const layout = el("div", { className: "vault-layout" });
   layout.append(main, rail);
 
@@ -80,7 +93,7 @@ export function mountShell(rootEl, content) {
   }
 
   rootEl.append(header, layout, footer);
-  return { main, companionTranscript, spineSummary, spineList };
+  return { main, companionTranscript, spineSummary, spineList, keysSummary, keysList };
 }
 
 /* ---------- Intro ---------- */
@@ -165,8 +178,12 @@ export function renderLevel(level, ctx) {
 
   refs.main.append(view);
 
-  if (isLevelComplete(run, level)) {
-    view.append(renderLevelComplete(level, ctx));
+  // End state: the lock is the level's exit. Challenges solved but lock shut
+  // shows the lock; lock opened shows the restored card.
+  if (isLevelRestored(run, level)) {
+    view.append(renderRestoredCard(level, ctx));
+  } else if (challengesComplete(run, level)) {
+    view.append(renderLockCard(level, ctx, view));
   }
 
   const firstLine = level.companionLines?.[0];
@@ -240,17 +257,96 @@ function renderChallengePlaceholder(challenge, num, total, level, ctx, viewEl) {
     markChallengeComplete(run, level.id, challenge.id);
     btn.disabled = true;
     btn.textContent = "Challenge complete ✓";
-    if (isLevelComplete(run, level)) {
-      const completeCard = renderLevelComplete(level, ctx);
-      viewEl.append(completeCard);
-      renderSpine(ctx);
-      announce("Level complete. Evidence logged. Shelf restored.");
-      moveFocusTo(completeCard.querySelector("h3"));
+    if (challengesComplete(run, level)) {
+      bankEvidence(run, level.id, level.evidenceFragment);
+      if (level.lock) {
+        const lockCard = renderLockCard(level, ctx, viewEl);
+        viewEl.append(lockCard);
+        renderSpine(ctx);
+        announce(
+          "All challenges solved. Evidence logged. A lock appears on the shelf. Enter the vault key to restore it.",
+        );
+        moveFocusTo(lockCard.querySelector("h3"));
+      } else {
+        openLock(run, level);
+        const completeCard = renderRestoredCard(level, ctx);
+        viewEl.append(completeCard);
+        renderSpine(ctx);
+        announce("Level complete. Evidence logged. Shelf restored.");
+        moveFocusTo(completeCard.querySelector("h3"));
+      }
     } else {
       announce(`Challenge complete. ${remainingText(run, level)}`);
     }
   });
   card.append(btn);
+  return card;
+}
+
+function renderLockCard(level, ctx, viewEl) {
+  const { run } = ctx;
+  const lock = level.lock;
+  const card = el("section", { className: "card lock-card" });
+  card.append(
+    el("p", { className: "card-eyebrow", textContent: "The lock" }),
+    el("h3", { textContent: "The shelf will not return on its own" }),
+    el("p", { className: "archivist-voice", textContent: lock.prompt }),
+  );
+
+  (lock.hints ?? []).forEach((hint, i) => {
+    const d = el("details");
+    d.append(
+      el("summary", { textContent: `Hint ${i + 1} of ${lock.hints.length}` }),
+      el("p", { textContent: hint }),
+    );
+    card.append(d);
+  });
+
+  const inputId = `lock-${level.id}`;
+  const label = el("label", {
+    textContent: lock.inputLabel ?? "Vault key",
+    attrs: { for: inputId },
+  });
+  const input = el("input", {
+    id: inputId,
+    className: "lock-input",
+    attrs: { type: "text", autocomplete: "off", spellcheck: "false" },
+  });
+  const feedback = el("p", { className: "lock-feedback" });
+  const turn = el("button", { textContent: "Turn the key" });
+
+  const attempt = () => {
+    const guess = input.value.trim().toLowerCase().replace(/\s+/g, " ");
+    const accepted = lock.acceptedCodes.some(
+      (c) => c.trim().toLowerCase().replace(/\s+/g, " ") === guess,
+    );
+    if (!accepted) {
+      const message =
+        lock.wrongText ?? "The door does not move. Nothing is lost; try again.";
+      feedback.textContent = message;
+      announce(message);
+      input.select();
+      return;
+    }
+    openLock(run, level);
+    const restored = renderRestoredCard(level, ctx);
+    card.replaceWith(restored);
+    renderSpine(ctx);
+    announce(
+      `The key turns. ${level.rewardLabel ? level.rewardLabel + " banked to your keyring. " : ""}Shelf restored.`,
+    );
+    moveFocusTo(restored.querySelector("h3"));
+  };
+
+  turn.addEventListener("click", attempt);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      attempt();
+    }
+  });
+
+  card.append(label, input, feedback, el("p", {}, turn));
   return card;
 }
 
@@ -260,7 +356,7 @@ function remainingText(run, level) {
   return left === 1 ? "1 challenge remains." : `${left} challenges remain.`;
 }
 
-function renderLevelComplete(level, ctx) {
+function renderRestoredCard(level, ctx) {
   bankEvidence(ctx.run, level.id, level.evidenceFragment);
   const card = el("section", { className: "card level-complete" });
   card.append(
@@ -293,6 +389,14 @@ export function renderFinale(ctx) {
     el("p", { className: "view-eyebrow", textContent: "The Archivist returns" }),
     el("h2", { className: "view-title", textContent: finale.title }),
   );
+
+  // The meta-lock gates the question. Five keys, five keyways, then it asks.
+  if (finale.metaLock && !run.vaultOpened) {
+    view.append(renderMetaLock(finale.metaLock, ctx));
+    refs.main.append(view);
+    return;
+  }
+
   if (finale.setup) view.append(el("p", { textContent: finale.setup }));
 
   if (finale.replayEvidence !== false && run.evidence.length) {
@@ -345,6 +449,71 @@ export function renderFinale(ctx) {
   refs.main.append(view);
 }
 
+function renderMetaLock(metaLock, ctx) {
+  const { run } = ctx;
+  const card = el("section", { className: "card lock-card" });
+  card.append(
+    el("p", { className: "card-eyebrow", textContent: "The last door" }),
+    el("h3", { textContent: "Five keyways" }),
+    el("p", { className: "archivist-voice", textContent: metaLock.prompt }),
+  );
+
+  (metaLock.hints ?? []).forEach((hint, i) => {
+    const d = el("details");
+    d.append(
+      el("summary", { textContent: `Hint ${i + 1} of ${metaLock.hints.length}` }),
+      el("p", { textContent: hint }),
+    );
+    card.append(d);
+  });
+
+  const selects = [];
+  metaLock.slots.forEach((slot, i) => {
+    const selectId = `keyway-${i}`;
+    const wrap = el("p");
+    wrap.append(
+      el("label", { textContent: `Keyway: ${slot.label}`, attrs: { for: selectId } }),
+    );
+    const select = el("select", { id: selectId, className: "lock-input" });
+    select.append(el("option", { value: "", textContent: "Choose a key" }));
+    run.keys.forEach((key) => {
+      select.append(el("option", { value: key.label, textContent: key.label }));
+    });
+    selects.push({ select, slot });
+    wrap.append(select);
+    card.append(wrap);
+  });
+
+  const feedback = el("p", { className: "lock-feedback" });
+  const open = el("button", { textContent: "Open the vault" });
+  open.addEventListener("click", () => {
+    const allPlaced = selects.every(({ select }) => select.value !== "");
+    if (!allPlaced) {
+      const message = "Every keyway needs a key before the door will move.";
+      feedback.textContent = message;
+      announce(message);
+      return;
+    }
+    const correct = selects.every(
+      ({ select, slot }) => select.value === slot.keyLabel,
+    );
+    if (!correct) {
+      const message =
+        metaLock.wrongText ?? "One or more keys sit in the wrong door.";
+      feedback.textContent = message;
+      announce(message);
+      return;
+    }
+    ctx.run.vaultOpened = true;
+    announce("Every key turns at once. The final door opens.");
+    renderFinale(ctx);
+    moveFocusTo(ctx.refs.main.querySelector("h2"));
+  });
+
+  card.append(feedback, el("p", {}, open));
+  return card;
+}
+
 function renderFinaleReveal(finale) {
   const wrap = el("div");
 
@@ -389,12 +558,14 @@ export function renderProgressSpine(ctx) {
 function renderSpine(ctx) {
   const { content, run, refs } = ctx;
   const { done, total } = getProgress(run, content);
+  const maxOrder = maxUnlockedOrder(run, content);
   refs.spineSummary.textContent = `Shelves restored: ${done} of ${total}`;
   refs.spineList.innerHTML = "";
   [...content.levels]
     .sort((a, b) => a.order - b.order)
     .forEach((level) => {
-      const restored = isLevelComplete(run, level);
+      const restored = isLevelRestored(run, level);
+      const reachable = level.order <= maxOrder;
       const item = el("li", {
         className: `spine-item${restored ? " is-restored" : ""}`,
       });
@@ -407,12 +578,41 @@ function renderSpine(ctx) {
           textContent: restored ? "✓" : "○",
           attrs: { "aria-hidden": "true" },
         }),
-        el("span", {
-          textContent: `${level.title} (${restored ? "restored" : "sealed"})`,
-        }),
       );
+      const text = `${level.title} (${restored ? "restored" : "sealed"})`;
+      if (reachable) {
+        const link = el("button", {
+          className: "spine-link",
+          textContent: text,
+        });
+        link.addEventListener("click", () => ctx.actions.goTo(level.order));
+        item.append(link);
+      } else {
+        item.append(el("span", { textContent: text }));
+      }
       refs.spineList.append(item);
     });
+
+  // Keyring
+  refs.keysSummary.textContent = `Keys banked: ${run.keys.length} of ${total}`;
+  refs.keysList.innerHTML = "";
+  if (run.keys.length === 0) {
+    refs.keysList.append(
+      el("li", { className: "spine-item", textContent: "No keys yet." }),
+    );
+  }
+  run.keys.forEach((key) => {
+    const item = el("li", { className: "spine-item is-restored" });
+    item.append(
+      el("span", {
+        className: "spine-marker",
+        textContent: "⚿",
+        attrs: { "aria-hidden": "true" },
+      }),
+      el("span", { textContent: key.label }),
+    );
+    refs.keysList.append(item);
+  });
 }
 
 /* ---------- Shared helpers ---------- */

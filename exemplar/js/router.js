@@ -9,7 +9,7 @@ import {
   renderProgressSpine,
 } from "./render/shell.js";
 import { announce, moveFocusTo } from "./a11y.js";
-import { encodeResume } from "./state.js";
+import { encodeResume, maxUnlockedOrder } from "./state.js";
 
 export function showIntro(ctx) {
   ctx.run.view = "intro";
@@ -22,6 +22,9 @@ export function showIntro(ctx) {
 export function goToLevel(ctx, order) {
   const level = ctx.content.levels.find((l) => l.order === order);
   if (!level) return;
+  // Rooms unlock in order; the spine only offers reachable rooms, and this
+  // guard keeps programmatic paths honest too.
+  if (order > maxUnlockedOrder(ctx.run, ctx.content)) return;
   ctx.run.view = "level";
   ctx.run.currentLevelOrder = order;
   syncHash(ctx);

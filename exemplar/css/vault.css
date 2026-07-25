@@ -344,6 +344,55 @@ button.secondary:hover { background: var(--surface); }
   color: var(--text-muted);
 }
 
+/* Locks: the level exit and the final door. Orange is reserved for exactly
+   this, the high-stakes moment. The wrong-attempt state is text, never a
+   color change alone, and attempts are unlimited. */
+.lock-card { border-color: rgba(247, 116, 24, 0.55); }
+
+.lock-card .card-eyebrow { color: var(--accent-orange); }
+
+.archivist-voice {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+}
+
+.lock-input {
+  font: inherit;
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+  color: var(--porcelain);
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+  margin: 0.35rem 0 0.75rem;
+}
+
+select.lock-input option { color: #0F172A; background: #F8FAFC; }
+
+.lock-feedback {
+  min-height: 1.5rem;
+  font-weight: 600;
+  margin: 0.25rem 0 0.5rem;
+}
+
+/* Spine navigation: restored and current rooms are revisitable */
+.spine-link {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.spine-link:hover { text-decoration: underline; }
+
+.key-list .spine-marker { color: var(--accent-green); }
+
 /* Finale */
 textarea {
   font: inherit;

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
 
   "meta": {
     "id": "aia-lost-learning-vault",
@@ -225,7 +225,18 @@
       ],
       "evidenceFragment": "Level 1: AURA described a color it could not see, and reported the description at 98.4% confidence. It was accurate about three details out of four. The failure was not that it was wrong. The failure was that nothing in its output distinguished the invented detail from the verified ones.",
       "unlockText": "The first shelf comes back online. Somewhere far down the hall, a light you did not know was off comes on.",
-      "rewardLabel": "Vault key: DESCRIBE"
+      "rewardLabel": "Vault key: DESCRIBE",
+      "lock": {
+        "prompt": "The Archivist speaks for the first time since the doors sealed. 'You gave four images their words back. One discipline did that work. Name it, one word, and the shelf returns to me.'",
+        "inputLabel": "Speak the vault key",
+        "acceptedCodes": ["describe"],
+        "hints": [
+          "One word, and it is a verb. It is what alt text does for an image and what a long description does for a chart.",
+          "Every challenge in this room asked you to put what you saw into words a screen reader can carry.",
+          "The word is DESCRIBE."
+        ],
+        "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
+      }
     },
 
     {
@@ -250,7 +261,13 @@
       ],
       "evidenceFragment": "STUB. Level 2 evidence.",
       "unlockText": "STUB.",
-      "rewardLabel": "Vault key: DISTINGUISH"
+      "rewardLabel": "Vault key: DISTINGUISH",
+      "lock": {
+        "prompt": "STUB. The Archivist asks for the discipline of the Color Chamber.",
+        "acceptedCodes": ["distinguish"],
+        "hints": ["STUB hint one", "STUB hint two", "The word is DISTINGUISH."],
+        "wrongText": "STUB. The door does not move."
+      }
     },
 
     {
@@ -275,7 +292,13 @@
       ],
       "evidenceFragment": "STUB. Level 3 evidence.",
       "unlockText": "STUB.",
-      "rewardLabel": "Vault key: TRANSCRIBE"
+      "rewardLabel": "Vault key: TRANSCRIBE",
+      "lock": {
+        "prompt": "STUB. The Archivist asks for the discipline of the Caption Conspiracy.",
+        "acceptedCodes": ["transcribe"],
+        "hints": ["STUB hint one", "STUB hint two", "The word is TRANSCRIBE."],
+        "wrongText": "STUB. The door does not move."
+      }
     },
 
     {
@@ -303,7 +326,13 @@
       ],
       "evidenceFragment": "STUB. Level 4 evidence.",
       "unlockText": "STUB.",
-      "rewardLabel": "Vault key: STRUCTURE"
+      "rewardLabel": "Vault key: STRUCTURE",
+      "lock": {
+        "prompt": "STUB. The Archivist asks for the discipline of the Document Labyrinth.",
+        "acceptedCodes": ["structure"],
+        "hints": ["STUB hint one", "STUB hint two", "The word is STRUCTURE."],
+        "wrongText": "STUB. The door does not move."
+      }
     },
 
     {
@@ -328,7 +357,13 @@
       ],
       "evidenceFragment": "STUB. Level 5 evidence.",
       "unlockText": "STUB.",
-      "rewardLabel": "Vault key: INSTRUCT"
+      "rewardLabel": "Vault key: INSTRUCT",
+      "lock": {
+        "prompt": "STUB. The Archivist asks for the discipline of the Prompt Reactor.",
+        "acceptedCodes": ["instruct"],
+        "hints": ["STUB hint one", "STUB hint two", "The word is INSTRUCT."],
+        "wrongText": "STUB. The door does not move."
+      }
     }
   ],
 
@@ -337,6 +372,21 @@
     "setup": "The Archivist speaks for the second and last time. Every repair has been verified. It has one question before it opens the doors, and it is not a question about accessibility.",
     "prompt": "Should AI ever be trusted with accessibility work? Write your recommendation. You have five pieces of evidence and no correct answer.",
     "replayEvidence": true,
+    "metaLock": {
+      "prompt": "The last door carries five keyways, one for each shelf you restored. The Archivist watches without speaking. Place each key where it belongs, and then it will ask its question.",
+      "slots": [
+        { "label": "The Invisible Image", "keyLabel": "Vault key: DESCRIBE" },
+        { "label": "The Color Chamber", "keyLabel": "Vault key: DISTINGUISH" },
+        { "label": "The Caption Conspiracy", "keyLabel": "Vault key: TRANSCRIBE" },
+        { "label": "The Document Labyrinth", "keyLabel": "Vault key: STRUCTURE" },
+        { "label": "The Prompt Reactor", "keyLabel": "Vault key: INSTRUCT" }
+      ],
+      "hints": [
+        "Each key names the discipline its room taught. Match the verb to the repair you made there.",
+        "Describe the images. Distinguish the colors. Transcribe the speech. Structure the document. Instruct the machine."
+      ],
+      "wrongText": "One or more keys sit in the wrong door. The Archivist says nothing. It has waited ten years; it can wait while you try again."
+    },
     "companionAssessment": {
       "id": "aura-final",
       "text": "I recommend answering yes. I have been 94.6% accurate across this entire session.",
