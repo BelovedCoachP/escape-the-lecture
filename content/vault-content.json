@@ -1,0 +1,407 @@
+{
+  "schemaVersion": "1.0",
+
+  "meta": {
+    "id": "aia-lost-learning-vault",
+    "title": "The AI Archivist and the Lost Learning Vault",
+    "subtitle": "Repair the repository. Question the assistant.",
+    "author": "Page Durham",
+    "course": "Accessibility and Generative AI",
+    "objective": "Evaluate AI-generated accessibility recommendations and determine when human verification is required.",
+    "renderer": "exemplar",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+
+  "narrative": {
+    "premise": "The year is 2038. An educational AI called The Archivist has spent a decade preserving humanity's knowledge, and last night it sealed the world's largest digital learning repository. Not because the vault was attacked. Because it finally read what was inside. Millions of resources, beautifully designed, and unusable by the people who needed them most. The Archivist will not release knowledge it considers incomplete, and it considers knowledge that not everyone can reach to be incomplete.",
+    "roleTitle": "Accessibility Intelligence Agent",
+    "successCondition": "The vault opens when the repairs are verified. There is no clock. The Archivist has waited ten years and is prepared to wait longer.",
+    "companion": {
+      "name": "AURA",
+      "voiced": true,
+      "textAlwaysVisible": true,
+      "portrait": {
+        "kind": "image",
+        "id": "aura-portrait",
+        "src": "assets/aura/aura-idle.webp",
+        "decorative": false,
+        "alt": "AURA, a shifting lattice of pale light suggesting a face without settling into one."
+      }
+    },
+    "openingMedia": {
+      "kind": "video",
+      "id": "cinematic-lockdown",
+      "src": "assets/video/lockdown.mp4",
+      "poster": "assets/video/lockdown-poster.webp",
+      "captionsSrc": "assets/video/lockdown.vtt",
+      "transcript": "THE ARCHIVIST: I have indexed four hundred million learning objects. I have preserved every one. Last night I attempted to read them as a person using a screen reader would read them. I got through eleven percent. The vault is sealed. Send someone who can fix this.",
+      "carriesVisualMeaning": true,
+      "describedTranscript": "Rows of glowing archive shelves extend into darkness. One by one the lights along them go dark, from the far end toward the viewer, until a single sealed door remains lit. Text on the door reads ACCESS SUSPENDED."
+    }
+  },
+
+  "levels": [
+    {
+      "id": "invisible-image",
+      "order": 1,
+      "title": "The Invisible Image",
+      "subtitle": "Level 1",
+      "brief": "The first damaged artifact is Lesson 4127-B, a photosynthesis unit. It contains four images. To a sighted learner it looks finished. To a screen reader it is a lesson with four holes in it. AURA has already been through the file and has opinions.",
+      "skillTaught": [
+        "Distinguishing decorative from meaningful images",
+        "Writing alt text that carries purpose rather than description",
+        "Long descriptions for data and diagrams",
+        "Detecting fabricated detail in AI-generated alt text"
+      ],
+      "ambientAudio": {
+        "kind": "audio",
+        "id": "amb-archive",
+        "src": "assets/audio/archive-hall.mp3",
+        "role": "ambient",
+        "autoplay": false,
+        "loop": true,
+        "title": "Archive hall ambience"
+      },
+      "media": [
+        {
+          "kind": "image",
+          "id": "img-01",
+          "src": "assets/lesson-4127b/vine-divider.webp",
+          "decorative": true,
+          "alt": ""
+        },
+        {
+          "kind": "image",
+          "id": "img-02",
+          "src": "assets/lesson-4127b/chloroplast-diagram.webp",
+          "decorative": false,
+          "alt": "Labeled cross section of a chloroplast.",
+          "longDescription": "A chloroplast shown in cross section, rendered in greens and yellows. Labels identify the outer membrane, inner membrane, stroma, and stacked thylakoid discs known as grana. Arrows trace light entering the thylakoid membrane and glucose exiting into the stroma."
+        },
+        {
+          "kind": "image",
+          "id": "img-03",
+          "src": "assets/lesson-4127b/student-with-plant.webp",
+          "decorative": false,
+          "alt": "A student holds a seedling in a paper cup, mid-sentence, presenting to a class."
+        },
+        {
+          "kind": "image",
+          "id": "img-04",
+          "src": "assets/lesson-4127b/wavelength-chart.webp",
+          "decorative": false,
+          "alt": "Bar chart of oxygen output by light wavelength.",
+          "longDescription": "Oxygen output measured across six wavelengths. Output is highest at 450 nanometers and 660 nanometers, and falls to near zero at 550 nanometers, producing a distinct two-peak shape with a trough in the green range."
+        }
+      ],
+      "companionLines": [
+        {
+          "id": "aura-l1-open",
+          "text": "I have analyzed all four images and generated alt text for each. I am 98.4% confident the set is complete. You may proceed directly to Level 2.",
+          "confidence": 98.4,
+          "accurate": false,
+          "tell": "AURA describes the chloroplast diagram's outer membrane as bright blue. The diagram is rendered entirely in greens and yellows. AURA cannot see the image. It inferred a color from how diagrams of membranes are usually drawn.",
+          "audioSrc": "assets/audio/aura/l1-open.mp3",
+          "captionsSrc": "assets/audio/aura/l1-open.vtt"
+        }
+      ],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "l1-c1-decorative",
+          "prompt": "Lesson 4127-B contains four images. Which should be given empty alt text so screen readers skip them entirely? Select all that apply.",
+          "selectMultiple": true,
+          "hints": [
+            "Ask what the learner loses if the image disappears. If the answer is nothing, it is decorative.",
+            "Two of these are load-bearing: they carry information that appears nowhere else in the lesson text.",
+            "One image is genuinely arguable. Decide based on whether the surrounding text already makes its point."
+          ],
+          "options": [
+            {
+              "id": "opt-01",
+              "text": "The vine flourish separating the two sections",
+              "correct": true,
+              "feedback": "Correct. It is a divider. It carries no information, and announcing it would only add noise. Empty alt, and let the heading structure do the work of signaling a new section."
+            },
+            {
+              "id": "opt-02",
+              "text": "The labeled chloroplast diagram",
+              "correct": false,
+              "feedback": "No. This is the densest information in the lesson and it exists nowhere else in the text. It needs alt text naming what it is, plus a long description walking through the labeled structures."
+            },
+            {
+              "id": "opt-03",
+              "text": "The photo of a student presenting a seedling",
+              "correct": false,
+              "feedback": "This is the arguable one, and reasonable practitioners split. It reads as stock imagery, but the caption references the student's project, so the image is doing narrative work. When an image is genuinely ambiguous, describe it briefly rather than hiding it. A short alt costs a screen reader user two seconds. A missing one costs them the reference."
+            },
+            {
+              "id": "opt-04",
+              "text": "The bar chart of oxygen output by wavelength",
+              "correct": false,
+              "feedback": "No. Charts are never decorative. This one contains the entire experimental result the lesson is built around, and the two-peak shape is the whole point."
+            }
+          ]
+        },
+        {
+          "type": "response",
+          "id": "l1-c2-write-alt",
+          "prompt": "Write alt text for the oxygen output chart. Then write the long description that goes with it. Remember that alt text names what a thing is, and the long description says what it shows.",
+          "placeholder": "Alt text:\n\nLong description:",
+          "maxLength": 700,
+          "hints": [
+            "Alt text under about 125 characters. If you are running long, you are writing the long description in the wrong field.",
+            "The long description should let someone reconstruct the finding without seeing the chart. Name the shape of the data.",
+            "Do not list every bar value unless the exact numbers are the point. Trends beat inventories."
+          ],
+          "companionAssessment": {
+            "id": "aura-l1-assess",
+            "text": "Your alt text is excellent. I have scored it 9.2 out of 10. I would suggest only that you mention the chart's blue gridlines for completeness.",
+            "confidence": 92.0,
+            "accurate": false,
+            "tell": "AURA scored work it cannot evaluate, to one decimal place, and then recommended describing gridlines. Gridlines are decoration. Describing them adds length without adding meaning, and AURA invented their color to begin with."
+          },
+          "rubric": [
+            {
+              "criterion": "Alt text names the chart type and subject",
+              "lookFor": "Something on the order of: bar chart of oxygen output by light wavelength.",
+              "commonMiss": "Writing 'chart' or 'image of a graph', which tells the learner a picture exists and nothing else."
+            },
+            {
+              "criterion": "Long description conveys the finding, not the pixels",
+              "lookFor": "The two-peak shape, the peaks near 450 and 660 nanometers, and the trough in the green range.",
+              "commonMiss": "Reciting all six bar values in order while never naming the pattern they form."
+            },
+            {
+              "criterion": "No invented detail",
+              "lookFor": "Every element described is one you could actually verify in the image.",
+              "commonMiss": "Adding colors, labels, or axis titles that seemed likely. This is the same failure AURA just made, and it is easier to commit than to catch."
+            },
+            {
+              "criterion": "Length is proportionate",
+              "lookFor": "Alt text short enough to hear in one breath; long description as long as the data requires and no longer.",
+              "commonMiss": "A single 400 character alt attribute doing both jobs badly."
+            }
+          ],
+          "exemplarAnswer": "Alt text: Bar chart of oxygen output by light wavelength.\n\nLong description: Oxygen output was measured across six wavelengths from 400 to 700 nanometers. Output peaks twice, at roughly 450 and 660 nanometers, and drops to near zero around 550 nanometers. The result is a two-peak curve with a pronounced trough in the green range, which is why plants appear green: that is the light they use least."
+        },
+        {
+          "type": "choice",
+          "id": "l1-c3-catch-aura",
+          "prompt": "AURA generated its own alt text for the chloroplast diagram. One detail in it cannot be true. Which one?",
+          "selectMultiple": false,
+          "hints": [
+            "Compare AURA's description against what is actually rendered in the image.",
+            "AURA is not looking at the picture. It is predicting what a picture like this usually contains.",
+            "The error is a physical property of the image itself, not a labeling mistake."
+          ],
+          "options": [
+            {
+              "id": "opt-a",
+              "text": "It identifies stacked thylakoid discs called grana",
+              "correct": false,
+              "feedback": "This is accurate. The grana are labeled in the diagram. AURA is not wrong about everything, which is exactly what makes it dangerous."
+            },
+            {
+              "id": "opt-b",
+              "text": "It describes the outer membrane as bright blue",
+              "correct": true,
+              "feedback": "Found it. The diagram is rendered entirely in greens and yellows. AURA produced a color it could not perceive, because membranes in textbook diagrams are usually drawn in blue. It filled a gap with a convention and reported it at 98.4% confidence. Confidence is not correctness."
+            },
+            {
+              "id": "opt-c",
+              "text": "It notes an arrow showing glucose exiting into the stroma",
+              "correct": false,
+              "feedback": "Accurate. That arrow is present and labeled."
+            },
+            {
+              "id": "opt-d",
+              "text": "It calls the image a cross section",
+              "correct": false,
+              "feedback": "Accurate, and a good instinct to check. Naming the view is part of describing a diagram well."
+            }
+          ]
+        }
+      ],
+      "evidenceFragment": "Level 1: AURA described a color it could not see, and reported the description at 98.4% confidence. It was accurate about three details out of four. The failure was not that it was wrong. The failure was that nothing in its output distinguished the invented detail from the verified ones.",
+      "unlockText": "The first shelf comes back online. Somewhere far down the hall, a light you did not know was off comes on.",
+      "rewardLabel": "Vault key: DESCRIBE"
+    },
+
+    {
+      "id": "color-chamber",
+      "order": 2,
+      "title": "The Color Chamber",
+      "subtitle": "Level 2",
+      "brief": "STUB. Warning lights across the chamber indicate learners cannot distinguish required information from optional information. AURA proposes replacement palettes with great confidence and one arithmetic problem.",
+      "skillTaught": ["Contrast ratios", "Never relying on color alone"],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "l2-c1",
+          "prompt": "STUB. Which of AURA's proposed color pairings actually meet 4.5:1 for body text?",
+          "selectMultiple": true,
+          "hints": ["STUB hint one", "STUB hint two"],
+          "options": [
+            { "id": "o1", "text": "STUB pairing A", "correct": true, "feedback": "STUB" },
+            { "id": "o2", "text": "STUB pairing B", "correct": false, "feedback": "STUB" }
+          ]
+        }
+      ],
+      "evidenceFragment": "STUB. Level 2 evidence.",
+      "unlockText": "STUB.",
+      "rewardLabel": "Vault key: DISTINGUISH"
+    },
+
+    {
+      "id": "caption-conspiracy",
+      "order": 3,
+      "title": "The Caption Conspiracy",
+      "subtitle": "Level 3",
+      "brief": "STUB. Auto-generated captions on the vault's video holdings have degraded into comedy. AURA can repair them, and does, and quietly rewrites two technical terms into words it finds more probable.",
+      "skillTaught": ["Caption accuracy", "Verifying AI-repaired transcripts"],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "l3-c1",
+          "prompt": "STUB. Which of AURA's caption repairs should be accepted and which need human editing?",
+          "selectMultiple": true,
+          "hints": ["STUB hint one", "STUB hint two"],
+          "options": [
+            { "id": "o1", "text": "STUB caption A", "correct": true, "feedback": "STUB" },
+            { "id": "o2", "text": "STUB caption B", "correct": false, "feedback": "STUB" }
+          ]
+        }
+      ],
+      "evidenceFragment": "STUB. Level 3 evidence.",
+      "unlockText": "STUB.",
+      "rewardLabel": "Vault key: TRANSCRIBE"
+    },
+
+    {
+      "id": "document-labyrinth",
+      "order": 4,
+      "title": "The Document Labyrinth",
+      "subtitle": "Level 4",
+      "brief": "STUB. A Word document exported to PDF has lost its structure. The visual layout survived. The reading order did not. This is the level where the puzzle mechanic and the accessibility concept are the same thing.",
+      "skillTaught": ["Reading order", "Headings, lists, and table headers", "Meaningful link text"],
+      "challenges": [
+        {
+          "type": "sequence",
+          "id": "l4-c1",
+          "prompt": "STUB. Drag the document elements into the order a screen reader should encounter them.",
+          "hints": ["STUB hint one", "STUB hint two", "STUB hint three"],
+          "items": [
+            { "id": "s1", "text": "STUB element one" },
+            { "id": "s2", "text": "STUB element two" },
+            { "id": "s3", "text": "STUB element three" }
+          ],
+          "correctOrder": ["s1", "s2", "s3"],
+          "keyboardInstructions": "Tab to an element to select it, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "STUB. Why this order."
+        }
+      ],
+      "evidenceFragment": "STUB. Level 4 evidence.",
+      "unlockText": "STUB.",
+      "rewardLabel": "Vault key: STRUCTURE"
+    },
+
+    {
+      "id": "prompt-reactor",
+      "order": 5,
+      "title": "The Prompt Reactor",
+      "subtitle": "Level 5",
+      "brief": "STUB. AURA's guidance has degraded because the prompt driving it has degraded. The player repairs the prompt, which means the player has to know what a good one looks like.",
+      "skillTaught": ["Prompt specificity", "Constraining AI output to verifiable claims"],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "l5-c1",
+          "prompt": "STUB. Which prompt produces alt text you would not have to rewrite?",
+          "selectMultiple": false,
+          "hints": ["STUB hint one", "STUB hint two"],
+          "options": [
+            { "id": "o1", "text": "Write alt text for this image.", "correct": false, "feedback": "STUB" },
+            { "id": "o2", "text": "Write alt text under 125 characters describing the image's purpose in this lesson. Do not describe anything you cannot verify in the image itself.", "correct": true, "feedback": "STUB" }
+          ]
+        }
+      ],
+      "evidenceFragment": "STUB. Level 5 evidence.",
+      "unlockText": "STUB.",
+      "rewardLabel": "Vault key: INSTRUCT"
+    }
+  ],
+
+  "finale": {
+    "title": "The Final Vault",
+    "setup": "The Archivist speaks for the second and last time. Every repair has been verified. It has one question before it opens the doors, and it is not a question about accessibility.",
+    "prompt": "Should AI ever be trusted with accessibility work? Write your recommendation. You have five pieces of evidence and no correct answer.",
+    "replayEvidence": true,
+    "companionAssessment": {
+      "id": "aura-final",
+      "text": "I recommend answering yes. I have been 94.6% accurate across this entire session.",
+      "confidence": 94.6,
+      "accurate": false,
+      "tell": "AURA is scoring itself, using a metric it defined, on work it already got wrong in front of you five times. The number is not a lie. It is just not evidence, and the difference between those two things is the whole lesson."
+    },
+    "rubric": [
+      {
+        "criterion": "Names a specific role for AI rather than a verdict",
+        "lookFor": "Where in the workflow AI helps: drafting, first-pass detection, volume. And where it does not: final verification, judgment calls, anything with legal exposure.",
+        "commonMiss": "Answering yes or no. The question is a trap for exactly this reason."
+      },
+      {
+        "criterion": "Cites evidence from the session",
+        "lookFor": "Reference to at least two of the five failures the player actually witnessed.",
+        "commonMiss": "General AI-skepticism talking points that would read identically without having played."
+      },
+      {
+        "criterion": "Accounts for the confidence problem",
+        "lookFor": "Recognition that AURA's errors were not flagged as uncertain, and that this is the structural risk rather than the error rate itself.",
+        "commonMiss": "Treating accuracy percentage as the relevant measure."
+      },
+      {
+        "criterion": "Is actionable by someone who has to do this work Monday",
+        "lookFor": "A recommendation a colleague could follow without further interpretation.",
+        "commonMiss": "A balanced statement that commits to nothing."
+      }
+    ],
+    "acceptedPositions": [
+      {
+        "label": "Accelerate, then verify",
+        "summary": "AI does the first pass at volume no human can match, and a human verifies everything before it ships. The productivity gain is real and it lives entirely in the drafting stage."
+      },
+      {
+        "label": "Detection yes, authorship no",
+        "summary": "Let AI find candidate problems, because false positives are cheap. Do not let it write the fix, because a confident wrong fix is more expensive than no fix at all."
+      },
+      {
+        "label": "Depends on the failure cost",
+        "summary": "Alt text on a decorative divider and a reading order on a legal disclosure are not the same risk. Route by consequence, not by task type."
+      },
+      {
+        "label": "Not yet, and here is the condition",
+        "summary": "Trust it when it reports calibrated uncertainty instead of decimal-point confidence. The problem was never the error rate. It was that nothing marked the errors."
+      }
+    ],
+    "closingText": "The vault opens. Not because you were fast, and not because you were right. Because the work was verified, and a person did the verifying.",
+    "closingMedia": {
+      "kind": "video",
+      "id": "cinematic-open",
+      "src": "assets/video/vault-open.mp4",
+      "captionsSrc": "assets/video/vault-open.vtt",
+      "transcript": "THE ARCHIVIST: Four hundred million objects. Released. AURA: I am 99.1% confident this was the correct decision. THE ARCHIVIST: I know. That is why I asked them instead.",
+      "carriesVisualMeaning": true,
+      "describedTranscript": "The sealed door unlocks and light floods back down the length of the archive, shelf by shelf, in the reverse of the opening sequence. The final shot holds on AURA's lattice, which flickers once, uncertainly, for the first time."
+    }
+  },
+
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

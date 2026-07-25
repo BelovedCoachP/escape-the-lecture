@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://learnaiid.com/schemas/escape-room/v1.json",
+  "title": "Escape the Lecture: Escape Room Content Schema v1",
+  "description": "Single content contract for both renderers. The Exemplar (The AI Archivist and the Lost Learning Vault) and the faculty Template consume identical data. Accessibility fields are structurally required, not advisory: a room that omits them will not validate, and therefore will not publish.",
+  "type": "object",
+  "required": ["schemaVersion", "meta", "narrative", "levels", "finale", "a11y"],
+  "additionalProperties": false,
+
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+
+    "meta": {
+      "type": "object",
+      "required": ["id", "title", "author", "renderer"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]{3,60}$" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 90 },
+        "subtitle": { "type": "string", "maxLength": 140 },
+        "author": { "type": "string", "minLength": 1 },
+        "course": { "type": "string", "description": "Course or context this room supports." },
+        "objective": {
+          "type": "string",
+          "description": "The single learning objective this room is aligned to. Required by the template form; this is the field that keeps faculty honest.",
+          "maxLength": 400
+        },
+        "renderer": {
+          "enum": ["exemplar", "template"],
+          "description": "Which skin consumes this content. The spine is identical either way."
+        },
+        "brandFooter": {
+          "type": "string",
+          "description": "Attribution line. In the Exemplar this is the only place LearnAIID appears."
+        }
+      }
+    },
+
+    "narrative": {
+      "type": "object",
+      "required": ["premise", "roleTitle", "successCondition"],
+      "additionalProperties": false,
+      "properties": {
+        "premise": { "type": "string", "minLength": 1 },
+        "roleTitle": { "type": "string", "description": "What the player is called. Exemplar: Accessibility Intelligence Agent." },
+        "successCondition": {
+          "type": "string",
+          "description": "Replaces the countdown. State the condition under which the vault opens. Never a clock. WCAG 2.2.1 is satisfied by having no time limit at all."
+        },
+        "openingMedia": { "$ref": "#/$defs/video" },
+        "companion": { "$ref": "#/$defs/companion" }
+      }
+    },
+
+    "levels": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/level" }
+    },
+
+    "finale": {
+      "type": "object",
+      "required": ["title", "prompt", "rubric", "closingText"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "setup": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "replayEvidence": {
+          "type": "boolean",
+          "default": true,
+          "description": "Solo play requires this. The renderer replays every evidenceFragment the player banked before asking for the recommendation, standing in for the team deliberation the original team design assumed."
+        },
+        "companionAssessment": { "$ref": "#/$defs/companionLine" },
+        "rubric": { "$ref": "#/$defs/rubric" },
+        "acceptedPositions": {
+          "type": "array",
+          "description": "There is no single correct answer. These are defensible stances the player can compare their own against.",
+          "items": {
+            "type": "object",
+            "required": ["label", "summary"],
+            "properties": {
+              "label": { "type": "string" },
+              "summary": { "type": "string" }
+            }
+          }
+        },
+        "closingText": { "type": "string" },
+        "closingMedia": { "$ref": "#/$defs/video" }
+      }
+    },
+
+    "a11y": {
+      "type": "object",
+      "description": "Compliance assertions the renderer must honor. These are const, not boolean, so a non-compliant configuration cannot be expressed in valid content.",
+      "required": ["audioAutoplay", "colorOnlySignals", "keyboardAlternatives", "reducedMotion", "timeLimit"],
+      "additionalProperties": false,
+      "properties": {
+        "audioAutoplay": { "const": false, "description": "WCAG 1.4.2. Also blocked by browsers inside an LMS iframe, so this is a correctness fix and a compatibility fix at once." },
+        "colorOnlySignals": { "const": false, "description": "WCAG 1.4.1. Every state change carries a text or shape signal alongside color." },
+        "keyboardAlternatives": { "const": true, "description": "WCAG 2.1.1. Applies hardest to the sequence challenge, which must be operable without dragging." },
+        "reducedMotion": { "const": "respected", "description": "prefers-reduced-motion disables ambient motion and transitions." },
+        "timeLimit": { "const": "none", "description": "WCAG 2.2.1 is satisfied by absence. Faculty may add a timer downstream at their own risk." },
+        "targetLevel": { "const": "WCAG 2.1 AA" }
+      }
+    }
+  },
+
+  "$defs": {
+
+    "companion": {
+      "type": "object",
+      "description": "The unreliable AI narrator. Exemplar: AURA. The template exposes a simplified version so faculty rooms can carry the same mechanic.",
+      "required": ["name", "textAlwaysVisible"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "portrait": { "$ref": "#/$defs/image" },
+        "voiced": { "type": "boolean", "default": false },
+        "textAlwaysVisible": {
+          "const": true,
+          "description": "Speech is never audio-only. The transcript is on screen at all times, not behind a toggle."
+        }
+      }
+    },
+
+    "companionLine": {
+      "type": "object",
+      "description": "One utterance from the companion. The confidence figure is the running joke and the thesis: confidence is not correctness.",
+      "required": ["id", "text", "accurate"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string", "minLength": 1 },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Displayed to the player. Deliberately precise and deliberately unearned."
+        },
+        "accurate": {
+          "type": "boolean",
+          "description": "Authoring truth, not player-facing. The renderer uses it to decide when to surface the tell."
+        },
+        "tell": {
+          "type": "string",
+          "description": "What gives the error away once the player knows to look. Revealed after the challenge resolves, never before."
+        },
+        "audioSrc": { "type": "string" },
+        "captionsSrc": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["audioSrc"] },
+          "then": {
+            "required": ["captionsSrc"],
+            "description": "Voiced lines carry captions. No exceptions."
+          }
+        },
+        {
+          "if": { "properties": { "accurate": { "const": false } }, "required": ["accurate"] },
+          "then": {
+            "required": ["tell"],
+            "description": "If the companion is wrong, the content must say how the player could have caught it. Otherwise the mechanic is just noise."
+          }
+        }
+      ]
+    },
+
+    "level": {
+      "type": "object",
+      "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" },
+        "order": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "subtitle": { "type": "string" },
+        "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." },
+        "skillTaught": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Named so the room can be audited against its own claims."
+        },
+        "ambientAudio": { "$ref": "#/$defs/audio" },
+        "media": {
+          "type": "array",
+          "items": { "oneOf": [ { "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" } ] }
+        },
+        "companionLines": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/companionLine" }
+        },
+        "challenges": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/challenge" }
+        },
+        "evidenceFragment": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring."
+        },
+        "unlockText": { "type": "string", "minLength": 1 },
+        "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." }
+      }
+    },
+
+    "challenge": {
+      "oneOf": [
+        { "$ref": "#/$defs/choiceChallenge" },
+        { "$ref": "#/$defs/sequenceChallenge" },
+        { "$ref": "#/$defs/responseChallenge" }
+      ]
+    },
+
+    "challengeBase": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "hints": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": { "type": "string" },
+          "description": "Escalating tiers, always available, never penalized. This is the competence-support mechanic from SDT, and it is why hints are required rather than optional."
+        }
+      }
+    },
+
+    "choiceChallenge": {
+      "type": "object",
+      "required": ["type", "id", "prompt", "options", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "choice" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "selectMultiple": { "type": "boolean", "default": false },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "required": ["id", "text", "correct", "feedback"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "text": { "type": "string", "minLength": 1 },
+              "correct": { "type": "boolean" },
+              "feedback": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Required on every option, including correct ones. A wrong answer with no explanation is a dead end, not a puzzle."
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "sequenceChallenge": {
+      "type": "object",
+      "required": ["type", "id", "prompt", "items", "correctOrder", "hints", "keyboardInstructions"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "sequence" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "items": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "required": ["id", "text"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "text": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "correctOrder": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "type": "string" }
+        },
+        "keyboardInstructions": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required. Drag and drop is the visual affordance, never the only one. Every sequence must be reorderable with keys alone, and the instructions for doing so must be authored, not generated."
+        },
+        "explanation": { "type": "string", "description": "Why this order and not another. Shown on resolution." }
+      }
+    },
+
+    "responseChallenge": {
+      "type": "object",
+      "description": "Free text. Deliberately not autograded. The companion assesses first, confidently and often wrongly, then the expert rubric appears beside it and the player scores their own work against both. This is the thesis as a mechanic, and it is the reason the template needs no API key.",
+      "required": ["type", "id", "prompt", "rubric", "exemplarAnswer", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "response" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "placeholder": { "type": "string" },
+        "maxLength": { "type": "integer", "default": 600 },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "companionAssessment": { "$ref": "#/$defs/companionLine" },
+        "rubric": { "$ref": "#/$defs/rubric" },
+        "exemplarAnswer": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The expert answer, revealed after submission. Not a key. A comparison."
+        }
+      }
+    },
+
+    "rubric": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["criterion", "lookFor"],
+        "additionalProperties": false,
+        "properties": {
+          "criterion": { "type": "string", "minLength": 1 },
+          "lookFor": { "type": "string", "minLength": 1 },
+          "commonMiss": { "type": "string" }
+        }
+      }
+    },
+
+    "image": {
+      "type": "object",
+      "required": ["kind", "src", "decorative"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "image" },
+        "id": { "type": "string" },
+        "src": { "type": "string", "minLength": 1 },
+        "decorative": { "type": "boolean" },
+        "alt": { "type": "string" },
+        "longDescription": {
+          "type": "string",
+          "description": "Required for charts, diagrams, and anything carrying data. Alt text names it; this explains it."
+        },
+        "credit": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "decorative": { "const": false } }, "required": ["decorative"] },
+          "then": { "required": ["alt"], "properties": { "alt": { "minLength": 1 } } }
+        },
+        {
+          "if": { "properties": { "decorative": { "const": true } }, "required": ["decorative"] },
+          "then": { "properties": { "alt": { "const": "" } } }
+        }
+      ]
+    },
+
+    "video": {
+      "type": "object",
+      "description": "Captions and a transcript are required siblings of src. There is no valid way to author a video without them.",
+      "required": ["kind", "src", "captionsSrc", "transcript"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "video" },
+        "id": { "type": "string" },
+        "src": { "type": "string", "minLength": 1 },
+        "poster": { "type": "string" },
+        "captionsSrc": { "type": "string", "minLength": 1 },
+        "transcript": { "type": "string", "minLength": 1 },
+        "audioDescriptionSrc": { "type": "string" },
+        "describedTranscript": {
+          "type": "string",
+          "description": "Required when the video carries meaning visually and no separate described track is supplied."
+        },
+        "carriesVisualMeaning": { "type": "boolean", "default": true }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "carriesVisualMeaning": { "const": true } },
+            "required": ["carriesVisualMeaning"]
+          },
+          "then": {
+            "anyOf": [
+              { "required": ["audioDescriptionSrc"] },
+              { "required": ["describedTranscript"] }
+            ]
+          }
+        }
+      ]
+    },
+
+    "audio": {
+      "type": "object",
+      "required": ["kind", "src", "role", "autoplay"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "audio" },
+        "id": { "type": "string" },
+        "src": { "type": "string", "minLength": 1 },
+        "role": { "enum": ["ambient", "cue", "speech"] },
+        "autoplay": { "const": false },
+        "loop": { "type": "boolean", "default": false },
+        "title": { "type": "string", "description": "Player-facing label on the control." },
+        "visualCue": {
+          "type": "string",
+          "description": "Required for role=cue. The text or shape shown alongside the sound so it is never the only signal."
+        },
+        "transcript": { "type": "string", "description": "Required for role=speech." },
+        "credit": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "role": { "const": "cue" } }, "required": ["role"] },
+          "then": { "required": ["visualCue"], "properties": { "visualCue": { "minLength": 1 } } }
+        },
+        {
+          "if": { "properties": { "role": { "const": "speech" } }, "required": ["role"] },
+          "then": { "required": ["transcript"], "properties": { "transcript": { "minLength": 1 } } }
+        }
+      ]
+    }
+  }
+}
