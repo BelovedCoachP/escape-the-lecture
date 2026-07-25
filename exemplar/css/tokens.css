@@ -1,0 +1,26 @@
+/* Brand tokens per TECHNICAL-SPEC section 5.2. Navy leads 60-70%; purple is
+   the environment's supporting star; cyan belongs to AURA alone. */
+:root {
+  --deep-space-navy: #0F172A;
+  --wordmark-navy: #1B2D5A;
+  --brand-blue: #0080FF;
+  --brand-blue-cta: #006BD6;         /* white text passes AA on this, not on #0080FF */
+  --brand-blue-cta-hover: #005CB8;
+  --brand-purple: #9B4DEA;
+  --brand-pink: #E563B5;             /* large text / graphics only on light */
+  --brand-pink-deep: #CE3B98;
+  --accent-cyan: #00D8FF;            /* AURA's signature glow */
+  --accent-green: #16A34A;           /* success / shelf restored */
+  --accent-orange: #F77418;          /* rare, high-stakes CTA only */
+  --porcelain: #F8FAFC;              /* never pure white */
+  --gradient-deep-space: linear-gradient(135deg, #0F172A 0%, #172554 50%, #3B0764 100%);
+
+  /* Derived system tokens */
+  --font-display: "League Spartan", "Segoe UI", system-ui, sans-serif;
+  --font-body: system-ui, "Segoe UI", -apple-system, sans-serif;
+  --surface: rgba(248, 250, 252, 0.05);
+  --surface-raised: rgba(248, 250, 252, 0.08);
+  --surface-border: rgba(248, 250, 252, 0.16);
+  --text-muted: rgba(248, 250, 252, 0.78);
+  --radius: 10px;
+}

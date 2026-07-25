@@ -6,11 +6,13 @@
   "type": "module",
   "scripts": {
     "validate": "node scripts/validate.mjs",
+    "build:validator": "node scripts/build-validator.mjs",
     "prepare": "husky"
   },
   "author": "Page Durham",
   "devDependencies": {
     "ajv": "^8.20.0",
+    "esbuild": "^0.28.1",
     "husky": "^9.1.7"
   }
 }

@@ -1,0 +1,24 @@
+/* All motion lives here and only runs when the user has not asked for calm.
+   prefers-reduced-motion: reduce gets a fully static experience; nothing in
+   the game depends on motion to carry meaning. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .card,
+  .callout,
+  .level-complete {
+    animation: rise-in 0.35s ease-out both;
+  }
+
+  button {
+    transition: background-color 0.15s ease;
+  }
+
+  details {
+    transition: border-color 0.15s ease;
+  }
+
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(0.5rem); }
+    to   { opacity: 1; transform: none; }
+  }
+}
