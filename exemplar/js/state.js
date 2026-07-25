@@ -11,6 +11,7 @@ export function createRun() {
     keys: [], // { levelId, label } banked when a lock opens; the keyring
     locksOpened: {}, // levelId -> true once the level's lock is opened
     vaultOpened: false, // the finale meta-lock
+    interludesSeen: {}, // levelId -> true once the rest beat has played
     hintUsage: {}, // challengeId -> count (never penalized; tracked for Session B)
     finaleSubmitted: false,
   };
@@ -104,6 +105,7 @@ export function applyResume(run, resume, content) {
       run.completed[level.id] = level.challenges.map((c) => c.id);
       bankEvidence(run, level.id, level.evidenceFragment);
       openLock(run, level);
+      run.interludesSeen[level.id] = true;
     }
   }
 }

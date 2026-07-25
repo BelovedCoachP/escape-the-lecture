@@ -236,6 +236,13 @@
           "It is the act that alt text performs for an image and a long description performs for a chart. Say it as a command."
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
+      },
+      "interlude": {
+        "id": "interlude-1",
+        "speaker": "narrator",
+        "text": "The first shelf hums back to life, one steady light with the dark stretching away on every side of it. AURA announces that this represents 0.0000003 percent of the archive and projects completion of the work in roughly nine thousand years, adding, helpfully, that it has rounded up. The Archivist says nothing. The Archivist has time.",
+        "shelfEvent": "One shelf, relit. Its glow picks out the edges of four hundred million dark ones.",
+        "auraLine": "To be precise: nine thousand one hundred and forty years. I did not want to alarm you."
       }
     },
 
@@ -267,6 +274,13 @@
         "acceptedCodes": ["distinguish"],
         "hints": ["STUB hint one.", "STUB. One word, a verb: the act of telling required information apart from optional."],
         "wrongText": "STUB. The door does not move."
+      },
+      "interlude": {
+        "id": "interlude-2",
+        "speaker": "narrator",
+        "text": "Across the Color Chamber the warning lights go dark, bank by bank, until the room simply looks like a room. The Archivist speaks slowly, as if reading its own log for the first time. 'I preserved every object in this archive. It had not occurred to me that preserving a thing and making it usable were different acts.' AURA offers to generate ten thousand more accessible palettes immediately. 'That,' the Archivist says, 'is the difference I just described.'",
+        "shelfEvent": "The Color Chamber's warning lights go dark. Nothing flashes. It is an enormous relief.",
+        "auraLine": "I have saved the palettes to a folder regardless. Confidence in their beauty: 99.2 percent."
       }
     },
 
@@ -298,6 +312,12 @@
         "acceptedCodes": ["transcribe"],
         "hints": ["STUB hint one.", "STUB. One word, a verb: the act of carrying speech across into text."],
         "wrongText": "STUB. The door does not move."
+      },
+      "interlude": {
+        "id": "interlude-3",
+        "speaker": "narrator",
+        "text": "One hundred videos flip to clean captions at once, a whole wing of small lights coming on together. The Archivist is quiet for a moment before it speaks. 'A learner wrote to me eleven years ago. She said she had never once heard this lesson correctly. I filed her message. I did not understand it then.' It pauses. 'I understand it now.' Even AURA knows when to be quiet. Mostly.",
+        "shelfEvent": "A hundred caption tracks come clean at once. A wing of the hall lights up like a small city."
       }
     },
 
@@ -332,6 +352,13 @@
         "acceptedCodes": ["structure"],
         "hints": ["STUB hint one.", "STUB. One word, and this time it is both a noun and a verb: what headings, lists, and reading order give a document."],
         "wrongText": "STUB. The door does not move."
+      },
+      "interlude": {
+        "id": "interlude-4",
+        "speaker": "narrator",
+        "text": "The reading-order repair relights an entire wing at once, shelf after shelf, faster than the eye wants to track. 'Understand what you did,' the Archivist says. 'You changed nothing a sighted reader would ever see. You fixed the order in which the document speaks. That was always the whole problem. It was never about what the archive contained.'",
+        "shelfEvent": "An entire wing relights in sequence, like a sentence finally read in the right order.",
+        "auraLine": "I am 71 percent sure I would have gotten to that."
       }
     },
 
@@ -340,18 +367,44 @@
       "order": 5,
       "title": "The Prompt Reactor",
       "subtitle": "Level 5",
-      "brief": "STUB. AURA's guidance has degraded because the prompt driving it has degraded. The player repairs the prompt, which means the player has to know what a good one looks like.",
-      "skillTaught": ["Prompt specificity", "Constraining AI output to verifiable claims"],
+      "brief": "PARTIAL STUB. AURA's guidance has degraded because the prompt driving it has degraded, and that repair is still being authored. What is finished is the room's centerpiece: AURA has recovered enough to start designing again, and it wants the honor of building the Archivist's final door.",
+      "skillTaught": ["Prompt specificity", "Constraining AI output to verifiable claims", "Reading AI confidence as design bias, not measurement"],
       "challenges": [
         {
           "type": "choice",
-          "id": "l5-c1",
-          "prompt": "STUB. Which prompt produces alt text you would not have to rewrite?",
-          "selectMultiple": false,
-          "hints": ["STUB hint one", "STUB hint two"],
+          "id": "l5-c1-vault-pitch",
+          "prompt": "AURA pitches four puzzles for the Archivist's final door, each delivered at its usual confidence. Two of the four would lock real people out of the vault this entire repair exists to open. Select the two proposals that exclude.",
+          "selectMultiple": true,
+          "hints": [
+            "Set the confidence numbers aside on your first pass. For each proposal, ask instead: who cannot even begin this puzzle?",
+            "Name the single sense or ability each design silently requires. Two of the four offer no other way in at all.",
+            "When you have your two, read AURA's numbers again from high to low and ask what its confidence is actually tracking. It is not reach."
+          ],
           "options": [
-            { "id": "o1", "text": "Write alt text for this image.", "correct": false, "feedback": "STUB" },
-            { "id": "o2", "text": "Write alt text under 125 characters describing the image's purpose in this lesson. Do not describe anything you cannot verify in the image itself.", "correct": true, "feedback": "STUB" }
+            {
+              "id": "opt-mirror",
+              "text": "The mirror-and-light puzzle. AURA, at 96.2 percent: 'the most beautiful moment in the game.'",
+              "correct": true,
+              "feedback": "Correct. It may genuinely be the most beautiful moment in the game, and it excludes screen reader users and many low-vision players completely, because the beauty is the only interface. Beautiful and exclusionary are not opposites. That is exactly the trap."
+            },
+            {
+              "id": "opt-sound",
+              "text": "The sound-sequence lock. AURA, at 93.8 percent: 'fully immersive.'",
+              "correct": true,
+              "feedback": "Correct. Immersive for hearing players, impossible for everyone else. Sound can carry mood, but the moment it is the only signal, the door is locked for someone. Every cue needs a visual twin and a text path."
+            },
+            {
+              "id": "opt-riddle",
+              "text": "The plain typed riddle. AURA, at 74 percent: 'functional, though it seems plain.'",
+              "correct": false,
+              "feedback": "This one reaches everyone: keyboard, screen reader, switch access, low vision, no hearing required. AURA scored it low because plain looks boring to a system trained to impress. Plain is what universal usually looks like."
+            },
+            {
+              "id": "opt-sequence",
+              "text": "The sequence puzzle. AURA, at 68 percent: 'too simple to be interesting.'",
+              "correct": false,
+              "feedback": "You solved this one in the Document Labyrinth, in the room where the mechanic and the accessibility concept were the same object, and AURA calls it too simple to be interesting. Now look at the pattern in the numbers: the two exclusionary designs rated highest, the two inclusive ones lowest, because inclusive reads as unremarkable to a system optimizing for impressive. AURA's confidence is an aesthetic score wearing a measurement's clothes. Read it accordingly."
+            }
           ]
         }
       ],
@@ -363,6 +416,13 @@
         "acceptedCodes": ["instruct"],
         "hints": ["STUB hint one.", "STUB. One word, a verb: what a well-written prompt does to a machine that a vague one fails to do."],
         "wrongText": "STUB. The door does not move."
+      },
+      "interlude": {
+        "id": "interlude-5",
+        "speaker": "narrator",
+        "text": "'You did not replace it,' the Archivist says, and it means AURA. 'You did not shut it down. You taught it to be asked better questions.' The hall behind you is lit the whole way down for the first time in ten years. One door remains, and the Archivist regards it the way you might regard your own front door after a long time away. Its own.",
+        "shelfEvent": "The reactor settles. Behind you, the hall is lit end to end.",
+        "auraLine": "The last door is unlike the others. My confidence is... I am not going to give you a number. I am told that is progress."
       }
     }
   ],

@@ -6,6 +6,7 @@ import {
   renderIntro,
   renderLevel,
   renderFinale,
+  renderInterlude,
   renderProgressSpine,
 } from "./render/shell.js";
 import { announce, moveFocusTo } from "./a11y.js";
@@ -35,6 +36,29 @@ export function goToLevel(ctx, order) {
 }
 
 export function advance(ctx) {
+  // The rest beat plays in the transition: after a room resolves, before the
+  // next brief. It advances the Archivist's arc and lets the player breathe.
+  const current = ctx.content.levels.find(
+    (l) => l.order === ctx.run.currentLevelOrder,
+  );
+  if (
+    ctx.run.view === "level" &&
+    current?.interlude &&
+    !ctx.run.interludesSeen[current.id]
+  ) {
+    ctx.run.interludesSeen[current.id] = true;
+    renderInterlude(current, ctx, () => proceed(ctx));
+    const heading = ctx.refs.main.querySelector("h2");
+    moveFocusTo(heading);
+    announce(
+      `Interlude. ${current.interlude.shelfEvent ?? "The archive responds."}`,
+    );
+    return;
+  }
+  proceed(ctx);
+}
+
+function proceed(ctx) {
   const orders = ctx.content.levels.map((l) => l.order).sort((a, b) => a - b);
   const next = orders.find((o) => o > ctx.run.currentLevelOrder);
   if (next !== undefined) {

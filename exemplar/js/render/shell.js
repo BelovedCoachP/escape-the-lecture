@@ -377,6 +377,54 @@ function renderRestoredCard(level, ctx) {
   return card;
 }
 
+/* ---------- Interlude ---------- */
+
+export function renderInterlude(level, ctx, onContinue) {
+  const { refs } = ctx;
+  const interlude = level.interlude;
+  refs.main.innerHTML = "";
+
+  const view = el("section", { className: "interlude" });
+  view.append(
+    el("p", { className: "view-eyebrow", textContent: "Interlude" }),
+    el("h2", { className: "view-title", textContent: "The archive responds" }),
+  );
+
+  if (interlude.shelfEvent) {
+    view.append(
+      el("p", { className: "status-line", textContent: `✓ ${interlude.shelfEvent}` }),
+    );
+  }
+
+  const text = el("p", { textContent: interlude.text });
+  if (interlude.speaker === "archivist") text.className = "archivist-voice";
+  view.append(text);
+
+  if (interlude.auraLine) {
+    const aside = el("aside", {
+      className: "card companion-line",
+      attrs: {
+        "aria-label": `${ctx.content.narrative.companion?.name ?? "Companion"} says`,
+      },
+    });
+    aside.append(
+      el("p", {
+        className: "speaker",
+        textContent: ctx.content.narrative.companion?.name ?? "Companion",
+      }),
+      el("p", { textContent: interlude.auraLine }),
+    );
+    view.append(aside);
+    setCompanionTranscript(ctx, interlude.auraLine);
+  }
+
+  const cont = el("button", { textContent: "Continue" });
+  cont.addEventListener("click", onContinue);
+  view.append(el("p", {}, cont));
+
+  refs.main.append(view);
+}
+
 /* ---------- Finale ---------- */
 
 export function renderFinale(ctx) {

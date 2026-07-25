@@ -393,6 +393,19 @@ select.lock-input option { color: #0F172A; background: #F8FAFC; }
 
 .key-list .spine-marker { color: var(--accent-green); }
 
+/* Interlude: the rest beat. Quieter than a level view on purpose. */
+.interlude .status-line {
+  color: var(--accent-green);
+  font-weight: 700;
+  margin: 0 0 1rem;
+}
+
+.interlude > p:not(.status-line):not(.view-eyebrow) {
+  font-size: 1.15rem;
+  line-height: 1.75;
+  max-width: 46rem;
+}
+
 /* Finale */
 textarea {
   font: inherit;

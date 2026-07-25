@@ -251,7 +251,20 @@
         },
         "unlockText": { "type": "string", "minLength": 1 },
         "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." },
-        "lock": { "$ref": "#/$defs/lock" }
+        "lock": { "$ref": "#/$defs/lock" },
+        "interlude": {
+          "type": "object",
+          "description": "Optional rest beat shown after a level resolves, before the next brief. Reduces puzzle fatigue (a UDL point) and advances the narrative.",
+          "required": ["text"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "type": "string" },
+            "speaker": { "enum": ["archivist", "aura", "narrator"] },
+            "text": { "type": "string", "minLength": 1 },
+            "shelfEvent": { "type": "string", "description": "The visual reward: what relights in the hall." },
+            "auraLine": { "type": "string", "description": "AURA's undercut, surfaced as a separate styled aside." }
+          }
+        }
       }
     },
 
