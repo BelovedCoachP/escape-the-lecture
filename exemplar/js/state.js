@@ -49,20 +49,26 @@ export function bankKey(run, levelId, label) {
   }
 }
 
-// Highest level order the player may enter: one past the last restored level.
-export function maxUnlockedOrder(run, content) {
+// A room can be entered if it is the first room, it is already restored, or
+// the room before it is restored. Per-room, not high-water-mark, so
+// restarting an earlier room never seals rooms the player already opened.
+export function isLevelReachable(run, content, level) {
   const orders = content.levels.map((l) => l.order).sort((a, b) => a - b);
-  let max = orders[0];
-  for (const order of orders) {
-    const level = content.levels.find((l) => l.order === order);
-    if (isLevelRestored(run, level)) {
-      const next = orders.find((o) => o > order);
-      max = next ?? order;
-    } else {
-      break;
-    }
-  }
-  return max;
+  if (level.order === orders[0]) return true;
+  if (isLevelRestored(run, level)) return true;
+  const prevOrder = [...orders].reverse().find((o) => o < level.order);
+  const prev = content.levels.find((l) => l.order === prevOrder);
+  return prev ? isLevelRestored(run, prev) : true;
+}
+
+// Full reset of one room: challenges, lock, its key, its evidence, and its
+// interlude, so replaying the room replays all of it.
+export function resetLevel(run, level) {
+  delete run.completed[level.id];
+  delete run.locksOpened[level.id];
+  delete run.interludesSeen[level.id];
+  run.keys = run.keys.filter((k) => k.levelId !== level.id);
+  run.evidence = run.evidence.filter((e) => e.levelId !== level.id);
 }
 
 export function bankEvidence(run, levelId, fragment) {

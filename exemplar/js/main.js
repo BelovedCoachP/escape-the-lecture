@@ -10,6 +10,7 @@ import {
   applyResume,
   loadSavedRun,
   clearSavedRun,
+  resetLevel,
 } from "./state.js";
 import { mountShell } from "./render/shell.js";
 import { showIntro, goToLevel, openFinale, advance } from "./router.js";
@@ -77,6 +78,27 @@ async function boot(rootEl) {
     ctx.hasSavedRun = false;
     ctx.actions.begin();
   };
+  ctx.actions.goHome = () => {
+    // Capture the position before showIntro rewrites run.view, so the
+    // intro's Continue button returns the player exactly here.
+    if (ctx.run.view === "level" || ctx.run.view === "finale") {
+      ctx.resumeTarget = { view: ctx.run.view, order: ctx.run.currentLevelOrder };
+      ctx.hasSavedRun = true;
+    }
+    showIntro(ctx);
+  };
+  ctx.actions.restartLevel = (level) => {
+    resetLevel(ctx.run, level);
+    goToLevel(ctx, level.order);
+  };
+  ctx.actions.playAgain = () => {
+    clearSavedRun();
+    ctx.run = createRun();
+    ctx.hasSavedRun = false;
+    ctx.resumeTarget = null;
+    showIntro(ctx);
+  };
+  refs.homeBtn.addEventListener("click", () => ctx.actions.goHome());
 
   window.addEventListener("hashchange", () => {
     if (ctx.suppressHashEvent) {

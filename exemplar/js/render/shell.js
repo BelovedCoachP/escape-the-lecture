@@ -10,7 +10,7 @@ import {
   openLock,
   bankEvidence,
   getProgress,
-  maxUnlockedOrder,
+  isLevelReachable,
   saveRun,
 } from "../state.js";
 import { announce, moveFocusTo } from "../a11y.js";
@@ -41,14 +41,21 @@ export function mountShell(rootEl, content) {
   rootEl.innerHTML = "";
 
   const header = el("header", { className: "vault-header" });
-  header.append(
+  const headerText = el("div");
+  headerText.append(
     el("h1", { className: "vault-title", textContent: content.meta.title }),
   );
   if (content.meta.subtitle) {
-    header.append(
+    headerText.append(
       el("p", { className: "vault-subtitle", textContent: content.meta.subtitle }),
     );
   }
+  const homeBtn = el("button", {
+    className: "secondary home-btn",
+    textContent: "⌂ Main Hall",
+    attrs: { "aria-label": "Return to the Main Hall" },
+  });
+  header.append(headerText, homeBtn);
 
   const main = el("main", {
     id: "vault-main",
@@ -117,7 +124,7 @@ export function mountShell(rootEl, content) {
   }
 
   rootEl.append(header, layout, footer);
-  return { main, companionTranscript, spineSummary, spineList, keysSummary, keysList };
+  return { main, companionTranscript, spineSummary, spineList, keysSummary, keysList, homeBtn };
 }
 
 /* ---------- Intro ---------- */
@@ -193,6 +200,8 @@ export function renderLevel(level, ctx) {
     el("p", { textContent: level.brief }),
   );
 
+  view.append(renderRestartControl(level, ctx));
+
   if (level.skillTaught?.length) {
     const skills = el("details");
     skills.append(el("summary", { textContent: "Skills in this room" }));
@@ -234,6 +243,36 @@ export function renderLevel(level, ctx) {
 
   const firstLine = level.companionLines?.[0];
   if (firstLine) setCompanionTranscript(ctx, firstLine.text);
+}
+
+// A small, deliberate reset for one room. Two-step: the first press asks,
+// so a stray click never wipes progress.
+function renderRestartControl(level, ctx) {
+  const wrap = el("p", { className: "room-controls" });
+  const restart = el("button", {
+    className: "secondary",
+    textContent: "Start this room over",
+  });
+  restart.addEventListener("click", () => {
+    wrap.innerHTML = "";
+    const question = el("span", {
+      className: "restart-question",
+      textContent: "Restart this room and clear its progress? ",
+    });
+    const yes = el("button", { textContent: "Yes, start over" });
+    const no = el("button", { className: "secondary", textContent: "Keep going" });
+    yes.addEventListener("click", () => ctx.actions.restartLevel(level));
+    no.addEventListener("click", () => {
+      wrap.innerHTML = "";
+      wrap.append(restart);
+      restart.focus();
+    });
+    wrap.append(question, yes, no);
+    announce("Restart this room and clear its progress? Choose yes or keep going.");
+    yes.focus();
+  });
+  wrap.append(restart);
+  return wrap;
 }
 
 function renderCompanionLine(line, ctx) {
@@ -708,6 +747,9 @@ function renderFinaleReveal(finale, ctx) {
   if (finale.closingMedia) {
     closing.append(renderVideoAsText(finale.closingMedia, "Closing transmission"));
   }
+  const again = el("button", { textContent: "Play again" });
+  again.addEventListener("click", () => ctx.actions.playAgain());
+  closing.append(el("p", {}, again));
   wrap.append(closing);
   return wrap;
 }
@@ -721,14 +763,13 @@ export function renderProgressSpine(ctx) {
 function renderSpine(ctx) {
   const { content, run, refs } = ctx;
   const { done, total } = getProgress(run, content);
-  const maxOrder = maxUnlockedOrder(run, content);
   refs.spineSummary.textContent = `Shelves restored: ${done} of ${total}`;
   refs.spineList.innerHTML = "";
   [...content.levels]
     .sort((a, b) => a.order - b.order)
     .forEach((level) => {
       const restored = isLevelRestored(run, level);
-      const reachable = level.order <= maxOrder;
+      const reachable = isLevelReachable(run, content, level);
       const item = el("li", {
         className: `spine-item${restored ? " is-restored" : ""}`,
       });

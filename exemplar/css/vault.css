@@ -98,7 +98,20 @@ a { color: var(--brand-blue); }
 .vault-header {
   padding: 2.5rem clamp(1rem, 4vw, 3rem) 1.25rem;
   border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
+
+.home-btn { flex-shrink: 0; }
+
+.room-controls { margin: 0 0 1.25rem; }
+
+.room-controls button { margin-right: 0.5rem; }
+
+.restart-question { font-weight: 600; margin-right: 0.5rem; }
 
 .vault-title {
   margin: 0;
