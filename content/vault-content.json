@@ -107,39 +107,51 @@
       ],
       "challenges": [
         {
-          "type": "choice",
+          "type": "sort",
           "id": "l1-c1-decorative",
-          "prompt": "Lesson 4127-B contains four images. Which should be given empty alt text so screen readers skip them entirely? Select all that apply.",
-          "selectMultiple": true,
+          "prompt": "Lesson 4127-B contains four images. Sort each one onto the correct shelf. Decorative images get empty alt text, so screen readers skip them entirely. Meaningful images carry information and must be described.",
+          "keyboardInstructions": "Each image offers one button per shelf. Press a button to place the image there; every placement is announced, and you can move an image again at any time. Nothing is judged until you choose Verify sorting.",
           "hints": [
             "Ask what the learner loses if the image disappears. If the answer is nothing, it is decorative.",
             "Two of these are load-bearing: they carry information that appears nowhere else in the lesson text.",
             "One image is genuinely arguable. Decide based on whether the surrounding text already makes its point."
           ],
-          "options": [
+          "bins": [
             {
-              "id": "opt-01",
+              "id": "bin-decorative",
+              "label": "Decorative",
+              "description": "Empty alt text. A screen reader passes over it in silence."
+            },
+            {
+              "id": "bin-meaningful",
+              "label": "Meaningful",
+              "description": "Carries information. It must be described."
+            }
+          ],
+          "items": [
+            {
+              "id": "img-vine",
               "text": "The vine flourish separating the two sections",
-              "correct": true,
-              "feedback": "Correct. It is a divider. It carries no information, and announcing it would only add noise. Empty alt, and let the heading structure do the work of signaling a new section."
+              "correctBin": "bin-decorative",
+              "feedback": "It is a divider. It carries no information, and announcing it would only add noise. Empty alt, and let the heading structure do the work of signaling a new section."
             },
             {
-              "id": "opt-02",
+              "id": "img-chloroplast",
               "text": "The labeled chloroplast diagram",
-              "correct": false,
-              "feedback": "No. This is the densest information in the lesson and it exists nowhere else in the text. It needs alt text naming what it is, plus a long description walking through the labeled structures."
+              "correctBin": "bin-meaningful",
+              "feedback": "This is the densest information in the lesson and it exists nowhere else in the text. It needs alt text naming what it is, plus a long description walking through the labeled structures."
             },
             {
-              "id": "opt-03",
+              "id": "img-student",
               "text": "The photo of a student presenting a seedling",
-              "correct": false,
+              "correctBin": "bin-meaningful",
               "feedback": "This is the arguable one, and reasonable practitioners split. It reads as stock imagery, but the caption references the student's project, so the image is doing narrative work. When an image is genuinely ambiguous, describe it briefly rather than hiding it. A short alt costs a screen reader user two seconds. A missing one costs them the reference."
             },
             {
-              "id": "opt-04",
+              "id": "img-chart",
               "text": "The bar chart of oxygen output by wavelength",
-              "correct": false,
-              "feedback": "No. Charts are never decorative. This one contains the entire experimental result the lesson is built around, and the two-peak shape is the whole point."
+              "correctBin": "bin-meaningful",
+              "feedback": "Charts are never decorative. This one contains the entire experimental result the lesson is built around, and the two-peak shape is the whole point."
             }
           ]
         },
@@ -186,39 +198,42 @@
           "exemplarAnswer": "Alt text: Bar chart of oxygen output by light wavelength.\n\nLong description: Oxygen output was measured across six wavelengths from 400 to 700 nanometers. Output peaks twice, at roughly 450 and 660 nanometers, and drops to near zero around 550 nanometers. The result is a two-peak curve with a pronounced trough in the green range, which is why plants appear green: that is the light they use least."
         },
         {
-          "type": "choice",
+          "type": "hunt",
           "id": "l1-c3-catch-aura",
-          "prompt": "AURA generated its own alt text for the chloroplast diagram. One detail in it cannot be true. Which one?",
-          "selectMultiple": false,
+          "prompt": "AURA's generated alt text for the chloroplast diagram is laid out below, claim by claim, next to the image's verified long description. One detail cannot be true. Flag it, then confirm your findings.",
           "hints": [
             "Compare AURA's description against what is actually rendered in the image.",
             "AURA is not looking at the picture. It is predicting what a picture like this usually contains.",
             "The error is a physical property of the image itself, not a labeling mistake."
           ],
-          "options": [
+          "artifact": [
             {
-              "id": "opt-a",
-              "text": "It identifies stacked thylakoid discs called grana",
-              "correct": false,
+              "id": "claim-1",
+              "label": "Claim 1",
+              "text": "A labeled cross section of a chloroplast.",
+              "flawed": false,
+              "feedback": "Accurate, and a good instinct to check. Naming the view is part of describing a diagram well."
+            },
+            {
+              "id": "claim-2",
+              "label": "Claim 2",
+              "text": "Stacked thylakoid discs, called grana, are identified.",
+              "flawed": false,
               "feedback": "This is accurate. The grana are labeled in the diagram. AURA is not wrong about everything, which is exactly what makes it dangerous."
             },
             {
-              "id": "opt-b",
-              "text": "It describes the outer membrane as bright blue",
-              "correct": true,
+              "id": "claim-3",
+              "label": "Claim 3",
+              "text": "The outer membrane is rendered in bright blue.",
+              "flawed": true,
               "feedback": "Found it. The diagram is rendered entirely in greens and yellows. AURA produced a color it could not perceive, because membranes in textbook diagrams are usually drawn in blue. It filled a gap with a convention and reported it at 98.4% confidence. Confidence is not correctness."
             },
             {
-              "id": "opt-c",
-              "text": "It notes an arrow showing glucose exiting into the stroma",
-              "correct": false,
+              "id": "claim-4",
+              "label": "Claim 4",
+              "text": "An arrow traces glucose exiting into the stroma.",
+              "flawed": false,
               "feedback": "Accurate. That arrow is present and labeled."
-            },
-            {
-              "id": "opt-d",
-              "text": "It calls the image a cross section",
-              "correct": false,
-              "feedback": "Accurate, and a good instinct to check. Naming the view is part of describing a diagram well."
             }
           ]
         }
@@ -293,14 +308,28 @@
       "skillTaught": ["Caption accuracy", "Verifying AI-repaired transcripts"],
       "challenges": [
         {
-          "type": "choice",
-          "id": "l3-c1",
-          "prompt": "STUB. Which of AURA's caption repairs should be accepted and which need human editing?",
-          "selectMultiple": true,
-          "hints": ["STUB hint one", "STUB hint two"],
-          "options": [
-            { "id": "o1", "text": "STUB caption A", "correct": true, "feedback": "STUB" },
-            { "id": "o2", "text": "STUB caption B", "correct": false, "feedback": "STUB" }
+          "type": "repair",
+          "id": "l3-c1-caption-repair",
+          "prompt": "STUB. The vault's auto-captions have degraded. Repair each caption line so it says what the speaker actually said.",
+          "hints": [
+            "STUB hint one.",
+            "STUB. Read each line aloud. The errors are sound-alikes, not typos."
+          ],
+          "segments": [
+            {
+              "id": "seg-1",
+              "context": "STUB. Video 114, biology lecture, 04:12:",
+              "broken": "the mitochondria is the powerhouse of the sell",
+              "accepted": ["the mitochondria is the powerhouse of the cell"],
+              "feedback": "STUB. Sound-alike substitution: sell for cell. Auto-captioning guesses by audio probability, not meaning."
+            },
+            {
+              "id": "seg-2",
+              "context": "STUB. Video 617, accessibility workshop, 12:40:",
+              "broken": "screen reader yoosers navigate by headings",
+              "accepted": ["screen reader users navigate by headings"],
+              "feedback": "STUB. Phonetic garble on a technical term."
+            }
           ]
         }
       ],

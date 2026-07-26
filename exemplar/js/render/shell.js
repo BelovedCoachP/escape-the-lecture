@@ -13,11 +13,19 @@ import {
   maxUnlockedOrder,
 } from "../state.js";
 import { announce, moveFocusTo } from "../a11y.js";
+import { el } from "./dom.js";
+import { renderChoice } from "./challenge.choice.js";
+import { renderSort } from "./challenge.sort.js";
+import { renderHunt } from "./challenge.hunt.js";
+import { renderRepair } from "./challenge.repair.js";
 
 const TYPE_LABELS = {
   choice: "Selection challenge",
   sequence: "Ordering challenge",
   response: "Written response",
+  sort: "Sorting challenge",
+  hunt: "Inspection challenge",
+  repair: "Repair challenge",
 };
 
 export function mountShell(rootEl, content) {
@@ -181,7 +189,7 @@ export function renderLevel(level, ctx) {
   const challenges = level.challenges;
   challenges.forEach((challenge, i) => {
     view.append(
-      renderChallengePlaceholder(challenge, i + 1, challenges.length, level, ctx, view),
+      renderChallengeCard(challenge, i + 1, challenges.length, level, ctx, view),
     );
   });
 
@@ -220,7 +228,7 @@ function renderCompanionLine(line, ctx) {
   return card;
 }
 
-function renderChallengePlaceholder(challenge, num, total, level, ctx, viewEl) {
+function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
   const { run } = ctx;
   const card = el("section", { className: "card challenge-card" });
   card.append(
@@ -240,56 +248,83 @@ function renderChallengePlaceholder(challenge, num, total, level, ctx, viewEl) {
     card.append(d);
   });
 
-  if (challenge.type === "choice") {
-    const list = el("ul", { className: "option-list" });
-    challenge.options.forEach((o) => list.append(el("li", { textContent: o.text })));
-    card.append(list);
-  } else if (challenge.type === "sequence") {
+  const done = (run.completed[level.id] ?? []).includes(challenge.id);
+  const api = {
+    announce,
+    complete: () => finishChallenge(challenge, level, ctx, viewEl),
+  };
+
+  let body;
+  switch (challenge.type) {
+    case "choice":
+      body = renderChoice(challenge, done, api);
+      break;
+    case "sort":
+      body = renderSort(challenge, done, api);
+      break;
+    case "hunt":
+      body = renderHunt(challenge, done, api);
+      break;
+    case "repair":
+      body = renderRepair(challenge, done, api);
+      break;
+    default:
+      body = renderPlaceholderBody(challenge, done, api);
+  }
+  card.append(body);
+  return card;
+}
+
+// Sequence and response arrive in the next build; until then they keep the
+// honest placeholder.
+function renderPlaceholderBody(challenge, done, api) {
+  const wrap = el("div");
+  if (challenge.type === "sequence") {
     const list = el("ol", { className: "option-list" });
     challenge.items.forEach((it) => list.append(el("li", { textContent: it.text })));
-    card.append(list);
+    wrap.append(list);
   }
-
-  card.append(
+  wrap.append(
     el("p", {
       className: "placeholder-note",
       textContent: "This challenge becomes interactive in the next build.",
     }),
   );
-
-  const done = (run.completed[level.id] ?? []).includes(challenge.id);
   const btn = el("button", {
     textContent: done ? "Challenge complete ✓" : "Mark challenge complete",
   });
   btn.disabled = done;
   btn.addEventListener("click", () => {
-    markChallengeComplete(run, level.id, challenge.id);
     btn.disabled = true;
     btn.textContent = "Challenge complete ✓";
-    if (challengesComplete(run, level)) {
-      bankEvidence(run, level.id, level.evidenceFragment);
-      if (level.lock) {
-        const lockCard = renderLockCard(level, ctx, viewEl);
-        viewEl.append(lockCard);
-        renderSpine(ctx);
-        announce(
-          "All challenges solved. Evidence logged. A lock appears on the shelf. Enter the vault key to restore it.",
-        );
-        moveFocusTo(lockCard.querySelector("h3"));
-      } else {
-        openLock(run, level);
-        const completeCard = renderRestoredCard(level, ctx);
-        viewEl.append(completeCard);
-        renderSpine(ctx);
-        announce("Level complete. Evidence logged. Shelf restored.");
-        moveFocusTo(completeCard.querySelector("h3"));
-      }
-    } else {
-      announce(`Challenge complete. ${remainingText(run, level)}`);
-    }
+    api.complete();
   });
-  card.append(btn);
-  return card;
+  wrap.append(el("p", {}, btn));
+  return wrap;
+}
+
+function finishChallenge(challenge, level, ctx, viewEl) {
+  const { run } = ctx;
+  markChallengeComplete(run, level.id, challenge.id);
+  if (challengesComplete(run, level)) {
+    bankEvidence(run, level.id, level.evidenceFragment);
+    if (level.lock) {
+      viewEl.append(renderLockCard(level, ctx, viewEl));
+      renderSpine(ctx);
+      // Focus stays on the solved challenge so its feedback can be read;
+      // the announcement carries the news that the lock has appeared below.
+      announce(
+        "All challenges solved. Evidence logged. A lock appears on the shelf below. Enter the vault key to restore it.",
+      );
+    } else {
+      openLock(run, level);
+      viewEl.append(renderRestoredCard(level, ctx));
+      renderSpine(ctx);
+      announce("Level complete. Evidence logged. Shelf restored.");
+    }
+  } else {
+    announce(`Challenge solved. ${remainingText(run, level)}`);
+  }
 }
 
 function renderLockCard(level, ctx, viewEl) {
@@ -748,12 +783,3 @@ function setScene(scene) {
   document.body.dataset.scene = scene;
 }
 
-function el(tag, { attrs, ...props } = {}, ...children) {
-  const node = document.createElement(tag);
-  Object.assign(node, props);
-  if (attrs) {
-    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
-  }
-  node.append(...children);
-  return node;
-}

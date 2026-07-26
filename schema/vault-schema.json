@@ -272,8 +272,124 @@
       "oneOf": [
         { "$ref": "#/$defs/choiceChallenge" },
         { "$ref": "#/$defs/sequenceChallenge" },
-        { "$ref": "#/$defs/responseChallenge" }
+        { "$ref": "#/$defs/responseChallenge" },
+        { "$ref": "#/$defs/sortChallenge" },
+        { "$ref": "#/$defs/huntChallenge" },
+        { "$ref": "#/$defs/repairChallenge" }
       ]
+    },
+
+    "sortChallenge": {
+      "type": "object",
+      "description": "v1.1, Exemplar. Items sorted into named bins. Covers the classification and placement mechanics. Fully keyboard operable: every item exposes a control per bin, every placement is announced, and nothing is judged until the player verifies.",
+      "required": ["type", "id", "prompt", "bins", "items", "keyboardInstructions", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "sort" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "keyboardInstructions": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required, same rule as sequence: the spatial metaphor must be operable without a pointer, and the instructions are authored, not generated."
+        },
+        "bins": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "required": ["id", "label"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string", "minLength": 1 },
+              "description": { "type": "string", "description": "What landing in this bin means." }
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": ["id", "text", "correctBin", "feedback"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "text": { "type": "string", "minLength": 1 },
+              "correctBin": { "type": "string", "description": "The id of the bin this item belongs in." },
+              "feedback": { "type": "string", "minLength": 1, "description": "Revealed when the sort resolves. Required on every item." }
+            }
+          }
+        }
+      }
+    },
+
+    "huntChallenge": {
+      "type": "object",
+      "description": "v1.1, Exemplar. The inverted hidden-object mechanic: flaws hide structurally, not visually. The artifact renders as real readable parts; the player flags the parts that cannot be true. Sighted players and screen reader players inspect the same object and solve the same puzzle.",
+      "required": ["type", "id", "prompt", "artifact", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "hunt" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "artifact": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": ["id", "text", "flawed", "feedback"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string", "description": "Part name announced with the text, e.g. 'Claim 2'." },
+              "text": { "type": "string", "minLength": 1 },
+              "flawed": { "type": "boolean", "description": "Authoring truth: is this part a flaw the player should flag?" },
+              "feedback": { "type": "string", "minLength": 1, "description": "Why this part is or is not a flaw. Revealed on resolve." }
+            }
+          }
+        }
+      }
+    },
+
+    "repairChallenge": {
+      "type": "object",
+      "description": "v1.1, Exemplar. Corrupted text repaired in place against known-good answers. Gradeable, unlike response. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous accepted variants.",
+      "required": ["type", "id", "prompt", "segments", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "repair" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "required": ["id", "broken", "accepted", "feedback"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "context": { "type": "string", "description": "Read-only framing shown above the editable line." },
+              "broken": { "type": "string", "minLength": 1, "description": "The corrupted text the player starts from." },
+              "accepted": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "feedback": { "type": "string", "minLength": 1, "description": "What was wrong and why. Revealed on resolve." }
+            }
+          }
+        }
+      }
     },
 
     "challengeBase": {

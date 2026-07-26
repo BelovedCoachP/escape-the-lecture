@@ -348,6 +348,149 @@ button.secondary:hover { background: var(--surface); }
   margin: 0.75rem 0 0.5rem;
 }
 
+/* ---------- Challenge primitives ---------- */
+
+.solved-badge {
+  color: var(--accent-green);
+  font-weight: 700;
+}
+
+/* Choice */
+.choice-options {
+  border: none;
+  margin: 0.75rem 0;
+  padding: 0;
+}
+
+.choice-row { margin: 0.6rem 0; }
+
+.choice-row input { margin-right: 0.6rem; }
+
+.choice-row label { display: inline; font-weight: 400; }
+
+.option-feedback {
+  margin: 0.35rem 0 0.75rem 1.8rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Sort */
+.sort-tray,
+.sort-bin {
+  border: 1px dashed var(--surface-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+}
+
+.sort-bins {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.sort-tray h4,
+.sort-bin h4 {
+  margin: 0 0 0.25rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.bin-desc {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.sort-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sort-item {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.8rem;
+  margin: 0.5rem 0;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.sort-item .option-feedback { margin-left: 0; }
+
+.sort-status { font-weight: 700; }
+
+.sort-actions {
+  margin-top: 0.4rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sort-actions button {
+  padding: 0.3rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+/* Hunt */
+.artifact {
+  border: 1px solid var(--surface-border);
+  border-left: 3px solid var(--accent-cyan);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.artifact-part { margin: 0.5rem 0; }
+
+.artifact-part .option-feedback { margin-left: 0; }
+
+.flag-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--surface-border);
+  font-weight: 400;
+}
+
+.flag-btn:hover { background: var(--surface); }
+
+.flag-btn[aria-pressed="true"] {
+  border: 2px solid var(--brand-pink);
+}
+
+.flag-btn:disabled {
+  background: transparent;
+  color: var(--porcelain);
+}
+
+.flag-label { font-weight: 700; }
+
+.flag-state { font-weight: 700; }
+
+/* Repair */
+.repair-seg { margin: 1rem 0; }
+
+.repair-seg .option-feedback { margin-left: 0; }
+
+.repair-input {
+  max-width: 100%;
+  width: 100%;
+  font-family: ui-monospace, Consolas, "Cascadia Mono", monospace;
+}
+
+/* Paper-room safety: interactive chips stay light on the light artifacts */
+[data-level="document-labyrinth"] .challenge-card .sort-item,
+[data-level="document-labyrinth"] .challenge-card .artifact {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+[data-level="document-labyrinth"] .challenge-card .flag-btn:disabled {
+  color: #0F172A;
+}
+
 /* Level complete */
 .level-complete {
   border-color: rgba(22, 163, 74, 0.55);
@@ -390,7 +533,8 @@ button.secondary:hover { background: var(--surface); }
   letter-spacing: 0.02em;
 }
 
-.lock-input {
+.lock-input,
+.repair-input {
   font: inherit;
   display: block;
   width: 100%;
