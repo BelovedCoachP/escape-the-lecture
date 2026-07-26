@@ -279,6 +279,21 @@
             { "id": "o1", "text": "STUB pairing A", "correct": true, "feedback": "STUB" },
             { "id": "o2", "text": "STUB pairing B", "correct": false, "feedback": "STUB" }
           ]
+        },
+        {
+          "type": "calculate",
+          "id": "l2-c2-contrast-math",
+          "prompt": "STUB. AURA proposes porcelain text on its favorite new panel color and rates the pairing 97.1% readable. Run the contrast ratio AURA did not. Enter it to one decimal place.",
+          "hints": [
+            "STUB hint one.",
+            "STUB. Contrast ratio is (lighter luminance + 0.05) divided by (darker luminance + 0.05)."
+          ],
+          "inputLabel": "Contrast ratio",
+          "unit": ":1",
+          "answer": 4.7,
+          "tolerance": 0.15,
+          "feedback": "STUB. 4.7 to 1 passes AA for body text. The point is not the number; it is that you ran it and AURA did not.",
+          "wrongText": "STUB. That is not the ratio. Check the working; nothing is lost."
         }
       ],
       "evidenceFragment": "STUB. Level 2 evidence.",
@@ -329,6 +344,32 @@
               "broken": "screen reader yoosers navigate by headings",
               "accepted": ["screen reader users navigate by headings"],
               "feedback": "STUB. Phonetic garble on a technical term."
+            }
+          ]
+        },
+        {
+          "type": "match",
+          "id": "l3-c2-failure-match",
+          "prompt": "STUB. AURA repaired three more captions and got two of them wrong in different ways. Match each repair to the failure type it committed.",
+          "hints": ["STUB hint one.", "STUB hint two."],
+          "pairs": [
+            {
+              "id": "p1",
+              "left": "STUB. 'photosynthesis' became 'photo synthesis sis'",
+              "right": "Phonetic stutter split",
+              "feedback": "STUB. The recognizer split one technical term into probable smaller words."
+            },
+            {
+              "id": "p2",
+              "left": "STUB. 'grana' became 'grandma'",
+              "right": "Probability substitution",
+              "feedback": "STUB. A rare domain word lost to a common one. This is the failure AURA is most confident about."
+            },
+            {
+              "id": "p3",
+              "left": "STUB. '[inaudible]' where the speaker cited her source",
+              "right": "Silent omission",
+              "feedback": "STUB. The most dangerous failure: nothing looks wrong, and the attribution is simply gone."
             }
           ]
         }
@@ -435,6 +476,20 @@
               "feedback": "You solved this one in the Document Labyrinth, in the room where the mechanic and the accessibility concept were the same object, and AURA calls it too simple to be interesting. Now look at the pattern in the numbers: the two exclusionary designs rated highest, the two inclusive ones lowest, because inclusive reads as unremarkable to a system optimizing for impressive. AURA's confidence is an aesthetic score wearing a measurement's clothes. Read it accordingly."
             }
           ]
+        },
+        {
+          "type": "extract",
+          "id": "l5-c2-extract-key",
+          "prompt": "STUB. The repaired prompt's constraints are back in order. Read them again. Together, they spell the discipline this room banks.",
+          "hints": [
+            "STUB hint one.",
+            "STUB. First letters, in the order the constraints appear."
+          ],
+          "source": "Identify the image's purpose in the lesson.\nName only what you can verify in the image itself.\nState the limits of your confidence.\nTrim to 125 characters or fewer.\nReview against the original before shipping.\nUnder no circumstances invent detail.\nConfirm anything uncertain with a human.\nTest the result with a screen reader.",
+          "acceptedAnswers": ["instruct"],
+          "inputLabel": "The extracted word",
+          "feedback": "STUB. INSTRUCT, spelled by the constraints themselves. A good prompt is instructions, not vibes.",
+          "wrongText": "STUB. Not quite. First letters, in order, top to bottom."
         }
       ],
       "evidenceFragment": "STUB. Level 5 evidence.",

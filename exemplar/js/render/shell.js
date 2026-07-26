@@ -19,6 +19,11 @@ import { renderChoice } from "./challenge.choice.js";
 import { renderSort } from "./challenge.sort.js";
 import { renderHunt } from "./challenge.hunt.js";
 import { renderRepair } from "./challenge.repair.js";
+import { renderSequence } from "./challenge.sequence.js";
+import { renderResponse, renderTellCard } from "./challenge.response.js";
+import { renderMatch } from "./challenge.match.js";
+import { renderCalculate } from "./challenge.calculate.js";
+import { renderExtract } from "./challenge.extract.js";
 
 const TYPE_LABELS = {
   choice: "Selection challenge",
@@ -27,6 +32,9 @@ const TYPE_LABELS = {
   sort: "Sorting challenge",
   hunt: "Inspection challenge",
   repair: "Repair challenge",
+  match: "Matching challenge",
+  calculate: "Calculation challenge",
+  extract: "Extraction challenge",
 };
 
 export function mountShell(rootEl, content) {
@@ -273,6 +281,7 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
   const api = {
     announce,
     complete: () => finishChallenge(challenge, level, ctx, viewEl),
+    companionName: ctx.content.narrative.companion?.name ?? "Companion",
   };
 
   let body;
@@ -289,6 +298,21 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
     case "repair":
       body = renderRepair(challenge, done, api);
       break;
+    case "sequence":
+      body = renderSequence(challenge, done, api);
+      break;
+    case "response":
+      body = renderResponse(challenge, done, api);
+      break;
+    case "match":
+      body = renderMatch(challenge, done, api);
+      break;
+    case "calculate":
+      body = renderCalculate(challenge, done, api);
+      break;
+    case "extract":
+      body = renderExtract(challenge, done, api);
+      break;
     default:
       body = renderPlaceholderBody(challenge, done, api);
   }
@@ -296,15 +320,9 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
   return card;
 }
 
-// Sequence and response arrive in the next build; until then they keep the
-// honest placeholder.
+// Safety net for any future challenge type the renderer does not know yet.
 function renderPlaceholderBody(challenge, done, api) {
   const wrap = el("div");
-  if (challenge.type === "sequence") {
-    const list = el("ol", { className: "option-list" });
-    challenge.items.forEach((it) => list.append(el("li", { textContent: it.text })));
-    wrap.append(list);
-  }
   wrap.append(
     el("p", {
       className: "placeholder-note",
@@ -555,7 +573,7 @@ export function renderFinale(ctx) {
     saveRun(run, ctx.content.meta.id);
     textarea.readOnly = true;
     submit.disabled = true;
-    revealWrap.append(renderFinaleReveal(finale));
+    revealWrap.append(renderFinaleReveal(finale, ctx));
     announce("Recommendation submitted. The vault responds.");
     moveFocusTo(revealWrap.querySelector("h3"));
   });
@@ -563,7 +581,7 @@ export function renderFinale(ctx) {
   if (run.finaleSubmitted) {
     textarea.readOnly = true;
     submit.disabled = true;
-    revealWrap.append(renderFinaleReveal(finale));
+    revealWrap.append(renderFinaleReveal(finale, ctx));
   }
 
   refs.main.append(view);
@@ -636,8 +654,31 @@ function renderMetaLock(metaLock, ctx) {
   return card;
 }
 
-function renderFinaleReveal(finale) {
+function renderFinaleReveal(finale, ctx) {
   const wrap = el("div");
+  const companionName = ctx.content.narrative.companion?.name ?? "Companion";
+
+  if (finale.rubric?.length) {
+    const rubricCard = el("section", { className: "card" });
+    rubricCard.append(el("h3", { textContent: "The expert rubric" }));
+    const list = el("ul", { className: "rubric-list" });
+    finale.rubric.forEach((r) => {
+      const item = el("li", { className: "rubric-item" });
+      item.append(el("p", {}, el("strong", { textContent: r.criterion })));
+      item.append(el("p", { className: "rubric-note", textContent: `Look for: ${r.lookFor}` }));
+      if (r.commonMiss) {
+        item.append(el("p", { className: "rubric-note", textContent: `Common miss: ${r.commonMiss}` }));
+      }
+      list.append(item);
+    });
+    rubricCard.append(list);
+    wrap.append(rubricCard);
+  }
+
+  const assessment = finale.companionAssessment;
+  if (assessment && assessment.accurate === false && assessment.tell) {
+    wrap.append(renderTellCard(assessment.tell, companionName));
+  }
 
   if (finale.acceptedPositions?.length) {
     const positions = el("section", { className: "card" });

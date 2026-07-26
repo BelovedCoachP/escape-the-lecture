@@ -527,6 +527,119 @@ button.secondary:hover { background: var(--surface); }
   font-family: ui-monospace, Consolas, "Cascadia Mono", monospace;
 }
 
+/* Sequence */
+.sequence-list {
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+}
+
+.seq-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+  margin: 0.5rem 0;
+}
+
+.seq-grab {
+  flex: 1;
+  text-align: left;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--surface-border);
+  font-weight: 400;
+}
+
+.seq-grab:hover { background: var(--surface); }
+
+.seq-grab[aria-pressed="true"] {
+  border: 2px solid var(--accent-cyan);
+}
+
+.seq-grab:disabled {
+  background: rgba(15, 23, 42, 0.5);
+  color: var(--porcelain);
+}
+
+.seq-pos { font-weight: 700; }
+
+.seq-state { font-weight: 700; }
+
+.seq-move { padding: 0.3rem 0.8rem; }
+
+/* Response: the two-panel reveal, AURA's take beside the expert rubric */
+.response-reveal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.reveal-panel { margin: 0; }
+
+.reveal-panel h4 { margin-top: 0; }
+
+.rubric-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rubric-item {
+  margin: 0 0 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.rubric-item:last-child { border-bottom: none; }
+
+.rubric-item p { margin: 0.2rem 0; }
+
+.rubric-note {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.tell-card { border-color: var(--brand-pink); }
+
+.tell-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--brand-pink);
+}
+
+.prewrap { white-space: pre-wrap; }
+
+/* Match / calculate / extract */
+.match-row { margin: 1rem 0; }
+
+.match-select,
+.calc-input,
+.extract-input {
+  font: inherit;
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+  color: var(--porcelain);
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+  margin: 0.35rem 0 0.5rem;
+}
+
+.match-select option { color: #0F172A; background: #F8FAFC; }
+
+.calc-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.calc-unit { font-weight: 700; color: var(--text-muted); }
+
 /* Paper-room safety: interactive chips stay light on the light artifacts */
 [data-level="document-labyrinth"] .challenge-card .sort-item,
 [data-level="document-labyrinth"] .challenge-card .artifact {

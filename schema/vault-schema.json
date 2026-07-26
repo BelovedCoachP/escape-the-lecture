@@ -275,8 +275,81 @@
         { "$ref": "#/$defs/responseChallenge" },
         { "$ref": "#/$defs/sortChallenge" },
         { "$ref": "#/$defs/huntChallenge" },
-        { "$ref": "#/$defs/repairChallenge" }
+        { "$ref": "#/$defs/repairChallenge" },
+        { "$ref": "#/$defs/matchChallenge" },
+        { "$ref": "#/$defs/calculateChallenge" },
+        { "$ref": "#/$defs/extractChallenge" }
       ]
+    },
+
+    "matchChallenge": {
+      "type": "object",
+      "description": "v1.1, Exemplar. Connect column A to column B. Each left item exposes a native select of right-side options, so the keyboard path needs no invention. Nothing is judged until the player verifies.",
+      "required": ["type", "id", "prompt", "pairs", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "match" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "pairs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "required": ["id", "left", "right", "feedback"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "left": { "type": "string", "minLength": 1 },
+              "right": { "type": "string", "minLength": 1, "description": "The correct partner. The renderer offers all rights, sorted, as the options." },
+              "feedback": { "type": "string", "minLength": 1, "description": "Why this pairing is right. Revealed on resolve." }
+            }
+          }
+        }
+      }
+    },
+
+    "calculateChallenge": {
+      "type": "object",
+      "description": "v1.1, Exemplar. Enter a computed value with tolerance. Covers arithmetic target, missing-value, and unit-conversion mechanics. The player does the math the companion did not.",
+      "required": ["type", "id", "prompt", "answer", "feedback", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "calculate" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "inputLabel": { "type": "string" },
+        "unit": { "type": "string", "description": "Display-only unit shown beside the field, e.g. ':1'." },
+        "answer": { "type": "number" },
+        "tolerance": { "type": "number", "default": 0, "minimum": 0 },
+        "feedback": { "type": "string", "minLength": 1, "description": "What the number means. Revealed on solve." },
+        "wrongText": { "type": "string" }
+      }
+    },
+
+    "extractChallenge": {
+      "type": "object",
+      "description": "v1.1, Exemplar. Derive letters or words from displayed source material to form an answer, usually feeding a lock. Purely textual, accessible by nature.",
+      "required": ["type", "id", "prompt", "acceptedAnswers", "feedback", "hints"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "extract" },
+        "id": { "type": "string" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
+        "source": { "type": "string", "description": "The material the answer hides in, displayed with the challenge." },
+        "inputLabel": { "type": "string" },
+        "acceptedAnswers": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "feedback": { "type": "string", "minLength": 1 },
+        "wrongText": { "type": "string" }
+      }
     },
 
     "sortChallenge": {
