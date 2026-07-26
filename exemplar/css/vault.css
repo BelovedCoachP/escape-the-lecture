@@ -277,7 +277,7 @@ a { color: var(--brand-blue); }
   color: var(--accent-cyan);
 }
 
-/* Media placeholders (text-first build) */
+/* Media */
 .media-item { margin: 1rem 0; }
 .media-kind {
   font-size: 0.8rem;
@@ -285,6 +285,46 @@ a { color: var(--brand-blue); }
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--brand-pink);
+  margin: 0.75rem 0 0.25rem;
+}
+
+figure.media-item { padding: 0.75rem; }
+
+.media-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: calc(var(--radius) - 2px);
+  background: #FDFCF0;
+}
+
+.media-alt {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* The decorative divider: no frame, no caption, no announcement. It is
+   there for the eye and invisible to assistive technology, which is
+   exactly the point being taught. */
+.media-decorative {
+  margin: 1.5rem 0;
+  opacity: 0.85;
+}
+
+.media-decorative .media-image {
+  background: none;
+  border-radius: 0;
+}
+
+.companion-portrait {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 0 0 0.75rem;
+  border: 1px solid rgba(0, 216, 255, 0.3);
 }
 
 details {

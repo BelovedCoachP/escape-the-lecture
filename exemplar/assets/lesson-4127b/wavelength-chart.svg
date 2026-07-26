@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="Bar chart of oxygen output by light wavelength.">
+  <!-- PUZZLE-CRITICAL ASSET. Hand-authored, never AI-generated.
+       The player writes a long description of this chart, so the data must
+       match the authored exemplar answer exactly: six wavelengths, peaks at
+       450 and 660 nanometers, near zero at 550, a two-peak shape with a
+       trough in the green range. Changing these bars breaks the rubric. -->
+  <title>Bar chart of oxygen output by light wavelength.</title>
+  <rect width="800" height="500" fill="#FDFCF0"/>
+
+  <!-- Axes -->
+  <line x1="110" y1="60" x2="110" y2="400" stroke="#24401A" stroke-width="2"/>
+  <line x1="110" y1="400" x2="730" y2="400" stroke="#24401A" stroke-width="2"/>
+
+  <g font-family="Georgia, 'Times New Roman', serif" font-size="15" fill="#24401A">
+    <!-- Y ticks: relative oxygen output -->
+    <g text-anchor="end">
+      <text x="100" y="405">0</text>
+      <text x="100" y="320">25</text>
+      <text x="100" y="235">50</text>
+      <text x="100" y="150">75</text>
+      <text x="100" y="65">100</text>
+    </g>
+    <!-- Bars: 400=18, 450=96, 500=42, 550=4, 600=38, 660=88 (relative output) -->
+    <g fill="#5E9440" stroke="#2F5A20" stroke-width="2">
+      <rect x="140" y="339" width="70" height="61"/>
+      <rect x="240" y="74"  width="70" height="326"/>
+      <rect x="340" y="257" width="70" height="143"/>
+      <rect x="440" y="386" width="70" height="14"/>
+      <rect x="540" y="271" width="70" height="129"/>
+      <rect x="640" y="101" width="70" height="299"/>
+    </g>
+    <!-- Bar value labels -->
+    <g text-anchor="middle" font-size="14" fill="#24401A">
+      <text x="175" y="331">18</text>
+      <text x="275" y="66">96</text>
+      <text x="375" y="249">42</text>
+      <text x="475" y="378">4</text>
+      <text x="575" y="263">38</text>
+      <text x="675" y="93">88</text>
+    </g>
+    <!-- X labels -->
+    <g text-anchor="middle">
+      <text x="175" y="424">400</text>
+      <text x="275" y="424">450</text>
+      <text x="375" y="424">500</text>
+      <text x="475" y="424">550</text>
+      <text x="575" y="424">600</text>
+      <text x="675" y="424">660</text>
+    </g>
+    <text x="420" y="456" text-anchor="middle" font-size="17">Wavelength (nanometers)</text>
+    <text x="40" y="230" text-anchor="middle" font-size="17" transform="rotate(-90 40 230)">Oxygen output (relative)</text>
+    <text x="420" y="34" text-anchor="middle" font-size="20">Oxygen output by light wavelength</text>
+  </g>
+</svg>

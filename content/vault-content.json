@@ -23,7 +23,7 @@
       "portrait": {
         "kind": "image",
         "id": "aura-portrait",
-        "src": "assets/aura/aura-idle.webp",
+        "src": "assets/aura/aura-idle.jpg",
         "decorative": false,
         "alt": "AURA, a shifting lattice of pale light suggesting a face without settling into one."
       }
@@ -66,14 +66,14 @@
         {
           "kind": "image",
           "id": "img-01",
-          "src": "assets/lesson-4127b/vine-divider.webp",
+          "src": "assets/lesson-4127b/vine-divider.jpg",
           "decorative": true,
           "alt": ""
         },
         {
           "kind": "image",
           "id": "img-02",
-          "src": "assets/lesson-4127b/chloroplast-diagram.webp",
+          "src": "assets/lesson-4127b/chloroplast-diagram.svg",
           "decorative": false,
           "alt": "Labeled cross section of a chloroplast.",
           "longDescription": "A chloroplast shown in cross section, rendered in greens and yellows. Labels identify the outer membrane, inner membrane, stroma, and stacked thylakoid discs known as grana. Arrows trace light entering the thylakoid membrane and glucose exiting into the stroma."
@@ -81,14 +81,14 @@
         {
           "kind": "image",
           "id": "img-03",
-          "src": "assets/lesson-4127b/student-with-plant.webp",
+          "src": "assets/lesson-4127b/student-with-plant.jpg",
           "decorative": false,
           "alt": "A student holds a seedling in a paper cup, mid-sentence, presenting to a class."
         },
         {
           "kind": "image",
           "id": "img-04",
-          "src": "assets/lesson-4127b/wavelength-chart.webp",
+          "src": "assets/lesson-4127b/wavelength-chart.svg",
           "decorative": false,
           "alt": "Bar chart of oxygen output by light wavelength.",
           "longDescription": "Oxygen output measured across six wavelengths. Output is highest at 450 nanometers and 660 nanometers, and falls to near zero at 550 nanometers, producing a distinct two-peak shape with a trough in the green range."

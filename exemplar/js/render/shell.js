@@ -63,9 +63,16 @@ export function mountShell(rootEl, content) {
       el("h2", { className: "panel-label", textContent: "Companion" }),
       el("p", { className: "companion-name", textContent: companion.name }),
     );
-    if (companion.portrait && !companion.portrait.decorative) {
+    if (companion.portrait) {
       panel.append(
-        el("p", { className: "companion-desc", textContent: companion.portrait.alt }),
+        el("img", {
+          className: "companion-portrait",
+          src: companion.portrait.src,
+          alt: companion.portrait.decorative ? "" : companion.portrait.alt,
+          attrs: companion.portrait.decorative
+            ? { "aria-hidden": "true", decoding: "async" }
+            : { decoding: "async" },
+        }),
       );
     }
     panel.append(companionTranscript);
@@ -731,13 +738,37 @@ function renderSpine(ctx) {
 /* ---------- Shared helpers ---------- */
 
 function renderMediaAsText(media) {
-  // A decorative image is skipped entirely, exactly as a screen reader would.
   if (media.kind === "image") {
-    if (media.decorative) return null;
+    // Decorative images render, but with empty alt and aria-hidden, so a
+    // screen reader passes over them in silence. That is the lesson the
+    // player is being taught, enforced in the renderer itself.
+    if (media.decorative) {
+      const fig = el("div", { className: "media-item media-decorative" });
+      fig.append(
+        el("img", {
+          className: "media-image",
+          src: media.src,
+          alt: "",
+          attrs: { "aria-hidden": "true", decoding: "async" },
+        }),
+      );
+      return fig;
+    }
     const item = el("figure", { className: "media-item card" });
     item.append(
+      el("img", {
+        className: "media-image",
+        src: media.src,
+        alt: media.alt,
+        // No lazy loading: the payload is small, and lazy images can fail to
+        // trigger inside an LMS iframe that is scrolled out of view.
+        attrs: { decoding: "async" },
+      }),
+    );
+    const caption = el("figcaption");
+    caption.append(
       el("p", { className: "media-kind", textContent: "Image" }),
-      el("p", { textContent: media.alt }),
+      el("p", { className: "media-alt", textContent: `Alt text: ${media.alt}` }),
     );
     if (media.longDescription) {
       const d = el("details");
@@ -745,8 +776,9 @@ function renderMediaAsText(media) {
         el("summary", { textContent: "Long description" }),
         el("p", { textContent: media.longDescription }),
       );
-      item.append(d);
+      caption.append(d);
     }
+    item.append(caption);
     return item;
   }
   if (media.kind === "video") {
