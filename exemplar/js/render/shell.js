@@ -11,6 +11,7 @@ import {
   bankEvidence,
   getProgress,
   maxUnlockedOrder,
+  saveRun,
 } from "../state.js";
 import { announce, moveFocusTo } from "../a11y.js";
 import { el } from "./dom.js";
@@ -144,9 +145,22 @@ export function renderIntro(ctx) {
     view.append(obj);
   }
 
-  const begin = el("button", { textContent: "Enter the vault" });
-  begin.addEventListener("click", () => ctx.actions.begin());
-  view.append(el("p", {}, begin));
+  const buttons = el("p", { className: "button-row" });
+  if (ctx.hasSavedRun) {
+    const cont = el("button", { textContent: "Continue your run" });
+    cont.addEventListener("click", () => ctx.actions.continueRun());
+    const restart = el("button", {
+      className: "secondary",
+      textContent: "Start over",
+    });
+    restart.addEventListener("click", () => ctx.actions.startOver());
+    buttons.append(cont, restart);
+  } else {
+    const begin = el("button", { textContent: "Enter the vault" });
+    begin.addEventListener("click", () => ctx.actions.begin());
+    buttons.append(begin);
+  }
+  view.append(buttons);
 
   refs.main.append(view);
   setCompanionTranscript(ctx, "Standing by.");
@@ -332,6 +346,7 @@ function finishChallenge(challenge, level, ctx, viewEl) {
   } else {
     announce(`Challenge solved. ${remainingText(run, level)}`);
   }
+  saveRun(run, ctx.content.meta.id);
 }
 
 function renderLockCard(level, ctx, viewEl) {
@@ -380,6 +395,7 @@ function renderLockCard(level, ctx, viewEl) {
       return;
     }
     openLock(run, level);
+    saveRun(run, ctx.content.meta.id);
     const restored = renderRestoredCard(level, ctx);
     card.replaceWith(restored);
     renderSpine(ctx);
@@ -536,6 +552,7 @@ export function renderFinale(ctx) {
   submit.addEventListener("click", () => {
     if (run.finaleSubmitted) return;
     run.finaleSubmitted = true;
+    saveRun(run, ctx.content.meta.id);
     textarea.readOnly = true;
     submit.disabled = true;
     revealWrap.append(renderFinaleReveal(finale));
@@ -608,6 +625,7 @@ function renderMetaLock(metaLock, ctx) {
       return;
     }
     ctx.run.vaultOpened = true;
+    saveRun(ctx.run, ctx.content.meta.id);
     announce("Every key turns at once. The final door opens.");
     renderFinale(ctx);
     renderSpine(ctx);
@@ -760,8 +778,9 @@ function renderMediaAsText(media) {
         className: "media-image",
         src: media.src,
         alt: media.alt,
-        // No lazy loading: the payload is small, and lazy images can fail to
-        // trigger inside an LMS iframe that is scrolled out of view.
+        // No lazy loading: the whole image set is small enough that deferring
+        // it buys nothing, and eager loading avoids blank frames on a page
+        // that is not currently compositing.
         attrs: { decoding: "async" },
       }),
     );

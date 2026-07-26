@@ -1,6 +1,8 @@
-// In-memory run state. Nothing persists: no cookies, no localStorage (storage
-// partitioning breaks inside LMS iframes). The URL hash carries minimal resume
-// position only.
+// Run state. Progress persists to localStorage so a player can close the tab
+// and come back to the room they were standing in. The URL hash still tracks
+// position so a link can be shared or bookmarked.
+
+const STORAGE_KEY = "escape-the-lecture:run:v1";
 
 export function createRun() {
   return {
@@ -92,6 +94,42 @@ export function decodeResume(hash, content) {
     }
   }
   return null;
+}
+
+// ---------- Persistence ----------
+// Storage is a convenience, never a requirement: every read and write is
+// guarded, so a blocked or full store degrades to a normal in-memory run.
+
+export function saveRun(run, contentId) {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ contentId, savedAt: new Date().toISOString(), run }),
+    );
+  } catch {
+    /* private mode, quota, or storage disabled: play on without saving */
+  }
+}
+
+export function loadSavedRun(contentId) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    // A saved run from different content is not this room's progress.
+    if (!parsed?.run || parsed.contentId !== contentId) return null;
+    return parsed.run;
+  } catch {
+    return null;
+  }
+}
+
+export function clearSavedRun() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* nothing to clear */
+  }
 }
 
 export function applyResume(run, resume, content) {

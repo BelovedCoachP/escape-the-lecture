@@ -4,7 +4,13 @@
 // guarantee: an inaccessible room cannot be expressed as valid content.
 
 import { loadContent, validateContent } from "./content.js";
-import { createRun, decodeResume, applyResume } from "./state.js";
+import {
+  createRun,
+  decodeResume,
+  applyResume,
+  loadSavedRun,
+  clearSavedRun,
+} from "./state.js";
 import { mountShell } from "./render/shell.js";
 import { showIntro, goToLevel, openFinale, advance } from "./router.js";
 import { initAnnouncer } from "./a11y.js";
@@ -39,12 +45,19 @@ async function boot(rootEl) {
   const refs = mountShell(rootEl, content);
   initAnnouncer(rootEl);
 
+  // A saved run (if any) seeds the state, merged over fresh defaults so an
+  // older save shape degrades gracefully.
+  const saved = loadSavedRun(content.meta.id);
   const ctx = {
     content,
-    run: createRun(),
+    run: saved ? Object.assign(createRun(), saved) : createRun(),
     refs,
     actions: {},
     suppressHashEvent: false,
+    hasSavedRun: Boolean(saved && saved.view !== "intro"),
+    // Captured now because showIntro rewrites run.view to "intro" before the
+    // player ever clicks Continue.
+    resumeTarget: saved ? { view: saved.view, order: saved.currentLevelOrder } : null,
   };
   ctx.actions.begin = () => {
     const first = Math.min(...content.levels.map((l) => l.order));
@@ -52,6 +65,18 @@ async function boot(rootEl) {
   };
   ctx.actions.advance = () => advance(ctx);
   ctx.actions.goTo = (order) => goToLevel(ctx, order);
+  ctx.actions.continueRun = () => {
+    const target = ctx.resumeTarget;
+    if (target?.view === "finale") openFinale(ctx);
+    else if (target?.view === "level") goToLevel(ctx, target.order);
+    else ctx.actions.begin();
+  };
+  ctx.actions.startOver = () => {
+    clearSavedRun();
+    ctx.run = createRun();
+    ctx.hasSavedRun = false;
+    ctx.actions.begin();
+  };
 
   window.addEventListener("hashchange", () => {
     if (ctx.suppressHashEvent) {

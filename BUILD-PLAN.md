@@ -18,11 +18,13 @@ Scoped 2026-07-25 against TECHNICAL-SPEC v1. Decisions confirmed with Page; this
 
 ## Tooling inventory
 
-In hand now: repo + validation gate (husky and GitHub Action, proven blocking), gh CLI authenticated as BelovedCoachP, Runway MCP (video + image), custom-style image MCP, Lovable MCP, browser pane for playtesting and the Canvas embed test, local video editing pipeline, WCAG audit workflow.
+In hand now: repo + validation gate (husky and GitHub Action, proven blocking), gh CLI authenticated as BelovedCoachP, Runway MCP (video + image), custom-style image MCP, Lovable MCP, browser pane for playtesting, local video editing pipeline, WCAG audit workflow.
+
+**Deployment target (decided 2026-07-25): GitHub Pages only.** The Canvas/LMS iframe constraint is retired for this build. Consequences: localStorage is allowed, so the exemplar persists run progress (save and resume); no embed test milestone; fluid layout stays because it is good practice, not because of an iframe.
 
 Needs connecting later: ElevenLabs (at media production). Optional: Ideogram OAuth.
 
-No connector exists (manual): Udio, Canvas LMS (embed test happens in the browser with Page's Canvas admin access).
+No connector exists (manual): Udio.
 
 ## Build sessions
 
@@ -59,7 +61,7 @@ Re-scoped 2026-07-25 after the Breakout EDU analysis; the full catalog, accessib
 
 ### Session F: prove it, then freeze
 1. Accessibility remediation pass across everything.
-2. Canvas embed test in a real course shell (fluid to 700px, no localStorage, open-in-full-screen link).
+2. Responsive pass: fluid down to small widths on the live GitHub Pages deployment.
 3. Solo timed Template run under 20 minutes.
 
 ## Timeline mapping

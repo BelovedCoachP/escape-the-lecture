@@ -10,7 +10,7 @@ import {
   renderProgressSpine,
 } from "./render/shell.js";
 import { announce, moveFocusTo } from "./a11y.js";
-import { encodeResume, maxUnlockedOrder } from "./state.js";
+import { encodeResume, maxUnlockedOrder, saveRun } from "./state.js";
 
 export function showIntro(ctx) {
   ctx.run.view = "intro";
@@ -33,6 +33,7 @@ export function goToLevel(ctx, order) {
   renderProgressSpine(ctx);
   focusViewHeading(ctx);
   announce(`${level.subtitle ? level.subtitle + ": " : ""}${level.title}`);
+  saveRun(ctx.run, ctx.content.meta.id);
 }
 
 export function advance(ctx) {
@@ -47,6 +48,7 @@ export function advance(ctx) {
     !ctx.run.interludesSeen[current.id]
   ) {
     ctx.run.interludesSeen[current.id] = true;
+    saveRun(ctx.run, ctx.content.meta.id);
     renderInterlude(current, ctx, () => proceed(ctx));
     const heading = ctx.refs.main.querySelector("h2");
     moveFocusTo(heading);
@@ -75,6 +77,7 @@ export function openFinale(ctx) {
   renderProgressSpine(ctx);
   focusViewHeading(ctx);
   announce(ctx.content.finale.title);
+  saveRun(ctx.run, ctx.content.meta.id);
 }
 
 function syncHash(ctx) {

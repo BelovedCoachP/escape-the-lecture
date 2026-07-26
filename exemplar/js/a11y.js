@@ -18,7 +18,7 @@ export function announce(message, politeness = "polite") {
   // Clearing first, then setting a beat later, makes repeated identical
   // announcements reliable across screen readers. setTimeout, not
   // requestAnimationFrame: rAF is throttled to zero in non-visible tabs,
-  // which would silently drop announcements inside a backgrounded LMS iframe.
+  // which would silently drop announcements whenever the tab is backgrounded.
   liveEl.textContent = "";
   clearTimeout(announce._t);
   announce._t = setTimeout(() => {

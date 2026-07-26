@@ -98,7 +98,7 @@
       "required": ["audioAutoplay", "colorOnlySignals", "keyboardAlternatives", "reducedMotion", "timeLimit"],
       "additionalProperties": false,
       "properties": {
-        "audioAutoplay": { "const": false, "description": "WCAG 1.4.2. Also blocked by browsers inside an LMS iframe, so this is a correctness fix and a compatibility fix at once." },
+        "audioAutoplay": { "const": false, "description": "WCAG 1.4.2. Audio that starts on its own competes with a screen reader and cannot be expressed in valid content." },
         "colorOnlySignals": { "const": false, "description": "WCAG 1.4.1. Every state change carries a text or shape signal alongside color." },
         "keyboardAlternatives": { "const": true, "description": "WCAG 2.1.1. Applies hardest to the sequence challenge, which must be operable without dragging." },
         "reducedMotion": { "const": "respected", "description": "prefers-reduced-motion disables ambient motion and transitions." },
