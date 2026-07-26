@@ -26,6 +26,37 @@ body {
     radial-gradient(42rem 30rem at 4% 105%, rgba(0, 128, 255, 0.13), transparent 60%);
 }
 
+/* ---------- Environments ----------
+   The screen is the room. Each scene paints its backdrop behind a navy
+   scrim heavy enough that all foreground text keeps AA contrast no matter
+   what the image does. The images are pure atmosphere: decorative,
+   unfocusable, and never the carrier of any information. */
+
+body[data-scene] #vault-root {
+  background-color: var(--deep-space-navy);
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.8) 0%,
+      rgba(15, 23, 42, 0.87) 45%,
+      rgba(15, 23, 42, 0.93) 100%
+    ),
+    var(--scene-backdrop, none);
+  background-size: auto, cover;
+  background-position: center, center top;
+  background-attachment: fixed, fixed;
+  background-repeat: no-repeat;
+}
+
+body[data-scene="hall"] { --scene-backdrop: url("../assets/backdrops/hall.jpg"); }
+body[data-scene="invisible-image"] { --scene-backdrop: url("../assets/backdrops/invisible-image.jpg"); }
+body[data-scene="color-chamber"] { --scene-backdrop: url("../assets/backdrops/color-chamber.jpg"); }
+body[data-scene="caption-conspiracy"] { --scene-backdrop: url("../assets/backdrops/caption-conspiracy.jpg"); }
+body[data-scene="document-labyrinth"] { --scene-backdrop: url("../assets/backdrops/document-labyrinth.jpg"); }
+body[data-scene="prompt-reactor"] { --scene-backdrop: url("../assets/backdrops/prompt-reactor.jpg"); }
+body[data-scene="corridor"] { --scene-backdrop: url("../assets/backdrops/corridor.jpg"); }
+body[data-scene="vault"] { --scene-backdrop: url("../assets/backdrops/vault.jpg"); }
+
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   line-height: 1.15;
@@ -204,7 +235,7 @@ a { color: var(--brand-blue); }
 .callout p { margin: 0; }
 
 .card {
-  background: var(--surface);
+  background: rgba(15, 23, 42, 0.55);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius);
   padding: 1.25rem 1.5rem;

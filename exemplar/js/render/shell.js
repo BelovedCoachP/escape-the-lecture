@@ -103,10 +103,11 @@ export function renderIntro(ctx) {
   const n = content.narrative;
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
+  setScene("hall");
 
   const view = el("section");
   view.append(
-    el("p", { className: "view-eyebrow", textContent: "Briefing" }),
+    el("p", { className: "view-eyebrow", textContent: "The Archive · Main Hall" }),
     el("h2", { className: "view-title", textContent: n.roleTitle }),
     el("p", { textContent: n.premise }),
   );
@@ -143,12 +144,13 @@ export function renderLevel(level, ctx) {
   refs.main.innerHTML = "";
   // Each room carries its own visual identity; CSS keys off this attribute.
   refs.main.dataset.level = level.id;
+  setScene(level.id);
 
   const view = el("section");
   view.append(
     el("p", {
       className: "view-eyebrow",
-      textContent: level.subtitle ?? `Level ${level.order}`,
+      textContent: `The Archive · Wing ${level.order} of ${ctx.content.levels.length}`,
     }),
     el("h2", { className: "view-title", textContent: level.title }),
     el("p", { textContent: level.brief }),
@@ -391,10 +393,11 @@ export function renderInterlude(level, ctx, onContinue) {
   const interlude = level.interlude;
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
+  setScene("corridor");
 
   const view = el("section", { className: "interlude" });
   view.append(
-    el("p", { className: "view-eyebrow", textContent: "Interlude" }),
+    el("p", { className: "view-eyebrow", textContent: "The Archive · The Corridor" }),
     el("h2", { className: "view-title", textContent: "The archive responds" }),
   );
 
@@ -440,10 +443,11 @@ export function renderFinale(ctx) {
   const finale = content.finale;
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
+  setScene("vault");
 
   const view = el("section");
   view.append(
-    el("p", { className: "view-eyebrow", textContent: "The Archivist returns" }),
+    el("p", { className: "view-eyebrow", textContent: "The Archive · The Last Door" }),
     el("h2", { className: "view-title", textContent: finale.title }),
   );
 
@@ -735,6 +739,13 @@ function setCompanionTranscript(ctx, text) {
   if (ctx.refs.companionTranscript) {
     ctx.refs.companionTranscript.textContent = text;
   }
+}
+
+// The environment layer. CSS paints the room's backdrop (with a contrast
+// scrim) off this attribute, so the screen looks like the place the player
+// is standing: the hall, each wing, the corridor between them, the door.
+function setScene(scene) {
+  document.body.dataset.scene = scene;
 }
 
 function el(tag, { attrs, ...props } = {}, ...children) {
