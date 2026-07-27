@@ -1,0 +1,10 @@
+WEBVTT
+
+NOTE
+Placeholder caption track for the current silent-ambient cut of the
+vault-open animation. Session D replaces this file with timed captions
+for the dubbed Archivist and AURA lines from TECHNICAL-SPEC section 3.4.
+Repo convention: every .mp4 ships with a sibling .vtt, always.
+
+00:00:00.000 --> 00:00:05.000
+[A heavy vault door unseals and swings open]
