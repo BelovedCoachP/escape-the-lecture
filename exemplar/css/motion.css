@@ -21,4 +21,35 @@
     from { opacity: 0; transform: translateY(0.5rem); }
     to   { opacity: 1; transform: none; }
   }
+
+  /* The exhibits reveal themselves one at a time when the player enters a
+     room: each media card fades up in sequence. Purely presentational; the
+     content is in the DOM and readable from the first frame, and reduced
+     motion (outside this media query) shows everything immediately. */
+  .media-collection .media-item {
+    opacity: 0;
+    animation: media-reveal 0.9s ease-out forwards;
+  }
+  .media-collection .media-item:nth-child(1) { animation-delay: 0.2s; }
+  .media-collection .media-item:nth-child(2) { animation-delay: 1.1s; }
+  .media-collection .media-item:nth-child(3) { animation-delay: 2s; }
+  .media-collection .media-item:nth-child(4) { animation-delay: 2.9s; }
+  .media-collection .media-item:nth-child(n+5) { animation-delay: 3.8s; }
+
+  @keyframes media-reveal {
+    from { opacity: 0; transform: translateY(0.75rem); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* The key turns before the shelf returns. */
+  .key-turn svg {
+    animation: key-turn-spin 1.3s cubic-bezier(0.4, 0, 0.3, 1) forwards;
+    transform-origin: 22px 32px;
+  }
+
+  @keyframes key-turn-spin {
+    0%   { transform: rotate(0deg); opacity: 0; }
+    20%  { opacity: 1; }
+    100% { transform: rotate(180deg); opacity: 1; }
+  }
 }

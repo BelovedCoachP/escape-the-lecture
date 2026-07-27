@@ -130,7 +130,8 @@ a { color: var(--brand-blue); }
   grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
   gap: 2rem;
   padding: 2rem clamp(1rem, 4vw, 3rem);
-  max-width: 1200px;
+  max-width: 1720px;
+  margin-inline: auto;
 }
 
 @media (max-width: 899px) {
@@ -573,6 +574,112 @@ button.secondary:hover { background: var(--surface); }
   color: var(--porcelain);
 }
 
+/* ---------- Challenge card: work left, hints right ----------
+   The card is a two-column flex row on wide screens. The eyebrow spans the
+   card; the work column holds prompt, interaction, and feedback; the hint
+   rail sits beside it and wraps below on narrow screens. */
+
+.challenge-card,
+.lock-card {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.75rem;
+  align-items: flex-start;
+}
+
+.challenge-card > .card-eyebrow,
+.lock-card > .card-eyebrow {
+  flex-basis: 100%;
+}
+
+.challenge-work {
+  flex: 1 1 34rem;
+  min-width: min(100%, 30rem);
+}
+
+.challenge-work > h3:first-child { margin-top: 0; }
+
+.hint-rail {
+  flex: 1 1 15rem;
+  max-width: 22rem;
+  min-width: 15rem;
+}
+
+.hint-rail details:first-child { margin-top: 0; }
+
+@media (max-width: 1099px) {
+  .hint-rail { max-width: 100%; }
+}
+
+/* ---------- The Archivist at the door ---------- */
+
+.archivist-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.archivist-portrait {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(248, 250, 252, 0.35);
+  flex-shrink: 0;
+}
+
+.archivist-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.voice-btn { font-size: 0.95rem; }
+
+/* The key that turns when the lock opens. Motion lives in motion.css. */
+.key-turn {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0 0.5rem;
+  color: var(--accent-cyan);
+}
+
+/* ---------- Field tool: the in-room contrast checker ---------- */
+
+.tool-card { border-color: rgba(0, 216, 255, 0.3); }
+
+.tool-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tool-field { flex: 1 1 14rem; }
+
+.tool-field label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+
+.tool-hex { max-width: 12rem; }
+
+.tool-swatch {
+  margin: 0.9rem 0 0.25rem;
+  padding: 1.1rem 1.4rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--surface-border);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #F8FAFC;
+  background-color: #9B4DEA;
+  max-width: 20rem;
+}
+
+.tool-result { font-weight: 600; }
+
+.tool-link { color: var(--accent-cyan); }
+
 .seq-pos { font-weight: 700; }
 
 .seq-state { font-weight: 700; }
@@ -878,6 +985,61 @@ label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
 [data-level="document-labyrinth"] .companion-line {
   background: #0F172A;
   color: var(--porcelain);
+}
+
+/* Paper-room interactive states: every control inside a paper card restates
+   its colors for dark-on-light, including grabbed and flagged states. The
+   dark-theme chip styles above assume a navy card and become white-on-white
+   here without these. */
+
+[data-level="document-labyrinth"] .challenge-card .seq-grab,
+[data-level="document-labyrinth"] .challenge-card .flag-btn,
+[data-level="document-labyrinth"] .challenge-card button.secondary {
+  color: #0F172A;
+  background: rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.4);
+}
+
+[data-level="document-labyrinth"] .challenge-card .seq-grab:hover,
+[data-level="document-labyrinth"] .challenge-card .flag-btn:hover,
+[data-level="document-labyrinth"] .challenge-card button.secondary:hover {
+  background: rgba(15, 23, 42, 0.13);
+}
+
+[data-level="document-labyrinth"] .challenge-card .seq-grab[aria-pressed="true"] {
+  border: 2px solid var(--brand-blue-cta);
+  background: rgba(0, 107, 214, 0.14);
+  color: #0F172A;
+}
+
+[data-level="document-labyrinth"] .challenge-card .flag-btn[aria-pressed="true"] {
+  border: 2px solid var(--brand-pink-deep);
+  background: rgba(206, 59, 152, 0.12);
+  color: #0F172A;
+}
+
+[data-level="document-labyrinth"] .challenge-card .seq-grab:disabled,
+[data-level="document-labyrinth"] .challenge-card .flag-btn:disabled,
+[data-level="document-labyrinth"] .challenge-card button.secondary:disabled {
+  color: #334155;
+  background: rgba(15, 23, 42, 0.07);
+}
+
+[data-level="document-labyrinth"] .challenge-card .option-feedback,
+[data-level="document-labyrinth"] .challenge-card .lock-feedback {
+  color: #334155;
+}
+
+[data-level="document-labyrinth"] .challenge-card .match-select,
+[data-level="document-labyrinth"] .challenge-card input[type="text"] {
+  color: #0F172A;
+  background: #FFFFFF;
+  border-color: rgba(15, 23, 42, 0.4);
+}
+
+[data-level="document-labyrinth"] .challenge-card .solved-badge,
+[data-level="document-labyrinth"] .challenge-card .sort-status {
+  color: #15803D;
 }
 
 /* Level 5, The Prompt Reactor: the console. Monospace, purple glow. */

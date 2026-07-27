@@ -28,6 +28,16 @@
         "alt": "AURA, a shifting lattice of pale light suggesting a face without settling into one."
       }
     },
+    "archivist": {
+      "name": "The Archivist",
+      "portrait": {
+        "kind": "image",
+        "id": "archivist-portrait",
+        "src": "assets/archivist/archivist-idle.jpg",
+        "decorative": false,
+        "alt": "The Archivist, a tall monolith of dark glass with slow lines of warm light moving through it like text being read."
+      }
+    },
     "openingMedia": {
       "kind": "video",
       "id": "cinematic-lockdown",
@@ -273,6 +283,7 @@
         "Never encoding meaning in color alone",
         "Distrusting confident numbers reported in the wrong unit"
       ],
+      "tools": ["contrast-checker"],
       "media": [
         {
           "kind": "image",

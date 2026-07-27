@@ -92,6 +92,9 @@ export function renderSequence(challenge, done, api) {
       if (!grabbed) {
         row.grab.setAttribute("aria-pressed", "true");
         row.stateSpan.textContent = " (grabbed)";
+        // Not every browser focuses a button on click (Firefox does not),
+        // and the arrow keys only reach us when focus is inside the list.
+        row.grab.focus();
         api.announce(
           `Grabbed. Position ${positionOf(row.li)} of ${rows.length}. Use the up and down arrow keys to move it, then press Enter to drop it.`,
         );
@@ -99,18 +102,18 @@ export function renderSequence(challenge, done, api) {
         api.announce(`Dropped at position ${positionOf(row.li)} of ${rows.length}.`);
       }
     });
-    row.grab.addEventListener("keydown", (e) => {
-      if (row.grab.getAttribute("aria-pressed") !== "true") return;
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        move(row, -1, true);
-      } else if (e.key === "ArrowDown") {
-        e.preventDefault();
-        move(row, 1, true);
-      }
-    });
     row.up.addEventListener("click", () => move(row, -1, false));
     row.down.addEventListener("click", () => move(row, 1, false));
+  });
+
+  // Arrow handling lives on the list, not the grab button, so a grabbed
+  // element responds no matter which control inside the list holds focus.
+  list.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+    const row = rows.find((r) => r.grab.getAttribute("aria-pressed") === "true");
+    if (!row) return;
+    e.preventDefault();
+    move(row, e.key === "ArrowUp" ? -1 : 1, true);
   });
 
   const verify = el("button", { textContent: "Verify order" });

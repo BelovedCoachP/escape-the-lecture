@@ -48,7 +48,17 @@
           "description": "Replaces the countdown. State the condition under which the vault opens. Never a clock. WCAG 2.2.1 is satisfied by having no time limit at all."
         },
         "openingMedia": { "$ref": "#/$defs/video" },
-        "companion": { "$ref": "#/$defs/companion" }
+        "companion": { "$ref": "#/$defs/companion" },
+        "archivist": {
+          "type": "object",
+          "description": "v1.1. The straight man gets a face. Rendered wherever the Archivist speaks, starting with the locks.",
+          "required": ["name"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "portrait": { "$ref": "#/$defs/image" }
+          }
+        }
       }
     },
 
@@ -126,8 +136,19 @@
         },
         "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
         "wrongText": { "type": "string", "description": "Shown on an incorrect attempt. Never punitive: nothing is lost, nothing is timed." },
-        "successText": { "type": "string", "description": "Optional extra beat on success; unlockText still plays." }
-      }
+        "successText": { "type": "string", "description": "Optional extra beat on success; unlockText still plays." },
+        "audioSrc": { "type": "string", "description": "v1.1. The Archivist speaking this lock's prompt. Plays when the lock appears (the reveal is always the player's own gesture) with a visible stop control; the prompt text is always on screen." },
+        "captionsSrc": { "type": "string", "description": "Sibling VTT for the voiced prompt." }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["audioSrc"] },
+          "then": {
+            "required": ["captionsSrc"],
+            "description": "Voiced lines carry captions. No exceptions, locks included."
+          }
+        }
+      ]
     },
 
     "metaLock": {
@@ -230,6 +251,11 @@
           "description": "Named so the room can be audited against its own claims."
         },
         "ambientAudio": { "$ref": "#/$defs/audio" },
+        "tools": {
+          "type": "array",
+          "description": "v1.1. Field tools the renderer mounts in this room. contrast-checker embeds a live WCAG ratio calculator with a prefilled WebAIM link.",
+          "items": { "enum": ["contrast-checker"] }
+        },
         "media": {
           "type": "array",
           "items": { "oneOf": [ { "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" } ] }

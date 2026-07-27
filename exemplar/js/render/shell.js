@@ -13,8 +13,9 @@ import {
   isLevelReachable,
   saveRun,
 } from "../state.js";
-import { announce, moveFocusTo } from "../a11y.js";
+import { announce, moveFocusTo, prefersReducedMotion } from "../a11y.js";
 import { el } from "./dom.js";
+import { renderContrastChecker } from "./tool.contrast.js";
 import { renderChoice } from "./challenge.choice.js";
 import { renderSort } from "./challenge.sort.js";
 import { renderHunt } from "./challenge.hunt.js";
@@ -52,9 +53,11 @@ export function mountShell(rootEl, content) {
   }
   const homeBtn = el("button", {
     className: "secondary home-btn",
-    textContent: "⌂ Main Hall",
-    attrs: { "aria-label": "Return to the Main Hall" },
+    attrs: { "aria-label": "Return to the Main Hall", title: "Main Hall" },
   });
+  // Icon-only home control; the accessible name carries the meaning.
+  homeBtn.innerHTML =
+    '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>';
   header.append(headerText, homeBtn);
 
   const main = el("main", {
@@ -67,13 +70,11 @@ export function mountShell(rootEl, content) {
     attrs: { "aria-label": "Companion and vault status" },
   });
 
+  // The companion panel is presence only: portrait and name. Every line
+  // AURA speaks renders in the room beside the work it refers to, so
+  // mirroring the text here would just say everything twice.
   const companion = content.narrative.companion;
-  let companionTranscript = null;
   if (companion) {
-    companionTranscript = el("p", {
-      className: "companion-transcript",
-      textContent: "Standing by.",
-    });
     const panel = el("section", { className: "panel companion-panel" });
     panel.append(
       el("h2", { className: "panel-label", textContent: "Companion" }),
@@ -91,7 +92,6 @@ export function mountShell(rootEl, content) {
         }),
       );
     }
-    panel.append(companionTranscript);
     rail.append(panel);
   }
 
@@ -124,7 +124,7 @@ export function mountShell(rootEl, content) {
   }
 
   rootEl.append(header, layout, footer);
-  return { main, companionTranscript, spineSummary, spineList, keysSummary, keysList, homeBtn };
+  return { main, spineSummary, spineList, keysSummary, keysList, homeBtn };
 }
 
 /* ---------- Intro ---------- */
@@ -178,7 +178,6 @@ export function renderIntro(ctx) {
   view.append(buttons);
 
   refs.main.append(view);
-  setCompanionTranscript(ctx, "Standing by.");
 }
 
 /* ---------- Level ---------- */
@@ -200,8 +199,6 @@ export function renderLevel(level, ctx) {
     el("p", { textContent: level.brief }),
   );
 
-  view.append(renderRestartControl(level, ctx));
-
   if (level.skillTaught?.length) {
     const skills = el("details");
     skills.append(el("summary", { textContent: "Skills in this room" }));
@@ -220,6 +217,10 @@ export function renderLevel(level, ctx) {
     view.append(collection);
   }
 
+  if (level.tools?.includes("contrast-checker")) {
+    view.append(renderContrastChecker());
+  }
+
   (level.companionLines ?? []).forEach((line) => {
     view.append(renderCompanionLine(line, ctx));
   });
@@ -231,8 +232,6 @@ export function renderLevel(level, ctx) {
     );
   });
 
-  refs.main.append(view);
-
   // End state: the lock is the level's exit. Challenges solved but lock shut
   // shows the lock; lock opened shows the restored card.
   if (isLevelRestored(run, level)) {
@@ -241,8 +240,10 @@ export function renderLevel(level, ctx) {
     view.append(renderLockCard(level, ctx, view));
   }
 
-  const firstLine = level.companionLines?.[0];
-  if (firstLine) setCompanionTranscript(ctx, firstLine.text);
+  // Room controls close the page; a lock that appears mid-run slots in above.
+  view.append(renderRestartControl(level, ctx));
+
+  refs.main.append(view);
 }
 
 // A small, deliberate reset for one room. Two-step: the first press asks,
@@ -296,6 +297,23 @@ function renderCompanionLine(line, ctx) {
   return card;
 }
 
+// Hints live in a rail beside the work instead of a stack above it, so the
+// challenge starts at the top of the card and wide screens carry no dead run
+// of collapsed accordions.
+function renderHintRail(hints) {
+  if (!hints?.length) return null;
+  const rail = el("div", { className: "hint-rail" });
+  hints.forEach((hint, i) => {
+    const d = el("details");
+    d.append(
+      el("summary", { textContent: `Hint ${i + 1} of ${hints.length}` }),
+      el("p", { textContent: hint }),
+    );
+    rail.append(d);
+  });
+  return rail;
+}
+
 function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
   const { run } = ctx;
   const card = el("section", { className: "card challenge-card" });
@@ -304,17 +322,9 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
       className: "card-eyebrow",
       textContent: `Challenge ${num} of ${total} · ${TYPE_LABELS[challenge.type] ?? challenge.type}`,
     }),
-    el("h3", { textContent: challenge.prompt }),
   );
-
-  (challenge.hints ?? []).forEach((hint, i) => {
-    const d = el("details");
-    d.append(
-      el("summary", { textContent: `Hint ${i + 1} of ${challenge.hints.length}` }),
-      el("p", { textContent: hint }),
-    );
-    card.append(d);
-  });
+  const workCol = el("div", { className: "challenge-work" });
+  workCol.append(el("h3", { textContent: challenge.prompt }));
 
   const done = (run.completed[level.id] ?? []).includes(challenge.id);
   const api = {
@@ -355,7 +365,10 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
     default:
       body = renderPlaceholderBody(challenge, done, api);
   }
-  card.append(body);
+  workCol.append(body);
+  card.append(workCol);
+  const hintRail = renderHintRail(challenge.hints);
+  if (hintRail) card.append(hintRail);
   return card;
 }
 
@@ -387,7 +400,10 @@ function finishChallenge(challenge, level, ctx, viewEl) {
   if (challengesComplete(run, level)) {
     bankEvidence(run, level.id, level.evidenceFragment);
     if (level.lock) {
-      viewEl.append(renderLockCard(level, ctx, viewEl));
+      const controls = viewEl.querySelector(".room-controls");
+      const lockCard = renderLockCard(level, ctx, viewEl);
+      if (controls) viewEl.insertBefore(lockCard, controls);
+      else viewEl.append(lockCard);
       renderSpine(ctx);
       // Focus stays on the solved challenge so its feedback can be read;
       // the announcement carries the news that the lock has appeared below.
@@ -396,7 +412,10 @@ function finishChallenge(challenge, level, ctx, viewEl) {
       );
     } else {
       openLock(run, level);
-      viewEl.append(renderRestoredCard(level, ctx));
+      const controls = viewEl.querySelector(".room-controls");
+      const restored = renderRestoredCard(level, ctx);
+      if (controls) viewEl.insertBefore(restored, controls);
+      else viewEl.append(restored);
       renderSpine(ctx);
       announce("Level complete. Evidence logged. Shelf restored.");
     }
@@ -412,18 +431,63 @@ function renderLockCard(level, ctx, viewEl) {
   const card = el("section", { className: "card lock-card" });
   card.append(
     el("p", { className: "card-eyebrow", textContent: "The lock" }),
-    el("h3", { textContent: "The shelf will not return on its own" }),
-    el("p", { className: "archivist-voice", textContent: lock.prompt }),
   );
+  const workCol = el("div", { className: "challenge-work" });
+  workCol.append(el("h3", { textContent: "The shelf will not return on its own" }));
 
-  (lock.hints ?? []).forEach((hint, i) => {
-    const d = el("details");
-    d.append(
-      el("summary", { textContent: `Hint ${i + 1} of ${lock.hints.length}` }),
-      el("p", { textContent: hint }),
+  // The Archivist speaks at every door. The portrait gives the voice a face;
+  // the spoken line (produced in the media session) plays when the lock
+  // appears, always duplicated by the on-screen text below.
+  const archivist = ctx.content.narrative.archivist;
+  if (archivist) {
+    const speakerRow = el("div", { className: "archivist-row" });
+    if (archivist.portrait) {
+      speakerRow.append(
+        el("img", {
+          className: "archivist-portrait",
+          src: archivist.portrait.src,
+          alt: archivist.portrait.decorative ? "" : archivist.portrait.alt,
+          attrs: archivist.portrait.decorative
+            ? { "aria-hidden": "true", decoding: "async" }
+            : { decoding: "async" },
+        }),
+      );
+    }
+    speakerRow.append(
+      el("p", { className: "archivist-name", textContent: archivist.name }),
     );
-    card.append(d);
-  });
+    workCol.append(speakerRow);
+  }
+  workCol.append(el("p", { className: "archivist-voice", textContent: lock.prompt }));
+
+  if (lock.audioSrc) {
+    const audio = new Audio(lock.audioSrc);
+    audio.preload = "auto";
+    const voiceBtn = el("button", {
+      className: "secondary voice-btn",
+      textContent: "▶ Hear the Archivist",
+    });
+    voiceBtn.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play().catch(() => {});
+        voiceBtn.textContent = "■ Stop";
+      } else {
+        audio.pause();
+        audio.currentTime = 0;
+        voiceBtn.textContent = "▶ Hear the Archivist";
+      }
+    });
+    audio.addEventListener("ended", () => {
+      voiceBtn.textContent = "▶ Hear the Archivist";
+    });
+    workCol.append(el("p", {}, voiceBtn));
+    // The lock only ever appears as the direct result of the player's last
+    // solve, so speaking the line now is that gesture completing, not
+    // autoplay; the full text is on screen above and Stop is one press away.
+    audio.play().then(() => {
+      voiceBtn.textContent = "■ Stop";
+    }).catch(() => {});
+  }
 
   const inputId = `lock-${level.id}`;
   const label = el("label", {
@@ -453,13 +517,28 @@ function renderLockCard(level, ctx, viewEl) {
     }
     openLock(run, level);
     saveRun(run, ctx.content.meta.id);
-    const restored = renderRestoredCard(level, ctx);
-    card.replaceWith(restored);
-    renderSpine(ctx);
     announce(
       `The key turns. ${level.rewardLabel ? level.rewardLabel + " banked to your keyring. " : ""}Shelf restored.`,
     );
-    moveFocusTo(restored.querySelector("h3"));
+    const finish = () => {
+      const restored = renderRestoredCard(level, ctx);
+      card.replaceWith(restored);
+      renderSpine(ctx);
+      moveFocusTo(restored.querySelector("h3"));
+    };
+    // The reward beat: the key turns in the lock before the shelf returns.
+    // Reduced motion skips straight to the restored card.
+    if (prefersReducedMotion()) {
+      finish();
+      return;
+    }
+    turn.disabled = true;
+    input.disabled = true;
+    const keyFx = el("div", { className: "key-turn", attrs: { "aria-hidden": "true" } });
+    keyFx.innerHTML =
+      '<svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="32" r="10"/><path d="M32 32h24"/><path d="M48 32v8"/><path d="M56 32v6"/></svg>';
+    card.append(keyFx);
+    setTimeout(finish, 1500);
   };
 
   turn.addEventListener("click", attempt);
@@ -470,7 +549,10 @@ function renderLockCard(level, ctx, viewEl) {
     }
   });
 
-  card.append(label, input, feedback, el("p", {}, turn));
+  workCol.append(label, input, feedback, el("p", {}, turn));
+  card.append(workCol);
+  const hintRail = renderHintRail(lock.hints);
+  if (hintRail) card.append(hintRail);
   return card;
 }
 
@@ -541,7 +623,6 @@ export function renderInterlude(level, ctx, onContinue) {
       el("p", { textContent: interlude.auraLine }),
     );
     view.append(aside);
-    setCompanionTranscript(ctx, interlude.auraLine);
   }
 
   const cont = el("button", { textContent: "Continue" });
@@ -588,7 +669,6 @@ export function renderFinale(ctx) {
 
   if (finale.companionAssessment) {
     view.append(renderCompanionLine(finale.companionAssessment, ctx));
-    setCompanionTranscript(ctx, finale.companionAssessment.text);
   }
 
   const form = el("section", { className: "card" });
@@ -901,12 +981,6 @@ function renderVideoAsText(video, label) {
     d.append(dd);
   }
   return d;
-}
-
-function setCompanionTranscript(ctx, text) {
-  if (ctx.refs.companionTranscript) {
-    ctx.refs.companionTranscript.textContent = text;
-  }
 }
 
 // The environment layer. CSS paints the room's backdrop (with a contrast
