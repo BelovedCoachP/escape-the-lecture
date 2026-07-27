@@ -168,7 +168,26 @@ export function renderIntro(ctx) {
       className: "secondary",
       textContent: "Start over",
     });
-    restart.addEventListener("click", () => ctx.actions.startOver());
+    // Two-step, same as the room restart: erasing a whole run should never
+    // be one stray click.
+    restart.addEventListener("click", () => {
+      buttons.innerHTML = "";
+      const question = el("span", {
+        className: "restart-question",
+        textContent: "Erase this run and start fresh? ",
+      });
+      const yes = el("button", { textContent: "Yes, start over" });
+      const no = el("button", { className: "secondary", textContent: "Keep my run" });
+      yes.addEventListener("click", () => ctx.actions.startOver());
+      no.addEventListener("click", () => {
+        buttons.innerHTML = "";
+        buttons.append(cont, restart);
+        restart.focus();
+      });
+      buttons.append(question, yes, no);
+      announce("Erase this run and start fresh? Choose yes or keep my run.");
+      yes.focus();
+    });
     buttons.append(cont, restart);
   } else {
     const begin = el("button", { textContent: "Enter the vault" });
@@ -649,7 +668,7 @@ export function renderInterlude(level, ctx, onContinue) {
 
 /* ---------- Finale ---------- */
 
-export function renderFinale(ctx) {
+export function renderFinale(ctx, opts = {}) {
   const { content, refs, run } = ctx;
   const finale = content.finale;
   refs.main.innerHTML = "";
@@ -657,6 +676,8 @@ export function renderFinale(ctx) {
   setScene("vault");
 
   const view = el("section");
+  // The one moment that gets a longer entrance: the last door opening.
+  if (opts.vaultJustOpened) view.classList.add("vault-opening");
   view.append(
     el("p", { className: "view-eyebrow", textContent: "The Archive · The Last Door" }),
     el("h2", { className: "view-title", textContent: finale.title }),
@@ -851,7 +872,7 @@ function renderMetaLock(metaLock, ctx) {
     ctx.run.vaultOpened = true;
     saveRun(ctx.run, ctx.content.meta.id);
     announce("Every key turns at once. The final door opens.");
-    renderFinale(ctx);
+    renderFinale(ctx, { vaultJustOpened: true });
     renderSpine(ctx);
     moveFocusTo(ctx.refs.main.querySelector("h2"));
   });
@@ -946,20 +967,27 @@ function renderSpine(ctx) {
   const { done, total } = getProgress(run, content);
   refs.spineSummary.textContent = `Shelves restored: ${done} of ${total}`;
   refs.spineList.innerHTML = "";
+  // The spine re-renders wholesale, so enter/pulse animations must attach
+  // only to what changed since the last render, or every state change would
+  // replay them all.
+  const prevRestored = ctx._spineRestored ?? new Set();
+  const nextRestored = new Set();
   [...content.levels]
     .sort((a, b) => a.order - b.order)
     .forEach((level) => {
       const restored = isLevelRestored(run, level);
       const reachable = isLevelReachable(run, content, level);
+      if (restored) nextRestored.add(level.id);
       const item = el("li", {
         className: `spine-item${restored ? " is-restored" : ""}`,
       });
       if (run.view === "level" && run.currentLevelOrder === level.order) {
         item.setAttribute("aria-current", "step");
       }
+      const justRestored = restored && !prevRestored.has(level.id);
       item.append(
         el("span", {
-          className: "spine-marker",
+          className: `spine-marker${justRestored ? " marker-pulse" : ""}`,
           textContent: restored ? "✓" : "○",
           attrs: { "aria-hidden": "true" },
         }),
@@ -977,6 +1005,7 @@ function renderSpine(ctx) {
       }
       refs.spineList.append(item);
     });
+  ctx._spineRestored = nextRestored;
 
   // Keyring. Alphabetical, never earn order: earn order next to the spine's
   // room order would hand the meta-lock's answer to anyone who can read the
@@ -984,9 +1013,11 @@ function renderSpine(ctx) {
   // reason; the puzzle is remembering which discipline belonged to which room.
   refs.keysSummary.textContent = `Keys banked: ${run.keys.length} of ${total}`;
   refs.keysList.innerHTML = "";
+  const prevKeys = ctx._spineKeys ?? new Set();
   const atSealedVault =
     run.view === "finale" && content.finale.metaLock && !run.vaultOpened;
   if (atSealedVault) {
+    ctx._spineKeys = new Set();
     refs.keysList.append(
       el("li", {
         className: "spine-item",
@@ -995,6 +1026,7 @@ function renderSpine(ctx) {
     );
     return;
   }
+  ctx._spineKeys = new Set(run.keys.map((k) => k.label));
   if (run.keys.length === 0) {
     refs.keysList.append(
       el("li", { className: "spine-item", textContent: "No keys yet." }),
@@ -1003,7 +1035,10 @@ function renderSpine(ctx) {
   [...run.keys]
     .sort((a, b) => a.label.localeCompare(b.label))
     .forEach((key) => {
-      const item = el("li", { className: "spine-item is-restored" });
+      const isNew = !prevKeys.has(key.label);
+      const item = el("li", {
+        className: `spine-item is-restored${isNew ? " key-enter" : ""}`,
+      });
       item.append(
         el("span", {
           className: "spine-marker",

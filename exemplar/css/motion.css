@@ -1,16 +1,22 @@
 /* All motion lives here and only runs when the user has not asked for calm.
    prefers-reduced-motion: reduce gets a fully static experience; nothing in
-   the game depends on motion to carry meaning. */
+   the game depends on motion to carry meaning. Color-only transitions live
+   in vault.css, since gentle color change aids comprehension either way. */
 
 @media (prefers-reduced-motion: no-preference) {
   .card,
   .callout,
   .level-complete {
-    animation: rise-in 0.35s ease-out both;
+    animation: rise-in 0.3s var(--ease-out-strong) both;
   }
 
   button {
-    transition: background-color 0.15s ease;
+    transition: background-color 0.15s ease, transform 140ms var(--ease-out-strong);
+  }
+
+  /* Press feedback: the interface visibly hears the click. */
+  button:active:not(:disabled) {
+    transform: scale(0.97);
   }
 
   details {
@@ -28,7 +34,7 @@
      motion (outside this media query) shows everything immediately. */
   .media-collection .media-item {
     opacity: 0;
-    animation: media-reveal 0.9s ease-out forwards;
+    animation: media-reveal 0.9s var(--ease-out-strong) forwards;
   }
   .media-collection .media-item:nth-child(1) { animation-delay: 0.2s; }
   .media-collection .media-item:nth-child(2) { animation-delay: 1.1s; }
@@ -41,9 +47,12 @@
     to   { opacity: 1; transform: none; }
   }
 
-  /* The key turns before the shelf returns. */
+  /* The key turns before the shelf returns. transform-box: view-box makes
+     the origin read in viewBox units (the key's bow sits at 22,32 there),
+     so the pivot stays on the bow no matter how the SVG is scaled. */
   .key-turn svg {
     animation: key-turn-spin 1.3s cubic-bezier(0.4, 0, 0.3, 1) forwards;
+    transform-box: view-box;
     transform-origin: 22px 32px;
   }
 
@@ -51,5 +60,31 @@
     0%   { transform: rotate(0deg); opacity: 0; }
     20%  { opacity: 1; }
     100% { transform: rotate(180deg); opacity: 1; }
+  }
+
+  /* A newly banked key lands on the keyring. */
+  .key-enter {
+    animation: key-enter 220ms var(--ease-out-strong) both;
+  }
+
+  @keyframes key-enter {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* A shelf marker flips to restored: one small pulse, state change only. */
+  .marker-pulse {
+    animation: marker-pulse 300ms ease-out;
+  }
+
+  @keyframes marker-pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  /* The last door opens: the finale view gets one longer, earned rise. */
+  .vault-opening {
+    animation: rise-in 0.45s var(--ease-out-strong) both;
   }
 }

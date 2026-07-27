@@ -23,4 +23,6 @@
   --surface-border: rgba(248, 250, 252, 0.16);
   --text-muted: rgba(248, 250, 252, 0.78);
   --radius: 10px;
+  /* Strong ease-out: built-in CSS easings are too weak to read as intentional. */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
 }

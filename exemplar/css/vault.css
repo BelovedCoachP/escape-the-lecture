@@ -4,7 +4,11 @@
 
 * { box-sizing: border-box; }
 
-html { height: 100%; }
+html {
+  height: 100%;
+  /* Native scrollbars and form-control chrome render dark on Windows. */
+  color-scheme: dark;
+}
 
 body {
   margin: 0;
@@ -61,6 +65,12 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
   line-height: 1.15;
   letter-spacing: 0.04em; /* keeps "AI A" from reading as "Al" in League Spartan */
+  text-wrap: balance;
+}
+
+/* Interactive elements respond to the first tap; no double-tap zoom delay. */
+button, input, select, textarea, summary, a {
+  touch-action: manipulation;
 }
 
 a { color: var(--brand-blue); }
@@ -181,19 +191,6 @@ a { color: var(--brand-blue); }
   color: var(--accent-cyan);
 }
 
-.companion-desc {
-  margin: 0 0 0.75rem;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.companion-transcript {
-  margin: 0;
-  font-size: 0.95rem;
-  border-top: 1px solid var(--surface-border);
-  padding-top: 0.75rem;
-}
-
 .spine-summary { margin: 0 0 0.75rem; font-weight: 600; }
 
 .spine-list {
@@ -215,7 +212,11 @@ a { color: var(--brand-blue); }
 
 .spine-item[aria-current="step"] { color: var(--porcelain); font-weight: 600; }
 
-.spine-marker { font-family: var(--font-body); }
+.spine-marker {
+  font-family: var(--font-body);
+  display: inline-block;
+  transition: color 250ms ease;
+}
 
 .spine-item.is-restored { color: var(--porcelain); }
 .spine-item.is-restored .spine-marker { color: var(--accent-green); }
@@ -289,6 +290,8 @@ a { color: var(--brand-blue); }
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--accent-cyan);
+  /* The decimals are the punchline; steady digits land them. */
+  font-variant-numeric: tabular-nums;
 }
 
 /* Media */
@@ -373,7 +376,11 @@ button {
   cursor: pointer;
 }
 
-button:hover { background: var(--brand-blue-cta-hover); }
+/* Hover styles only where a real pointer hovers; taps on touch screens
+   otherwise leave hover states stuck on. */
+@media (hover: hover) and (pointer: fine) {
+  button:hover { background: var(--brand-blue-cta-hover); }
+}
 
 button:disabled {
   background: var(--surface-raised);
@@ -392,7 +399,9 @@ button.secondary {
   flex-wrap: wrap;
 }
 
-button.secondary:hover { background: var(--surface); }
+@media (hover: hover) and (pointer: fine) {
+  button.secondary:hover { background: var(--surface); }
+}
 
 /* Static option lists inside placeholder challenges */
 .option-list {
@@ -515,7 +524,9 @@ button.secondary:hover { background: var(--surface); }
   font-weight: 400;
 }
 
-.flag-btn:hover { background: var(--surface); }
+@media (hover: hover) and (pointer: fine) {
+  .flag-btn:hover { background: var(--surface); }
+}
 
 .flag-btn[aria-pressed="true"] {
   border: 2px solid var(--brand-pink);
@@ -563,7 +574,9 @@ button.secondary:hover { background: var(--surface); }
   font-weight: 400;
 }
 
-.seq-grab:hover { background: var(--surface); }
+@media (hover: hover) and (pointer: fine) {
+  .seq-grab:hover { background: var(--surface); }
+}
 
 .seq-grab[aria-pressed="true"] {
   border: 2px solid var(--accent-cyan);
@@ -676,7 +689,7 @@ button.secondary:hover { background: var(--surface); }
   max-width: 20rem;
 }
 
-.tool-result { font-weight: 600; }
+.tool-result { font-weight: 600; font-variant-numeric: tabular-nums; }
 
 .tool-link { color: var(--accent-cyan); }
 
@@ -733,6 +746,13 @@ button.secondary:hover { background: var(--surface); }
   padding: 0.8rem 1rem;
   margin: 0.6rem 0;
   background: rgba(15, 23, 42, 0.5);
+  /* Color-only transition: fine under reduced motion. */
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.stance-row:has(input:checked) {
+  border-color: var(--brand-blue);
+  background: rgba(0, 128, 255, 0.08);
 }
 
 .stance-row input { margin-top: 0.35rem; }
@@ -889,7 +909,8 @@ button.secondary:hover { background: var(--surface); }
 
 select.lock-input option { color: #0F172A; background: #F8FAFC; }
 
-.lock-feedback {
+.lock-feedback,
+.attempt-feedback {
   min-height: 1.5rem;
   font-weight: 600;
   margin: 0.25rem 0 0.5rem;
@@ -906,7 +927,9 @@ select.lock-input option { color: #0F172A; background: #F8FAFC; }
   text-align: left;
 }
 
-.spine-link:hover { text-decoration: underline; }
+@media (hover: hover) and (pointer: fine) {
+  .spine-link:hover { text-decoration: underline; }
+}
 
 .key-list .spine-marker { color: var(--accent-green); }
 
@@ -1061,10 +1084,12 @@ label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
   border: 1px solid rgba(15, 23, 42, 0.4);
 }
 
-[data-level="document-labyrinth"] .challenge-card .seq-grab:hover,
-[data-level="document-labyrinth"] .challenge-card .flag-btn:hover,
-[data-level="document-labyrinth"] .challenge-card button.secondary:hover {
-  background: rgba(15, 23, 42, 0.13);
+@media (hover: hover) and (pointer: fine) {
+  [data-level="document-labyrinth"] .challenge-card .seq-grab:hover,
+  [data-level="document-labyrinth"] .challenge-card .flag-btn:hover,
+  [data-level="document-labyrinth"] .challenge-card button.secondary:hover {
+    background: rgba(15, 23, 42, 0.13);
+  }
 }
 
 [data-level="document-labyrinth"] .challenge-card .seq-grab[aria-pressed="true"] {
@@ -1087,7 +1112,8 @@ label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
 }
 
 [data-level="document-labyrinth"] .challenge-card .option-feedback,
-[data-level="document-labyrinth"] .challenge-card .lock-feedback {
+[data-level="document-labyrinth"] .challenge-card .lock-feedback,
+[data-level="document-labyrinth"] .challenge-card .attempt-feedback {
   color: #334155;
 }
 

@@ -56,10 +56,13 @@ export function renderHunt(challenge, done, api) {
     return { part, btn, feedback, flagState };
   });
 
+  // Wrong attempts show on screen, not just in the live region.
+  const status = el("p", { className: "attempt-feedback" });
   const confirm = el("button", { textContent: "Confirm findings" });
   confirm.addEventListener("click", () => {
     const flagged = parts.filter((p) => p.btn.getAttribute("aria-pressed") === "true");
     if (flagged.length === 0) {
+      status.textContent = "Flag at least one part before confirming.";
       api.announce("Flag at least one part before confirming.");
       return;
     }
@@ -67,11 +70,13 @@ export function renderHunt(challenge, done, api) {
       (p) => (p.btn.getAttribute("aria-pressed") === "true") === p.part.flawed,
     );
     if (!solved) {
-      api.announce(
-        "Your flags do not match the flaws. Either something true is flagged, or something impossible is not. Adjust and confirm again; nothing is lost.",
-      );
+      const message =
+        "Your flags do not match the flaws. Either something true is flagged, or something impossible is not. Adjust and confirm again; nothing is lost.";
+      status.textContent = `✗ ${message}`;
+      api.announce(message);
       return;
     }
+    status.textContent = "";
     parts.forEach((p) => {
       p.btn.disabled = true;
       p.flagState.textContent = p.part.flawed ? " — ✗ impossible detail" : " — ✓ verified";
@@ -83,7 +88,7 @@ export function renderHunt(challenge, done, api) {
     api.complete();
   });
 
-  wrap.append(artifact, el("p", {}, confirm));
+  wrap.append(artifact, status, el("p", {}, confirm));
   return wrap;
 }
 

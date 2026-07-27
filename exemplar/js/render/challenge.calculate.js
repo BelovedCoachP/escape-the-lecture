@@ -29,6 +29,8 @@ export function renderCalculate(challenge, done, api) {
     ? el("span", { className: "calc-unit", textContent: challenge.unit })
     : null;
   const feedback = el("p", { className: "option-feedback", hidden: true });
+  // Wrong attempts show on screen, not just in the live region.
+  const status = el("p", { className: "attempt-feedback" });
   const verify = el("button", { textContent: "Check the number" });
 
   const attempt = () => {
@@ -36,18 +38,21 @@ export function renderCalculate(challenge, done, api) {
     const raw = input.value.split(":")[0].match(/-?\d+(\.\d+)?/);
     const value = raw ? Number(raw[0]) : NaN;
     if (Number.isNaN(value)) {
+      status.textContent = "Enter a number first.";
       api.announce("Enter a number first.");
       return;
     }
     const tolerance = challenge.tolerance ?? 0;
     if (Math.abs(value - challenge.answer) > tolerance) {
-      api.announce(
+      const message =
         challenge.wrongText ??
-          "That is not the value. Check the working and try again; nothing is lost.",
-      );
+        "That is not the value. Check the working and try again; nothing is lost.";
+      status.textContent = `✗ ${message}`;
+      api.announce(message);
       input.select();
       return;
     }
+    status.textContent = "";
     input.readOnly = true;
     feedback.hidden = false;
     feedback.textContent = challenge.feedback;
@@ -67,6 +72,6 @@ export function renderCalculate(challenge, done, api) {
   const row = el("div", { className: "calc-row" });
   row.append(input);
   if (unitNote) row.append(unitNote);
-  wrap.append(label, row, feedback, el("p", {}, verify));
+  wrap.append(label, row, status, feedback, el("p", {}, verify));
   return wrap;
 }

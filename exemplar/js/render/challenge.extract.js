@@ -35,10 +35,13 @@ export function renderExtract(challenge, done, api) {
     attrs: { type: "text", autocomplete: "off", spellcheck: "false" },
   });
   const feedback = el("p", { className: "option-feedback", hidden: true });
+  // Wrong attempts show on screen, not just in the live region.
+  const status = el("p", { className: "attempt-feedback" });
   const verify = el("button", { textContent: "Confirm answer" });
 
   const attempt = () => {
     if (input.value.trim() === "") {
+      status.textContent = "Enter your answer first.";
       api.announce("Enter your answer first.");
       return;
     }
@@ -46,13 +49,15 @@ export function renderExtract(challenge, done, api) {
       (a) => normalize(a) === normalize(input.value),
     );
     if (!ok) {
-      api.announce(
+      const message =
         challenge.wrongText ??
-          "That is not it. Read the source again; nothing is lost.",
-      );
+        "That is not it. Read the source again; nothing is lost.";
+      status.textContent = `✗ ${message}`;
+      api.announce(message);
       input.select();
       return;
     }
+    status.textContent = "";
     input.readOnly = true;
     feedback.hidden = false;
     feedback.textContent = challenge.feedback;
@@ -69,6 +74,6 @@ export function renderExtract(challenge, done, api) {
     }
   });
 
-  wrap.append(label, input, feedback, el("p", {}, verify));
+  wrap.append(label, input, status, feedback, el("p", {}, verify));
   return wrap;
 }

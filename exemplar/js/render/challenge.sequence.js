@@ -116,6 +116,8 @@ export function renderSequence(challenge, done, api) {
     move(row, e.key === "ArrowUp" ? -1 : 1, true);
   });
 
+  // Wrong attempts show on screen, not just in the live region.
+  const status = el("p", { className: "attempt-feedback" });
   const verify = el("button", { textContent: "Verify order" });
   verify.addEventListener("click", () => {
     const currentOrder = rows
@@ -126,11 +128,12 @@ export function renderSequence(challenge, done, api) {
       (id, i) => id === challenge.correctOrder[i],
     ).length;
     if (inPlace < challenge.correctOrder.length) {
-      api.announce(
-        `The order is not right yet. ${inPlace} of ${challenge.correctOrder.length} elements sit in their correct positions. Nothing is lost; keep working.`,
-      );
+      const message = `The order is not right yet. ${inPlace} of ${challenge.correctOrder.length} elements sit in their correct positions. Nothing is lost; keep working.`;
+      status.textContent = `✗ ${message}`;
+      api.announce(message);
       return;
     }
+    status.textContent = "";
     rows.forEach((r) => {
       r.grab.disabled = true;
       r.up.disabled = true;
@@ -147,7 +150,7 @@ export function renderSequence(challenge, done, api) {
     api.complete();
   });
 
-  wrap.append(list, el("p", {}, verify));
+  wrap.append(list, status, el("p", {}, verify));
   return wrap;
 }
 

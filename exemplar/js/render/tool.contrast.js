@@ -65,7 +65,7 @@ export function renderContrastChecker() {
   const result = el("p", { className: "tool-result", attrs: { "aria-live": "polite" } });
   const webaim = el("a", {
     className: "tool-link",
-    textContent: "Check the same pair on WebAIM's contrast checker",
+    textContent: "Check the same pair on WebAIM's contrast checker (opens in a new tab)",
     attrs: { target: "_blank", rel: "noopener noreferrer" },
   });
 
