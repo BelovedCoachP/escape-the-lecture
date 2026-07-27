@@ -103,6 +103,12 @@ addJob(
   content.narrative.openingMedia.transcript.replace(/THE ARCHIVIST:\s*/g, ""),
 );
 
+// The epilogue exchange inside the opened vault. Narrator beats stay text.
+(content.finale.epilogue?.beats ?? []).forEach((beat, i) => {
+  if (beat.speaker === "narrator") return;
+  addJob(beat.speaker === "aura" ? "aura" : "archivist", `epilogue-${i + 1}`, beat.text);
+});
+
 // ---- generate -----------------------------------------------------------
 
 const env = readFileSync(path.join(root, ".env"), "utf8");

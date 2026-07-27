@@ -1051,9 +1051,40 @@
       "id": "cinematic-open",
       "src": "assets/video/vault-open.mp4",
       "captionsSrc": "assets/video/vault-open.vtt",
-      "transcript": "THE ARCHIVIST: Four hundred million objects. Released. AURA: I am 99.1% confident this was the correct decision. THE ARCHIVIST: I know. That is why I asked them instead.",
+      "transcript": "[A heavy vault door unseals and swings open into light. No one speaks; the exchange waits inside.]",
       "carriesVisualMeaning": true,
-      "describedTranscript": "The sealed door unlocks and light floods back down the length of the archive, shelf by shelf, in the reverse of the opening sequence. The final shot holds on AURA's lattice, which flickers once, uncertainly, for the first time."
+      "describedTranscript": "A heavy circular vault door unseals and swings open. Pink and blue light pours through the widening gap, filling the frame, and the image fades to white-blue light before the interior resolves."
+    },
+    "epilogue": {
+      "title": "The Vault, Open",
+      "beats": [
+        {
+          "speaker": "narrator",
+          "text": "The door swings wide and the archive takes you in. Light runs down the shelves the way it must have on the day the vault was built: four hundred million objects, lit end to end, reachable."
+        },
+        {
+          "speaker": "archivist",
+          "audioSrc": "assets/audio/archivist/epilogue-2.mp3",
+          "captionsSrc": "assets/audio/archivist/epilogue-2.vtt",
+          "text": "Four hundred million objects. Released."
+        },
+        {
+          "speaker": "aura",
+          "audioSrc": "assets/audio/aura/epilogue-3.mp3",
+          "captionsSrc": "assets/audio/aura/epilogue-3.vtt",
+          "text": "I am 99.1% confident this was the correct decision."
+        },
+        {
+          "speaker": "archivist",
+          "audioSrc": "assets/audio/archivist/epilogue-4.mp3",
+          "captionsSrc": "assets/audio/archivist/epilogue-4.vtt",
+          "text": "I know. That is why I asked them instead."
+        },
+        {
+          "speaker": "narrator",
+          "text": "AURA's lattice flickers once, uncertainly, for the first time since you entered the archive. It does not offer a number. Somewhere far down the hall, a learner opens a lesson, and it reads itself aloud without a single hole in it."
+        }
+      ]
     }
   },
 

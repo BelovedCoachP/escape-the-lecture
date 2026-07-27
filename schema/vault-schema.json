@@ -98,7 +98,41 @@
           }
         },
         "closingText": { "type": "string" },
-        "closingMedia": { "$ref": "#/$defs/video" }
+        "closingMedia": { "$ref": "#/$defs/video" },
+        "epilogue": {
+          "type": "object",
+          "description": "v1.1. The final scene. After the door-opening cinematic the player steps inside the opened vault; these beats play there, in order. AURA's beat is her one uncertain moment and the renderer treats it accordingly: no confidence badge, cyan fallen toward navy, one flicker.",
+          "required": ["title", "beats"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string", "minLength": 1 },
+            "beats": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "required": ["speaker", "text"],
+                "additionalProperties": false,
+                "properties": {
+                  "speaker": { "enum": ["archivist", "aura", "narrator"] },
+                  "text": { "type": "string", "minLength": 1 },
+                  "audioSrc": { "type": "string" },
+                  "captionsSrc": { "type": "string" }
+                },
+                "allOf": [
+                  {
+                    "if": { "required": ["audioSrc"] },
+                    "then": {
+                      "required": ["captionsSrc"],
+                      "description": "Voiced lines carry captions. No exceptions, even at the very end."
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
       }
     },
 

@@ -951,11 +951,78 @@ function renderFinaleReveal(finale, ctx, chosenLabel) {
   if (finale.closingMedia) {
     closing.append(renderVideo(finale.closingMedia, "Closing transmission"));
   }
-  const again = el("button", { textContent: "Play again" });
-  again.addEventListener("click", () => ctx.actions.playAgain());
-  closing.append(el("p", {}, again));
+  if (finale.epilogue) {
+    const enter = el("button", { textContent: "Step into the vault" });
+    enter.addEventListener("click", () => renderEpilogue(ctx));
+    closing.append(el("p", {}, enter));
+  } else {
+    const again = el("button", { textContent: "Play again" });
+    again.addEventListener("click", () => ctx.actions.playAgain());
+    closing.append(el("p", {}, again));
+  }
   wrap.append(closing);
   return wrap;
+}
+
+/* ---------- Epilogue: inside the opened vault ---------- */
+
+// The teleport. The door has opened on screen; this scene is the other side
+// of it: the lit archive, the last exchange, and AURA's one uncertain
+// moment. Not persisted as its own view on purpose — a reload lands back on
+// the finale reveal, where Step into the vault waits again.
+function renderEpilogue(ctx) {
+  const { refs, content } = ctx;
+  const ep = content.finale.epilogue;
+  refs.main.innerHTML = "";
+  delete refs.main.dataset.level;
+  setScene("vault-open");
+
+  const view = el("section", { className: "vault-opening" });
+  view.append(
+    el("p", { className: "view-eyebrow", textContent: "The Archive · Inside the Vault" }),
+    el("h2", { className: "view-title", textContent: ep.title }),
+  );
+
+  const archivistName = content.narrative.archivist?.name ?? "The Archivist";
+  const companionName = content.narrative.companion?.name ?? "Companion";
+  ep.beats.forEach((beat) => {
+    if (beat.speaker === "archivist") {
+      const card = el("section", { className: "card" });
+      card.append(
+        el("p", { className: "archivist-name", textContent: archivistName }),
+        el("p", { className: "archivist-voice", textContent: beat.text }),
+      );
+      if (beat.audioSrc) card.append(voiceControl(beat.audioSrc, archivistName).node);
+      view.append(card);
+    } else if (beat.speaker === "aura") {
+      // Her uncertain moment: no confidence badge, cyan fallen toward navy,
+      // and the flicker (motion-gated). Protect it.
+      const card = el("aside", {
+        className: "card companion-line aura-uncertain aura-flicker",
+        attrs: { "aria-label": `${companionName} says` },
+      });
+      card.append(
+        el("p", { className: "speaker", textContent: companionName }),
+        el("p", { textContent: beat.text }),
+      );
+      if (beat.audioSrc) card.append(voiceControl(beat.audioSrc, companionName).node);
+      view.append(card);
+    } else {
+      view.append(el("p", { textContent: beat.text }));
+    }
+  });
+
+  const buttons = el("p", { className: "button-row" });
+  const again = el("button", { textContent: "Play again" });
+  again.addEventListener("click", () => ctx.actions.playAgain());
+  const hall = el("button", { className: "secondary", textContent: "Return to the Main Hall" });
+  hall.addEventListener("click", () => ctx.actions.goHome());
+  buttons.append(again, hall);
+  view.append(buttons);
+
+  refs.main.append(view);
+  announce("The vault is open. You step inside.");
+  moveFocusTo(view.querySelector("h2"));
 }
 
 /* ---------- Progress spine ---------- */

@@ -60,6 +60,20 @@ body[data-scene="document-labyrinth"] { --scene-backdrop: url("../assets/backdro
 body[data-scene="prompt-reactor"] { --scene-backdrop: url("../assets/backdrops/prompt-reactor.jpg"); }
 body[data-scene="corridor"] { --scene-backdrop: url("../assets/backdrops/corridor.jpg"); }
 body[data-scene="vault"] { --scene-backdrop: url("../assets/backdrops/vault.jpg"); }
+body[data-scene="vault-open"] { --scene-backdrop: url("../assets/backdrops/vault-open.jpg"); }
+
+/* Inside the opened vault the scrim eases: the whole point of the final
+   scene is the light. Text still sits on cards, which carry their own navy. */
+body[data-scene="vault-open"] #vault-root {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.62) 0%,
+      rgba(15, 23, 42, 0.72) 45%,
+      rgba(15, 23, 42, 0.85) 100%
+    ),
+    var(--scene-backdrop, none);
+}
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
@@ -279,6 +293,12 @@ a { color: var(--brand-blue); }
   font-weight: 700;
   margin: 0 0 0.35rem;
 }
+
+/* AURA's one uncertain moment: cyan fallen toward navy, no badge, quieter
+   border. The flicker itself lives in motion.css. */
+.companion-line.aura-uncertain { border-color: rgba(0, 216, 255, 0.14); }
+
+.companion-line.aura-uncertain .speaker { color: #6B93A8; }
 
 .confidence-badge {
   display: inline-block;

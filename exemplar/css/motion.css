@@ -87,4 +87,20 @@
   .vault-opening {
     animation: rise-in 0.45s var(--ease-out-strong) both;
   }
+
+  /* AURA flickers once, uncertainly, for the first time. It happens a beat
+     after the scene settles, it happens once, and it is quiet. Protect it. */
+  .aura-flicker {
+    animation:
+      rise-in 0.45s var(--ease-out-strong) both,
+      aura-flicker 3.2s ease-in-out 1.4s 1;
+  }
+
+  @keyframes aura-flicker {
+    0%, 78%, 100% { opacity: 1; }
+    82% { opacity: 0.35; }
+    85% { opacity: 0.9; }
+    88% { opacity: 0.5; }
+    93% { opacity: 1; }
+  }
 }
