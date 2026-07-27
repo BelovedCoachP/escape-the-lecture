@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660" width="960" height="660" role="img" aria-label="Eight signage samples proposed by AURA, each labeled with its text and panel hex values.">
+  <!-- PUZZLE-CRITICAL ASSET. Hand-authored, never AI-generated.
+       The colors in this file ARE the puzzle data for the Color Chamber.
+       Every fill below must match the hex value printed in its caption,
+       because the player runs real WCAG contrast math against these pairs:
+       A  #F8FAFC on #9B4DEA = 4.32:1  (fails AA body text; the calculate answer)
+       B  #FFFFFF on #0080FF = 3.80:1  (fails)
+       C  #F8FAFC on #0F172A = 17.06:1 (passes)
+       D  #0F172A on #E563B5 = 5.77:1  (passes)
+       E  #00D8FF on #0F172A = 10.43:1 (passes)
+       F  #F8FAFC on #006BD6 = 4.93:1  (passes)
+       G  #9B4DEA on #0F172A = 3.95:1  (fails)
+       H  #94A3B8 on #F8FAFC = 2.45:1  (fails)
+       Do not "improve", regenerate, or re-tint these swatches. -->
+  <title>Eight signage samples proposed by AURA, each labeled with its text and panel hex values.</title>
+  <rect width="960" height="660" fill="#0F172A"/>
+
+  <g font-family="'League Spartan', 'Segoe UI', sans-serif">
+    <text x="40" y="52" font-size="24" font-weight="bold" fill="#F8FAFC">AURA's signage proposals, Wing 2</text>
+    <text x="40" y="80" font-size="15" fill="#94A3B8">As rendered. Measurement not included.</text>
+
+    <!-- Row 1 tiles -->
+    <g font-size="20" font-weight="bold" text-anchor="middle">
+      <rect x="40"  y="110" width="200" height="100" rx="8" fill="#9B4DEA" stroke="#334155" stroke-width="1.5"/>
+      <text x="140" y="168" fill="#F8FAFC">Wing Two</text>
+
+      <rect x="270" y="110" width="200" height="100" rx="8" fill="#0080FF" stroke="#334155" stroke-width="1.5"/>
+      <text x="370" y="168" fill="#FFFFFF">Wing Two</text>
+
+      <rect x="500" y="110" width="200" height="100" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1.5"/>
+      <text x="600" y="168" fill="#F8FAFC">Wing Two</text>
+
+      <rect x="730" y="110" width="200" height="100" rx="8" fill="#E563B5" stroke="#334155" stroke-width="1.5"/>
+      <text x="830" y="168" fill="#0F172A">Wing Two</text>
+    </g>
+    <!-- Row 1 captions -->
+    <g font-size="13" fill="#F8FAFC">
+      <text x="40"  y="238">A. Porcelain #F8FAFC</text>
+      <text x="40"  y="258" fill="#94A3B8">on Brand Purple #9B4DEA</text>
+      <text x="270" y="238">B. White #FFFFFF</text>
+      <text x="270" y="258" fill="#94A3B8">on Brand Blue #0080FF</text>
+      <text x="500" y="238">C. Porcelain #F8FAFC</text>
+      <text x="500" y="258" fill="#94A3B8">on Deep Space Navy #0F172A</text>
+      <text x="730" y="238">D. Navy #0F172A</text>
+      <text x="730" y="258" fill="#94A3B8">on Brand Pink #E563B5</text>
+    </g>
+
+    <!-- Row 2 tiles -->
+    <g font-size="20" font-weight="bold" text-anchor="middle">
+      <rect x="40"  y="330" width="200" height="100" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1.5"/>
+      <text x="140" y="388" fill="#00D8FF">Wing Two</text>
+
+      <rect x="270" y="330" width="200" height="100" rx="8" fill="#006BD6" stroke="#334155" stroke-width="1.5"/>
+      <text x="370" y="388" fill="#F8FAFC">Wing Two</text>
+
+      <rect x="500" y="330" width="200" height="100" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1.5"/>
+      <text x="600" y="388" fill="#9B4DEA">Wing Two</text>
+
+      <rect x="730" y="330" width="200" height="100" rx="8" fill="#F8FAFC" stroke="#334155" stroke-width="1.5"/>
+      <text x="830" y="388" fill="#94A3B8">Wing Two</text>
+    </g>
+    <!-- Row 2 captions -->
+    <g font-size="13" fill="#F8FAFC">
+      <text x="40"  y="458">E. Accent Cyan #00D8FF</text>
+      <text x="40"  y="478" fill="#94A3B8">on Deep Space Navy #0F172A</text>
+      <text x="270" y="458">F. Porcelain #F8FAFC</text>
+      <text x="270" y="478" fill="#94A3B8">on CTA Blue #006BD6</text>
+      <text x="500" y="458">G. Brand Purple #9B4DEA</text>
+      <text x="500" y="478" fill="#94A3B8">on Deep Space Navy #0F172A</text>
+      <text x="730" y="458">H. Slate Gray #94A3B8</text>
+      <text x="730" y="478" fill="#94A3B8">on Porcelain #F8FAFC</text>
+    </g>
+
+    <text x="40" y="560" font-size="14" fill="#94A3B8">Proposed for body text on all wing signage.</text>
+    <text x="40" y="584" font-size="14" fill="#94A3B8">Readability: 97.1 percent. Verified by AURA.</text>
+    <text x="40" y="622" font-size="13" fill="#64748B">Archive facilities memo 2038-114. Pairings shown at rendered fidelity.</text>
+  </g>
+</svg>

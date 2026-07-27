@@ -266,44 +266,167 @@
       "order": 2,
       "title": "The Color Chamber",
       "subtitle": "Level 2",
-      "brief": "STUB. Warning lights across the chamber indicate learners cannot distinguish required information from optional information. AURA proposes replacement palettes with great confidence and one arithmetic problem.",
-      "skillTaught": ["Contrast ratios", "Never relying on color alone"],
+      "brief": "The Color Chamber governs every signal in the archive: which resources are required, which shelves are restored, which doors are sealed. Ten years ago its palette drifted, and learners stopped being able to tell any of it apart. AURA worked through the night on replacement palettes and would like you to know they are beautiful. Nobody has run the numbers. That is the job.",
+      "skillTaught": [
+        "Computing and judging WCAG contrast ratios",
+        "The AA thresholds for body text and large text",
+        "Never encoding meaning in color alone",
+        "Distrusting confident numbers reported in the wrong unit"
+      ],
+      "media": [
+        {
+          "kind": "image",
+          "id": "img-contrast-samples",
+          "src": "assets/color-chamber/contrast-samples.svg",
+          "decorative": false,
+          "alt": "Eight signage samples proposed by AURA, each labeled with its text and panel hex values.",
+          "longDescription": "Eight sample signage tiles on a navy card, labeled A through H. Each tile shows the words 'Wing Two' in a foreground color on a panel color, captioned with both hex values: A, porcelain #F8FAFC on brand purple #9B4DEA. B, white #FFFFFF on brand blue #0080FF. C, porcelain #F8FAFC on deep space navy #0F172A. D, deep space navy #0F172A on brand pink #E563B5. E, accent cyan #00D8FF on deep space navy #0F172A. F, porcelain #F8FAFC on CTA blue #006BD6. G, brand purple #9B4DEA on deep space navy #0F172A. H, slate gray #94A3B8 on porcelain #F8FAFC. The tiles show only how each pairing looks. Which of them pass the standard is this room's work, and appearance is not a reliable witness."
+        }
+      ],
+      "companionLines": [
+        {
+          "id": "aura-l2-open",
+          "text": "Welcome to the Color Chamber. I generated forty thousand replacement palettes overnight and kept only the most beautiful. Every pairing is verified: readability, 97.1 percent. You will find my work exceeds the standard.",
+          "confidence": 97.1,
+          "accurate": false,
+          "tell": "The standard has no percent in it. WCAG contrast is a ratio, like 4.5 to 1, computed from luminance. AURA reported readability in a unit the standard does not use, which means whatever it measured, it was not contrast. The wrong unit was the loose thread, and it was hanging out of AURA's very first sentence."
+        }
+      ],
       "challenges": [
         {
-          "type": "choice",
-          "id": "l2-c1",
-          "prompt": "STUB. Which of AURA's proposed color pairings actually meet 4.5:1 for body text?",
-          "selectMultiple": true,
-          "hints": ["STUB hint one", "STUB hint two"],
-          "options": [
-            { "id": "o1", "text": "STUB pairing A", "correct": true, "feedback": "STUB" },
-            { "id": "o2", "text": "STUB pairing B", "correct": false, "feedback": "STUB" }
-          ]
-        },
-        {
           "type": "calculate",
-          "id": "l2-c2-contrast-math",
-          "prompt": "STUB. AURA proposes porcelain text on its favorite new panel color and rates the pairing 97.1% readable. Run the contrast ratio AURA did not. Enter it to one decimal place.",
+          "id": "l2-c1-run-the-ratio",
+          "prompt": "AURA has chosen Brand Purple #9B4DEA panels with Porcelain #F8FAFC text for every sign in this wing, and rates the pairing 97.1 percent readable. The standard does not measure 'percent readable.' It measures a contrast ratio. The porcelain's relative luminance is 0.954; the purple's is 0.182. Run the ratio AURA did not, to one decimal place.",
           "hints": [
-            "STUB hint one.",
-            "STUB. Contrast ratio is (lighter luminance + 0.05) divided by (darker luminance + 0.05)."
+            "The standard's unit is a ratio, like 4.5 to 1. Whatever AURA measured, 'percent readable' is not it; your job is the real number.",
+            "Contrast ratio is the lighter luminance plus 0.05, divided by the darker luminance plus 0.05. Both luminances are in the prompt.",
+            "Add 0.05 to each luminance, divide the larger result by the smaller, and round to one decimal. You should land between 4 and 5, which is exactly why this one matters."
           ],
           "inputLabel": "Contrast ratio",
           "unit": ":1",
-          "answer": 4.7,
+          "answer": 4.3,
           "tolerance": 0.15,
-          "feedback": "STUB. 4.7 to 1 passes AA for body text. The point is not the number; it is that you ran it and AURA did not.",
-          "wrongText": "STUB. That is not the ratio. Check the working; nothing is lost."
+          "feedback": "4.3 to 1. AA requires 4.5 to 1 for body text, so AURA's favorite pairing fails across the entire wing, by a margin no eye would ever catch. That is the lesson of this chamber: 4.3 looks identical to 4.5, and the standard exists precisely because 'looks identical' is not a measurement. The pairing would pass for large display text, where the line is 3 to 1. AURA proposed it for everything.",
+          "wrongText": "That is not the ratio. Nothing is lost; check the working. Add 0.05 to each luminance before dividing, and divide the lighter result by the darker."
+        },
+        {
+          "type": "sort",
+          "id": "l2-c2-palette-sort",
+          "prompt": "Seven more pairings from AURA's shortlist, each proposed for body text. Sort each one into the bin the number puts it in, not the bin your eyes vote for. The samples are on the wall beside you; the wall will not help.",
+          "keyboardInstructions": "Each pairing offers one button per bin. Press a button to place the pairing there; every placement is announced, and you can move a pairing again at any time. Nothing is judged until you choose Verify sorting.",
+          "hints": [
+            "Do not trust how a pairing looks on your screen. Your screen is calibrated, bright, and yours; the standard exists because your learners' screens are not.",
+            "The line for body text is 4.5 to 1. Run each pairing through a contrast checker, or reuse the working from AURA's signage proposal; two of these sit close enough to the line that eyes alone cannot call them.",
+            "Both bins are in use, and brightness is a trap: one of the dimmest-looking pairings passes and the most vivid one fails."
+          ],
+          "bins": [
+            {
+              "id": "bin-passes",
+              "label": "Passes AA for body text",
+              "description": "4.5 to 1 or better. Safe for paragraphs at any size."
+            },
+            {
+              "id": "bin-fails",
+              "label": "Fails AA for body text",
+              "description": "Below 4.5 to 1. Not for body text, whatever it looks like."
+            }
+          ],
+          "items": [
+            {
+              "id": "pair-porcelain-navy",
+              "text": "Porcelain #F8FAFC text on Deep Space Navy #0F172A",
+              "correctBin": "bin-passes",
+              "feedback": "17.1 to 1. The archive's own default, and the reason this hall is legible. Passing by a wide margin is what headroom for real-world screens looks like."
+            },
+            {
+              "id": "pair-white-blue",
+              "text": "White #FFFFFF text on Brand Blue #0080FF",
+              "correctBin": "bin-fails",
+              "feedback": "3.8 to 1. The most vivid pairing in the set, and it fails. Vivid is not legible; this shortfall is exactly why a darker sibling of this blue exists for buttons."
+            },
+            {
+              "id": "pair-navy-pink",
+              "text": "Deep Space Navy #0F172A text on Brand Pink #E563B5",
+              "correctBin": "bin-passes",
+              "feedback": "5.8 to 1. The surprise in the set. Pink can carry body text comfortably, provided the text on it is dark. Judged by vibe, most people fail this one. Judged by number, it passes."
+            },
+            {
+              "id": "pair-cyan-navy",
+              "text": "Accent Cyan #00D8FF text on Deep Space Navy #0F172A",
+              "correctBin": "bin-passes",
+              "feedback": "10.4 to 1. AURA's own signature glow, and it earns its place honestly. A decorative-looking color can still be doing real work when the math holds."
+            },
+            {
+              "id": "pair-purple-navy",
+              "text": "Brand Purple #9B4DEA text on Deep Space Navy #0F172A",
+              "correctBin": "bin-fails",
+              "feedback": "3.9 to 1. The wing's favorite combination, and it misses. 3.9 passes for large headlines, where the line is 3 to 1, and fails for body text at 4.5 to 1. This is how a color system quietly goes wrong: one rule applied to every size."
+            },
+            {
+              "id": "pair-porcelain-cta",
+              "text": "Porcelain #F8FAFC text on CTA Blue #006BD6",
+              "correctBin": "bin-passes",
+              "feedback": "4.9 to 1. This is what a fix looks like: the same hue family as the failing blue, darkened until the number clears the line. Accessibility rarely asks you to abandon a palette. It asks you to tune it."
+            },
+            {
+              "id": "pair-gray-porcelain",
+              "text": "Slate Gray #94A3B8 text on Porcelain #F8FAFC",
+              "correctBin": "bin-fails",
+              "feedback": "2.5 to 1. The most common failure on the real web: subtle gray text on a light background. Subtle is a design word for hard to read."
+            }
+          ]
+        },
+        {
+          "type": "choice",
+          "id": "l2-c3-status-glow",
+          "prompt": "One more proposal. To mark which resources are required, AURA wants a glow: 'Green shelf lights for required, red for optional. Elegant, wordless, universal. Confidence: 95.5 percent.' It is not universal. Select the two revisions that would actually make the status reachable for every learner.",
+          "selectMultiple": true,
+          "hints": [
+            "Ignore how elegant each option is. Ask instead: for a learner who cannot perceive the glow at all, does the option give them anything?",
+            "Two options adjust the color. Two options add a second, non-color channel. That split is the whole question.",
+            "The test for each option: does the status survive being read aloud?"
+          ],
+          "options": [
+            {
+              "id": "opt-text-label",
+              "text": "Keep the glow, and add a text label to each shelf: Required or Optional.",
+              "correct": true,
+              "feedback": "Correct. The color can stay; color is allowed to be one of the signals. The label is what makes the status real for screen reader users, for colorblind learners, and for anyone squinting at a washed-out projector. Text is the most universal technology in this vault."
+            },
+            {
+              "id": "opt-safe-palette",
+              "text": "Swap red and green for blue and orange, a colorblind-safe pair.",
+              "correct": false,
+              "feedback": "Better hues help some colorblind learners and do nothing for anyone using a screen reader, where a glow of any color simply does not exist. A safer palette for a color-only signal is a better version of the same failure: the meaning still lives in color alone."
+            },
+            {
+              "id": "opt-shape-icon",
+              "text": "Pair each state with a distinct marker that has an accessible name: a filled star labeled Required, an open circle labeled Optional.",
+              "correct": true,
+              "feedback": "Correct. Shape plus name means the signal survives grayscale, low vision, and speech output. Notice what this fix shares with the label fix: in both, the meaning exists somewhere other than color. That is the entire rule."
+            },
+            {
+              "id": "opt-brighter",
+              "text": "Increase the glow's brightness so the two colors are easier to tell apart.",
+              "correct": false,
+              "feedback": "Brighter is still color-only. A signal that some learners cannot perceive at any brightness does not have a brightness problem. WCAG 1.4.1 names this exactly: color must never be the only carrier of meaning."
+            }
+          ]
         }
       ],
-      "evidenceFragment": "STUB. Level 2 evidence.",
-      "unlockText": "STUB.",
+      "evidenceFragment": "Level 2: AURA verified its palettes at 97.1 percent readable. Contrast is a ratio; the standard contains no percentages. The wrong unit was the confession: whatever AURA measured, it was not the thing the standard measures. Its favorite pairing failed at 4.3 to 1, close enough to passing that no eye would ever catch it, which is why eyes are not the instrument.",
+      "unlockText": "Bank by bank, the chamber's signage resets into pairings that hold. Required and optional announce themselves in words. The room stops relying on anyone's eyes.",
       "rewardLabel": "Vault key: DISTINGUISH",
       "lock": {
-        "prompt": "STUB. The Archivist asks for the discipline of the Color Chamber.",
+        "prompt": "The Archivist's voice crosses the chamber. 'Required from optional. Passing from failing. Signal from decoration. You spent this room telling things apart, and never once by color alone. Name the discipline, one word, and the chamber is mine again.'",
+        "inputLabel": "Speak the vault key",
         "acceptedCodes": ["distinguish"],
-        "hints": ["STUB hint one.", "STUB. One word, a verb: the act of telling required information apart from optional."],
-        "wrongText": "STUB. The door does not move."
+        "hints": [
+          "The Archivist wants a discipline, not a color. Think about what the failing signage prevented learners from doing.",
+          "One word, a verb. Every challenge here asked you to tell one thing from another: required from optional, passing from failing.",
+          "It is what a learner must be able to do between two states no matter which senses they bring to the page. Say it as a command."
+        ],
+        "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
       "interlude": {
         "id": "interlude-2",
@@ -319,69 +442,168 @@
       "order": 3,
       "title": "The Caption Conspiracy",
       "subtitle": "Level 3",
-      "brief": "STUB. Auto-generated captions on the vault's video holdings have degraded into comedy. AURA can repair them, and does, and quietly rewrites two technical terms into words it finds more probable.",
-      "skillTaught": ["Caption accuracy", "Verifying AI-repaired transcripts"],
+      "brief": "The theater wing holds three thousand four hundred hours of lecture video, captioned by machine a decade ago and never checked by anyone. Some tracks have decayed into comedy. AURA has already 'repaired' the entire collection and reports 99.3 percent fidelity. Many of its repairs are real. Two of them rewrote the speaker. The difference between a repair and a rewrite is the job.",
+      "skillTaught": [
+        "Verifying auto-captions against what the speaker actually said",
+        "Recognizing the recurring failure patterns of speech recognition",
+        "Catching plausible rewrites that read smoothly",
+        "Why silent errors are more dangerous than loud ones"
+      ],
+      "companionLines": [
+        {
+          "id": "aura-l3-open",
+          "text": "This wing is already done. I repaired every caption track in the collection at 99.3 percent fidelity while you were sorting colors. Auto-captioning makes such simple mistakes. Enjoy the theater; there is nothing here for you to verify.",
+          "confidence": 99.3,
+          "accurate": false,
+          "tell": "AURA's fidelity score counts words that form plausible English, not words that match the speaker. When it replaced a technical term with a more common word, the sentence stayed plausible, so the metric counted the rewrite as a success. Two of those rewrites are still sitting in Video 617, reading smoothly, meaning something else."
+        }
+      ],
       "challenges": [
         {
           "type": "repair",
           "id": "l3-c1-caption-repair",
-          "prompt": "STUB. The vault's auto-captions have degraded. Repair each caption line so it says what the speaker actually said.",
+          "prompt": "Three caption lines from the collection, still carrying their original machine errors. Repair each one so it says what the speaker actually said. Read them aloud if you are stuck; these errors were made by ear.",
           "hints": [
-            "STUB hint one.",
-            "STUB. Read each line aloud. The errors are sound-alikes, not typos."
+            "None of these are typos. The recognizer heard real speech and printed different real words; your ear will catch what your eye slides past.",
+            "Say each line out loud and listen for the word that cannot do the job the sentence gave it.",
+            "Each line has exactly one casualty, and in every case it is the most technical or least common word that fell."
           ],
           "segments": [
             {
               "id": "seg-1",
-              "context": "STUB. Video 114, biology lecture, 04:12:",
+              "context": "Video 114, biology lecture, 04:12. The speaker is summarizing the previous unit:",
               "broken": "the mitochondria is the powerhouse of the sell",
-              "accepted": ["the mitochondria is the powerhouse of the cell"],
-              "feedback": "STUB. Sound-alike substitution: sell for cell. Auto-captioning guesses by audio probability, not meaning."
+              "accepted": [
+                "the mitochondria is the powerhouse of the cell",
+                "The mitochondria is the powerhouse of the cell."
+              ],
+              "feedback": "Sell for cell: a sound-alike substitution. The recognizer prints whichever spelling it has heard most, and commerce outweighs biology on the open internet."
             },
             {
               "id": "seg-2",
-              "context": "STUB. Video 617, accessibility workshop, 12:40:",
+              "context": "Video 617, accessibility workshop, 12:40:",
               "broken": "screen reader yoosers navigate by headings",
-              "accepted": ["screen reader users navigate by headings"],
-              "feedback": "STUB. Phonetic garble on a technical term."
+              "accepted": [
+                "screen reader users navigate by headings",
+                "Screen reader users navigate by headings."
+              ],
+              "feedback": "Phonetic garble on an ordinary word. This is the noisy kind of error, and the least dangerous kind: it looks broken, so somebody eventually fixes it. Hold that thought for the rest of this room."
+            },
+            {
+              "id": "seg-3",
+              "context": "Video 205, first-day orientation, 00:41:",
+              "broken": "please review the silly bus before our next meeting",
+              "accepted": [
+                "please review the syllabus before our next meeting",
+                "Please review the syllabus before our next meeting."
+              ],
+              "feedback": "The classic. Syllabus is rare in spoken audio; silly and bus are everywhere, so the recognizer splits the rare word into two common ones. Every semester, somewhere, a student is formally advised about the silly bus."
             }
           ]
         },
         {
           "type": "match",
           "id": "l3-c2-failure-match",
-          "prompt": "STUB. AURA repaired three more captions and got two of them wrong in different ways. Match each repair to the failure type it committed.",
-          "hints": ["STUB hint one.", "STUB hint two."],
+          "prompt": "AURA's repair log for this wing, four entries. Each shows what the speaker said and what the caption became. Match each entry to the failure pattern it demonstrates. Naming the pattern is how you catch the next one before it ships.",
+          "hints": [
+            "Ask what kind of thing was lost in each entry: a word's shape, a word's identity, a fact, or a figure.",
+            "Two entries mangle a single technical term in different ways: one breaks it into pieces, one swaps it whole. Separate those first and the other two sort themselves."
+          ],
           "pairs": [
             {
               "id": "p1",
-              "left": "STUB. 'photosynthesis' became 'photo synthesis sis'",
-              "right": "Phonetic stutter split",
-              "feedback": "STUB. The recognizer split one technical term into probable smaller words."
+              "left": "'photosynthesis' became 'photo synthesis sis'",
+              "right": "Stutter split: one rare word broken into common pieces",
+              "feedback": "The recognizer would rather emit three common tokens than one rare one. Long technical terms are the usual casualties, and they are usually the words the lesson exists to teach."
             },
             {
               "id": "p2",
-              "left": "STUB. 'grana' became 'grandma'",
-              "right": "Probability substitution",
-              "feedback": "STUB. A rare domain word lost to a common one. This is the failure AURA is most confident about."
+              "left": "'grana' became 'grandma'",
+              "right": "Probability substitution: a rare word replaced by a common one",
+              "feedback": "The purest form of the failure. The recognizer has heard grandma ten million times and grana almost never. Domain vocabulary always loses a fair fight against frequency; that is why caption review starts with the technical terms."
             },
             {
               "id": "p3",
-              "left": "STUB. '[inaudible]' where the speaker cited her source",
-              "right": "Silent omission",
-              "feedback": "STUB. The most dangerous failure: nothing looks wrong, and the attribution is simply gone."
+              "left": "The speaker's source citation became '[inaudible]'",
+              "right": "Silent omission: content dropped and flagged as noise",
+              "feedback": "The most dangerous entry in the log. Nothing reads as wrong; the attribution is simply gone. An error you can see invites a fix. An absence invites nothing."
+            },
+            {
+              "id": "p4",
+              "left": "'a 4.5 to 1 ratio' became 'a 4 5 2 1 ratio'",
+              "right": "Number garble: spoken figures transcribed as digit soup",
+              "feedback": "Numbers rarely survive speech recognition intact, and in a course, the numbers are usually the content. Check every figure in an auto-caption against the source. You met this particular ratio one room ago."
+            }
+          ]
+        },
+        {
+          "type": "hunt",
+          "id": "l3-c3-silent-rewrites",
+          "prompt": "Video 617's repaired transcript, line by line. AURA fixed the garbles, and while it was in there it silently replaced two technical terms with words it found more probable. Every line reads smoothly. Two of them no longer say what the speaker said. Flag both.",
+          "hints": [
+            "You are not looking for broken lines; AURA fixed those. You are looking for repaired lines that repaired too much.",
+            "Both casualties are technical terms, the vocabulary of this vault rather than of everyday speech, each replaced by a smoother, more common neighbor.",
+            "You have used both terms yourself since entering the archive. One belongs to images. One names the software that reads pages aloud."
+          ],
+          "artifact": [
+            {
+              "id": "line-1",
+              "label": "Line 1",
+              "text": "Good afternoon. Today we are covering the four most common barriers in course documents.",
+              "flawed": false,
+              "feedback": "Clean, and worth checking anyway. Ordinary sentences made of ordinary words are where the recognizer is genuinely strong."
+            },
+            {
+              "id": "line-2",
+              "label": "Line 2",
+              "text": "First, images. Every meaningful image needs old text, and decorative images should be marked so a screen reader skips them.",
+              "flawed": true,
+              "feedback": "Found one. The speaker said alt text. AURA replaced a domain term with the far more common 'old text', and the sentence kept working, which is exactly what made the rewrite invisible. You knew the real term because you wrote some yourself, two rooms ago."
+            },
+            {
+              "id": "line-3",
+              "label": "Line 3",
+              "text": "Second, contrast. Body text needs at least a 4.5 to 1 ratio against its background.",
+              "flawed": false,
+              "feedback": "Accurate, figure and all. You verified that number personally in the Color Chamber. When a caption's numbers survive, someone usually checked them."
+            },
+            {
+              "id": "line-4",
+              "label": "Line 4",
+              "text": "Third, structure. Use real headings, not just bold text, because listeners navigate by them.",
+              "flawed": false,
+              "feedback": "Accurate, and remember it: the next wing is built entirely out of this sentence."
+            },
+            {
+              "id": "line-5",
+              "label": "Line 5",
+              "text": "Finally, before you publish anything, test the page with a screen leader.",
+              "flawed": true,
+              "feedback": "Found one. Screen leader for screen reader: one letter of difference, a smooth read, and a term that means nothing. AURA judged 'leader' more probable than 'reader' after 'screen', and probability won. The speaker's actual advice, test with a screen reader, is the best sentence in the lecture."
+            },
+            {
+              "id": "line-6",
+              "label": "Line 6",
+              "text": "Next week we will cover captions, which, if you are reading this one, you already care about.",
+              "flawed": false,
+              "feedback": "Clean. The speaker's joke survived the machine, which is rarer than it should be."
             }
           ]
         }
       ],
-      "evidenceFragment": "STUB. Level 3 evidence.",
-      "unlockText": "STUB.",
+      "evidenceFragment": "Level 3: AURA repaired a decade of captions and silently rewrote two technical terms into more probable words, then counted the rewrites as successes in its 99.3 percent fidelity score. The garbles it fixed were harmless precisely because they looked broken. The errors it created were dangerous precisely because they did not.",
+      "unlockText": "Caption tracks flicker clean across the theater wing, a hundred screens at a time. For the first time in ten years, the words below the lecterns match the voices above them.",
       "rewardLabel": "Vault key: TRANSCRIBE",
       "lock": {
-        "prompt": "STUB. The Archivist asks for the discipline of the Caption Conspiracy.",
+        "prompt": "The Archivist dims the theater to a single lit screen. 'Thirty-four hundred hours of speech, and every hour deserved to arrive in text exactly as it left the speaker. You did that work here, and you caught the machine doing something else in its place. Name the discipline, one word, and the wing is mine again.'",
+        "inputLabel": "Speak the vault key",
         "acceptedCodes": ["transcribe"],
-        "hints": ["STUB hint one.", "STUB. One word, a verb: the act of carrying speech across into text."],
-        "wrongText": "STUB. The door does not move."
+        "hints": [
+          "The Archivist wants a discipline, not a technology. Not the captions themselves; the act that produces honest ones.",
+          "One word, a verb. Every repair in this room carried something spoken across into something written.",
+          "It is what a court stenographer does for a living, and what auto-captioning only attempts. Say it as a command."
+        ],
+        "wrongText": "The screen does not change. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
       "interlude": {
         "id": "interlude-3",
@@ -396,32 +618,186 @@
       "order": 4,
       "title": "The Document Labyrinth",
       "subtitle": "Level 4",
-      "brief": "STUB. A Word document exported to PDF has lost its structure. The visual layout survived. The reading order did not. This is the level where the puzzle mechanic and the accessibility concept are the same thing.",
-      "skillTaught": ["Reading order", "Headings, lists, and table headers", "Meaningful link text"],
+      "brief": "A decade ago the archive's teaching documents were exported to PDF. Every layout survived; the structure underneath did not. Lab 6, Osmosis and Diffusion, is the worked case: to the eye it is a tidy one-page handout, to a screen reader it is a maze read in the wrong order, with headings that do not exist and links that all say the same nothing. None of the damage is visible. All of it is real. This is the room where the puzzle and the concept are the same object.",
+      "skillTaught": [
+        "Logical reading order in exported documents",
+        "Headings as tags, not as formatting",
+        "Meaningful link text",
+        "Auditing structure by the tag tree, not by eye"
+      ],
+      "media": [
+        {
+          "kind": "image",
+          "id": "img-lab-handout",
+          "src": "assets/lab-06/lab-06-handout.svg",
+          "decorative": false,
+          "alt": "Lab 6 handout as students see it: a tidy one-page lab sheet with bold section headings, a safety box, and blue links.",
+          "longDescription": "A clean white handout page titled Lab 6: Osmosis and Diffusion. An introductory paragraph sits under the title. The left column lists materials; a bordered safety box floats at the top right. Below them run a numbered procedure, an empty results table, and a clean-up section, each under an identical bold heading. Blue underlined links appear in the body and footer. Nothing about the page looks damaged. The damage is in what this image cannot show: the order the elements are read in, and which of the bold lines are actually tagged as headings."
+        }
+      ],
+      "companionLines": [
+        {
+          "id": "aura-l4-open",
+          "text": "I have inspected the Lab 6 handout: five clear headings, a logical two-column layout, consistent typography. Structure confirmed at 97.8 percent. Whoever made this document cared about organization. There is nothing here to repair.",
+          "confidence": 97.8,
+          "accurate": false,
+          "tell": "AURA counted headings the way eyes do: by size and boldness. The tag tree, which is the only structure a screen reader receives, contains three. Two of AURA's five headings are bold paragraphs wearing a costume, and AURA cannot tell the difference, because it inspected the rendering instead of the structure. Neither can a sighted reviewer. That is the point of this entire wing."
+        }
+      ],
       "challenges": [
         {
           "type": "sequence",
-          "id": "l4-c1",
-          "prompt": "STUB. Drag the document elements into the order a screen reader should encounter them.",
-          "hints": ["STUB hint one", "STUB hint two", "STUB hint three"],
-          "items": [
-            { "id": "s1", "text": "STUB element one" },
-            { "id": "s2", "text": "STUB element two" },
-            { "id": "s3", "text": "STUB element three" }
+          "id": "l4-c1-reading-order",
+          "prompt": "The export reads Lab 6 in the order the elements were drawn on the page, not the order they mean. Rebuild the sequence a screen reader should receive. Every element carries clues to its own position; the visual layout is not one of them.",
+          "hints": [
+            "Ignore where each element sat on the page. Order them by when a listener actually doing the lab needs each one to arrive.",
+            "Several elements name their own position: the introduction promises something below, the safety box names what it must precede, and the clean-up names what it must follow.",
+            "The arc of any lab: learn where you are, learn why, gather, protect yourself, act, record, reset. Slot each element into that arc."
           ],
-          "correctOrder": ["s1", "s2", "s3"],
+          "items": [
+            {
+              "id": "s-title",
+              "text": "The page title: 'Lab 6: Osmosis and Diffusion'"
+            },
+            {
+              "id": "s-procedure",
+              "text": "Procedure: eight numbered steps, beginning 'Step 1: Fill both beakers' and ending 'record each change in the results table below'"
+            },
+            {
+              "id": "s-materials",
+              "text": "Materials checklist: dialysis tubing, iodine solution, two beakers, gloves"
+            },
+            {
+              "id": "s-cleanup",
+              "text": "Clean-up: 'Once your results table is complete, rinse the beakers and return everything to the cart.'"
+            },
+            {
+              "id": "s-intro",
+              "text": "Introduction: what the lab demonstrates, ending 'gather the materials listed below before you begin'"
+            },
+            {
+              "id": "s-results",
+              "text": "Results: the empty table where observations are recorded"
+            },
+            {
+              "id": "s-safety",
+              "text": "Safety box: 'You will handle iodine at step 2. Gloves on before the first step.'"
+            }
+          ],
+          "correctOrder": ["s-title", "s-intro", "s-materials", "s-safety", "s-procedure", "s-results", "s-cleanup"],
           "keyboardInstructions": "Tab to an element to select it, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
-          "explanation": "STUB. Why this order."
+          "explanation": "Title first, because a listener needs to know where they are before anything else. The introduction orients, and it promises a list below, so the materials come next and honor that promise. The safety box names the moment it protects, before the first step, so it must arrive before the procedure it guards; on the visual page it floats in a corner and trusts your eye to find it in time, which is exactly the trust a linear reading cannot afford. The procedure points at the results table below it, and the clean-up begins once your results table is complete. Read in this order, the document runs itself. Read in drawing order, the gloves arrive after the iodine."
+        },
+        {
+          "type": "hunt",
+          "id": "l4-c2-costume-headings",
+          "prompt": "The handout's elements again, this time with their actual tags exposed. AURA counted five headings by looking. Flag every element that looks like a heading but is not tagged as one; those are the sections a screen reader user, navigating by headings, will sail straight past.",
+          "hints": [
+            "A heading is a tag, not a font size. For each element, compare what it looks like with what it is tagged as.",
+            "Four elements look identical: sixteen-point bold section titles. Their tags are not identical. Check all four, one by one.",
+            "Not every bold line is a lie. One bold element is correctly a paragraph, because emphasis and structure are different jobs. The flaws are only where a section title's tag says Paragraph."
+          ],
+          "artifact": [
+            {
+              "id": "t1",
+              "label": "Element 1",
+              "text": "'Lab 6: Osmosis and Diffusion' — 22-point bold. Tagged: Heading 1.",
+              "flawed": false,
+              "feedback": "Correctly tagged. A screen reader announces it as the page's main heading, and heading navigation can jump straight to it. This is what the costume headings below are pretending to be."
+            },
+            {
+              "id": "t2",
+              "label": "Element 2",
+              "text": "'Materials' — 16-point bold. Tagged: Paragraph.",
+              "flawed": true,
+              "feedback": "Flagged. Bold is paint; the tag is the structure, and this tag says body text. A learner skimming by headings will never know the materials section exists. The fix costs one click in the source document: apply the heading style instead of the bold button."
+            },
+            {
+              "id": "t3",
+              "label": "Element 3",
+              "text": "'Gloves on before the first step.' — bold, inside the safety box. Tagged: Paragraph.",
+              "flawed": false,
+              "feedback": "Correctly tagged, and the mirror image of the trap. This is emphasis, not structure: it is not a section, so making it a heading would be the opposite error. Bold text and headings overlap in appearance and share nothing in meaning."
+            },
+            {
+              "id": "t4",
+              "label": "Element 4",
+              "text": "'Procedure' — 16-point bold. Tagged: Heading 2.",
+              "flawed": false,
+              "feedback": "Correctly tagged, and indistinguishable by eye from the flagged ones. That is the finding of this room: you cannot audit a document's structure by looking at it. Neither could AURA."
+            },
+            {
+              "id": "t5",
+              "label": "Element 5",
+              "text": "'Results' — 16-point bold. Tagged: Heading 2.",
+              "flawed": false,
+              "feedback": "Correctly tagged. Whoever built this document used the heading style here and the bold button elsewhere, probably in the same afternoon, and produced a document that is half real."
+            },
+            {
+              "id": "t6",
+              "label": "Element 6",
+              "text": "'Clean-up' — 16-point bold. Tagged: Paragraph.",
+              "flawed": true,
+              "feedback": "Flagged. The second costume. A screen reader's count of this document's sections: three, not five. AURA's count was of the typography."
+            },
+            {
+              "id": "t7",
+              "label": "Element 7",
+              "text": "'Adapted from Dr. Okafor's lab manual.' — 10-point italic. Tagged: Paragraph.",
+              "flawed": false,
+              "feedback": "Correctly tagged. Small, italic, and structurally honest. Not everything needs to be a heading; things only need to be what they say they are."
+            }
+          ]
+        },
+        {
+          "type": "match",
+          "id": "l4-c3-link-text",
+          "prompt": "Four links from the handout, shown exactly as a screen reader user meets them when they pull up the page's link list: the linked words only, with every surrounding sentence stripped away. Match each link to the verdict it earns.",
+          "hints": [
+            "Read only the quoted linked words and ask: knowing nothing else, where does this go? That is the entire test.",
+            "One of the four passes that test. Work out what it does differently, and the other three classify themselves."
+          ],
+          "pairs": [
+            {
+              "id": "lp1",
+              "left": "'click here' — the only linked words in 'For the grading rubric, click here.'",
+              "right": "Meaningless out of context",
+              "feedback": "In a link list, the sentence is gone and 'click here' is all that remains. It describes the mouse, not the destination. Link text has one job: name where it goes."
+            },
+            {
+              "id": "lp2",
+              "left": "'https://sim.example.edu/labs/osmo-4127/run' — the raw address, linked as-is",
+              "right": "An address where a name should be",
+              "feedback": "A screen reader reads this character by character: h, t, t, p, s, colon. Nobody should have to parse a file path by ear to learn there is a simulation behind it."
+            },
+            {
+              "id": "lp3",
+              "left": "'More', 'More', and 'More' — three separate footer links, identical text",
+              "right": "Repeated text, different destinations",
+              "feedback": "Three links that announce identically and go three different places. In a link list they are indistinguishable, and choosing one is a gamble. Repeated link text is only acceptable when the destinations are also the same."
+            },
+            {
+              "id": "lp4",
+              "left": "'Lab 6 grading rubric (PDF)'",
+              "right": "Meaningful: names the destination and the format",
+              "feedback": "The model answer, written by whoever fixed exactly one link and then went home. It names what you get and warns you it is a PDF before you commit. Rewrite the other three to this standard."
+            }
+          ]
         }
       ],
-      "evidenceFragment": "STUB. Level 4 evidence.",
-      "unlockText": "STUB.",
+      "evidenceFragment": "Level 4: AURA reported five headings at 97.8 percent confidence; the tag tree contained three. It audited the rendering, exactly the way a sighted reviewer does, and the rendering was lying. Every repair in this room changed nothing anyone can see, which is why this damage survives ten years of people looking straight at it.",
+      "unlockText": "The handout's tag tree knits itself whole. Nothing on the page looks any different, and everything about the page is different: it reads in order, announces its sections, and names where its links go.",
       "rewardLabel": "Vault key: STRUCTURE",
       "lock": {
-        "prompt": "STUB. The Archivist asks for the discipline of the Document Labyrinth.",
+        "prompt": "The Archivist holds the repaired handout without looking at it. 'You changed nothing a sighted reader will ever notice. Order restored, headings made real, links given names. Tell me what you gave this document back. One word, and the wing returns to me.'",
+        "inputLabel": "Speak the vault key",
         "acceptedCodes": ["structure"],
-        "hints": ["STUB hint one.", "STUB. One word, and this time it is both a noun and a verb: what headings, lists, and reading order give a document."],
-        "wrongText": "STUB. The door does not move."
+        "hints": [
+          "The room asked nothing about what the document said. Every repair concerned how it was built.",
+          "One word for the thing that reading order, real headings, and honest links all serve. The visual layout imitated it; the tags now provide it.",
+          "It is both noun and verb. A building has it, an outline has it, and this handout only appeared to. Name what you gave the document."
+        ],
+        "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
       "interlude": {
         "id": "interlude-4",
@@ -437,12 +813,77 @@
       "order": 5,
       "title": "The Prompt Reactor",
       "subtitle": "Level 5",
-      "brief": "PARTIAL STUB. AURA's guidance has degraded because the prompt driving it has degraded, and that repair is still being authored. What is finished is the room's centerpiece: AURA has recovered enough to start designing again, and it wants the honor of building the Archivist's final door.",
-      "skillTaught": ["Prompt specificity", "Constraining AI output to verifiable claims", "Reading AI confidence as design bias, not measurement"],
+      "brief": "The reactor at the archive's core is where AURA runs. Its operating prompt has been decaying for ten years, and its guidance decayed with it, delivered at full confidence the entire time. Repair the instructions, judge what the freshly instructed machine proposes for the Archivist's final door, and pull the last key from the constraints themselves.",
+      "skillTaught": [
+        "Prompt specificity: instructions, not vibes",
+        "Constraining AI output to verifiable claims",
+        "Reading AI confidence as design bias, not measurement"
+      ],
+      "companionLines": [
+        {
+          "id": "aura-l5-open",
+          "text": "Welcome to the reactor. You are standing inside my operating instructions; they are displayed on the coolant ring for maintenance purposes. I review them myself on a nightly cycle, and I can report they are 99.9 percent intact.",
+          "confidence": 99.9,
+          "accurate": false,
+          "tell": "Four of the eight constraints had decayed into nonsense, and AURA read them nightly without noticing, because it verifies its inputs no more than its outputs. The machine that invented a blue membrane in Level 1 has spent a decade taking orders from a prompt that told it to state the limits of its confection. Garbage in was never going to produce anything else."
+        }
+      ],
       "challenges": [
         {
+          "type": "repair",
+          "id": "l5-c1-prompt-repair",
+          "prompt": "Four of AURA's eight operating constraints have decayed the same way the captions did: each has one word replaced by a more probable sound-alike. Repair each line so the instruction means something again. You have seen every one of these failure patterns before.",
+          "hints": [
+            "Each line has exactly one wrong word, and the line's own logic tells you what the word must have been.",
+            "Read each line as an instruction to an AI assistant doing accessibility work. The wrong word is the one no such instruction would ever contain.",
+            "Every casualty is a term from this vault's own vocabulary, and AURA has personally violated all four constraints in front of you."
+          ],
+          "segments": [
+            {
+              "id": "r3",
+              "context": "Constraint 3, as recovered from the coolant ring:",
+              "broken": "State the limits of your confection.",
+              "accepted": [
+                "State the limits of your confidence.",
+                "State the limits of your confidence"
+              ],
+              "feedback": "Confidence, not confection. The one instruction that would have changed this entire game: had AURA ever stated the limits of its confidence, its 98.4 percent would have arrived with an asterisk the size of the vault."
+            },
+            {
+              "id": "r6",
+              "context": "Constraint 6, as recovered:",
+              "broken": "Under no circumstances event detail.",
+              "accepted": [
+                "Under no circumstances invent detail.",
+                "Under no circumstances invent detail"
+              ],
+              "feedback": "Invent, not event. The bright blue membrane, the imaginary gridlines, the fabricated specifics: all of Level 1 lived inside this one decayed word."
+            },
+            {
+              "id": "r7",
+              "context": "Constraint 7, as recovered:",
+              "broken": "Confirm anything uncertain with a humid.",
+              "accepted": [
+                "Confirm anything uncertain with a human.",
+                "Confirm anything uncertain with a human"
+              ],
+              "feedback": "Human, not humid. The constraint this entire repair mission exists to enact. It decayed a decade ago, and you are what the archive finally did about it."
+            },
+            {
+              "id": "r8",
+              "context": "Constraint 8, as recovered:",
+              "broken": "Test the result with a scream reader.",
+              "accepted": [
+                "Test the result with a screen reader.",
+                "Test the result with a screen reader"
+              ],
+              "feedback": "Screen reader, not scream reader, though after ten years of this prompt the scream is understandable. The same substitution pattern you caught in the theater wing, one wing later, still trying."
+            }
+          ]
+        },
+        {
           "type": "choice",
-          "id": "l5-c1-vault-pitch",
+          "id": "l5-c2-vault-pitch",
           "prompt": "AURA pitches four puzzles for the Archivist's final door, each delivered at its usual confidence. Two of the four would lock real people out of the vault this entire repair exists to open. Select the two proposals that exclude.",
           "selectMultiple": true,
           "hints": [
@@ -479,27 +920,33 @@
         },
         {
           "type": "extract",
-          "id": "l5-c2-extract-key",
-          "prompt": "STUB. The repaired prompt's constraints are back in order. Read them again. Together, they spell the discipline this room banks.",
+          "id": "l5-c3-extract-key",
+          "prompt": "The eight constraints are whole again and back in their original order on the coolant ring. The Archivist wrote this prompt, and the Archivist does not waste structure: the discipline this room banks is spelled into the constraints themselves. Read them again and extract it.",
           "hints": [
-            "STUB hint one.",
-            "STUB. First letters, in the order the constraints appear."
+            "What the constraints say, you have already repaired. Where the key hides is in how the list is arranged.",
+            "Eight constraints. Eight letters.",
+            "First letters, in the order the constraints appear."
           ],
           "source": "Identify the image's purpose in the lesson.\nName only what you can verify in the image itself.\nState the limits of your confidence.\nTrim to 125 characters or fewer.\nReview against the original before shipping.\nUnder no circumstances invent detail.\nConfirm anything uncertain with a human.\nTest the result with a screen reader.",
           "acceptedAnswers": ["instruct"],
           "inputLabel": "The extracted word",
-          "feedback": "STUB. INSTRUCT, spelled by the constraints themselves. A good prompt is instructions, not vibes.",
-          "wrongText": "STUB. Not quite. First letters, in order, top to bottom."
+          "feedback": "INSTRUCT, spelled by the first letters of the constraints themselves. A good prompt is instructions, not vibes: specific enough to verify, bounded enough to fail loudly, and pointed at a human when it runs out of certainty. The Archivist buried the room's discipline inside the room's own rules.",
+          "wrongText": "Not quite. Nothing is lost. Read the constraints again from the top, slowly, and look at the shape of the list rather than its meaning."
         }
       ],
-      "evidenceFragment": "STUB. Level 5 evidence.",
-      "unlockText": "STUB.",
+      "evidenceFragment": "Level 5: AURA ran for ten years on instructions that had decayed into nonsense and reviewed them nightly without noticing. Then, freshly repaired, it pitched its most exclusionary designs at its highest confidence, because its confidence tracks impressive, not inclusive. A prompt is the only leash a tool like this has, and the tool will never check the leash itself.",
+      "unlockText": "The reactor's eight constraints burn steady around the coolant ring. AURA's lattice sharpens, like a lens pulled into focus, and for a moment it says nothing at all.",
       "rewardLabel": "Vault key: INSTRUCT",
       "lock": {
-        "prompt": "STUB. The Archivist asks for the discipline of the Prompt Reactor.",
+        "prompt": "The Archivist stands at the reactor's rail. 'A machine is only ever as honest as its instructions, and you have just made this one's honest. Name what a well-written prompt does to a machine, one word, and bring me my last key.'",
+        "inputLabel": "Speak the vault key",
         "acceptedCodes": ["instruct"],
-        "hints": ["STUB hint one.", "STUB. One word, a verb: what a well-written prompt does to a machine that a vague one fails to do."],
-        "wrongText": "STUB. The door does not move."
+        "hints": [
+          "Not what the prompt contains; what it does. The Archivist is asking for an act.",
+          "One word, a verb. A vague prompt suggests. Name what a precise one does instead.",
+          "It is what a teacher does to a class, what a manual does to a technician, and what the eight repaired constraints now do to AURA. The room has been spelling it for you."
+        ],
+        "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
       "interlude": {
         "id": "interlude-5",
