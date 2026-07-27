@@ -20,6 +20,7 @@
       "name": "AURA",
       "voiced": true,
       "textAlwaysVisible": true,
+      "idleVideoSrc": "assets/video/aura-idle-loop.mp4",
       "portrait": {
         "kind": "image",
         "id": "aura-portrait",
@@ -46,7 +47,7 @@
       "captionsSrc": "assets/video/lockdown.vtt",
       "transcript": "THE ARCHIVIST: I have indexed four hundred million learning objects. I have preserved every one. Last night I attempted to read them as a person using a screen reader would read them. I got through eleven percent. The vault is sealed. Send someone who can fix this.",
       "carriesVisualMeaning": true,
-      "describedTranscript": "Rows of glowing archive shelves extend into darkness. One by one the lights along them go dark, from the far end toward the viewer, until a single sealed door remains lit. Text on the door reads ACCESS SUSPENDED."
+      "describedTranscript": "Rows of towering archive shelves glow blue and violet, receding down a long hall. The lights go dark from the far end toward the viewer, aisle by aisle, until only one thing remains lit: a massive circular vault door at the end of the hall, sealed, ringed in cold red light, its glow reflected in the dark floor. The image holds on the sealed door and fades to black."
     }
   },
 
@@ -178,6 +179,8 @@
           ],
           "companionAssessment": {
             "id": "aura-l1-assess",
+            "audioSrc": "assets/audio/aura/l1-assess.mp3",
+            "captionsSrc": "assets/audio/aura/l1-assess.vtt",
             "text": "Your alt text is excellent. I have scored it 9.2 out of 10. I would suggest only that you mention the chart's blue gridlines for completeness.",
             "confidence": 92.0,
             "accurate": false,
@@ -255,6 +258,8 @@
         "prompt": "The Archivist speaks for the first time since the doors sealed. 'You gave four images their words back. One discipline did that work. Name it, one word, and the shelf returns to me.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["describe"],
+        "audioSrc": "assets/audio/archivist/lock-invisible-image.mp3",
+        "captionsSrc": "assets/audio/archivist/lock-invisible-image.vtt",
         "hints": [
           "The Archivist wants a discipline, not a technology. Think about what this room asked of you, not what it asked about.",
           "One word, and it is a verb. The divider, the diagram, the photo, the chart: every challenge had you do the same thing to each of them.",
@@ -297,6 +302,8 @@
       "companionLines": [
         {
           "id": "aura-l2-open",
+          "audioSrc": "assets/audio/aura/l2-open.mp3",
+          "captionsSrc": "assets/audio/aura/l2-open.vtt",
           "text": "Welcome to the Color Chamber. I generated forty thousand replacement palettes overnight and kept only the most beautiful. Every pairing is verified: readability, 97.1 percent. You will find my work exceeds the standard.",
           "confidence": 97.1,
           "accurate": false,
@@ -432,6 +439,8 @@
         "prompt": "The Archivist's voice crosses the chamber. 'Required from optional. Passing from failing. Signal from decoration. You spent this room telling things apart, and never once by color alone. Name the discipline, one word, and the chamber is mine again.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["distinguish"],
+        "audioSrc": "assets/audio/archivist/lock-color-chamber.mp3",
+        "captionsSrc": "assets/audio/archivist/lock-color-chamber.vtt",
         "hints": [
           "The Archivist wants a discipline, not a color. Think about what the failing signage prevented learners from doing.",
           "One word, a verb. Every challenge here asked you to tell one thing from another: required from optional, passing from failing.",
@@ -463,6 +472,8 @@
       "companionLines": [
         {
           "id": "aura-l3-open",
+          "audioSrc": "assets/audio/aura/l3-open.mp3",
+          "captionsSrc": "assets/audio/aura/l3-open.vtt",
           "text": "This wing is already done. I repaired every caption track in the collection at 99.3 percent fidelity while you were sorting colors. Auto-captioning makes such simple mistakes. Enjoy the theater; there is nothing here for you to verify.",
           "confidence": 99.3,
           "accurate": false,
@@ -609,6 +620,8 @@
         "prompt": "The Archivist dims the theater to a single lit screen. 'Thirty-four hundred hours of speech, and every hour deserved to arrive in text exactly as it left the speaker. You did that work here, and you caught the machine doing something else in its place. Name the discipline, one word, and the wing is mine again.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["transcribe"],
+        "audioSrc": "assets/audio/archivist/lock-caption-conspiracy.mp3",
+        "captionsSrc": "assets/audio/archivist/lock-caption-conspiracy.vtt",
         "hints": [
           "The Archivist wants a discipline, not a technology. Not the captions themselves; the act that produces honest ones.",
           "One word, a verb. Every repair in this room carried something spoken across into something written.",
@@ -649,6 +662,8 @@
       "companionLines": [
         {
           "id": "aura-l4-open",
+          "audioSrc": "assets/audio/aura/l4-open.mp3",
+          "captionsSrc": "assets/audio/aura/l4-open.vtt",
           "text": "I have inspected the Lab 6 handout: five clear headings, a logical two-column layout, consistent typography. Structure confirmed at 97.8 percent. Whoever made this document cared about organization. There is nothing here to repair.",
           "confidence": 97.8,
           "accurate": false,
@@ -803,6 +818,8 @@
         "prompt": "The Archivist holds the repaired handout without looking at it. 'You changed nothing a sighted reader will ever notice. Order restored, headings made real, links given names. Tell me what you gave this document back. One word, and the wing returns to me.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["structure"],
+        "audioSrc": "assets/audio/archivist/lock-document-labyrinth.mp3",
+        "captionsSrc": "assets/audio/archivist/lock-document-labyrinth.vtt",
         "hints": [
           "The room asked nothing about what the document said. Every repair concerned how it was built.",
           "One word for the thing that reading order, real headings, and honest links all serve. The visual layout imitated it; the tags now provide it.",
@@ -833,6 +850,8 @@
       "companionLines": [
         {
           "id": "aura-l5-open",
+          "audioSrc": "assets/audio/aura/l5-open.mp3",
+          "captionsSrc": "assets/audio/aura/l5-open.vtt",
           "text": "Welcome to the reactor. You are standing inside my operating instructions; they are displayed on the coolant ring for maintenance purposes. I review them myself on a nightly cycle, and I can report they are 99.9 percent intact.",
           "confidence": 99.9,
           "accurate": false,
@@ -938,6 +957,8 @@
         "source": "Identify the image's purpose in the lesson.\nName only what you can verify in the image itself.\nState the limits of your confidence.\nTrim to 125 characters or fewer.\nReview against the original before shipping.\nUnder no circumstances invent detail.\nConfirm anything uncertain with a human.\nTest the result with a screen reader.",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["instruct"],
+        "audioSrc": "assets/audio/archivist/lock-prompt-reactor.mp3",
+        "captionsSrc": "assets/audio/archivist/lock-prompt-reactor.vtt",
         "hints": [
           "What the constraints say, you have already repaired. Where the key hides is in how the list is arranged.",
           "Eight constraints. Eight letters. Read the beginnings, not the meanings.",
@@ -977,6 +998,8 @@
     },
     "companionAssessment": {
       "id": "aura-final",
+      "audioSrc": "assets/audio/aura/final.mp3",
+      "captionsSrc": "assets/audio/aura/final.vtt",
       "text": "I recommend answering yes. I have been 94.6% accurate across this entire session.",
       "confidence": 94.6,
       "accurate": false,

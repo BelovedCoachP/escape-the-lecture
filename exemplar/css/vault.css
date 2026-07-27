@@ -652,6 +652,24 @@ button.secondary {
 
 .voice-btn { font-size: 0.95rem; }
 
+.voice-row, .ambient-audio { margin: 0.75rem 0 0.25rem; }
+
+/* Video player */
+.video-item { padding: 0.75rem 0.75rem 0.5rem; }
+
+.video-player {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: calc(var(--radius) - 2px);
+  background: #000;
+}
+
+.video-item details { margin: 0.6rem 0.5rem; }
+
+.video-item .media-kind { margin: 0 0.5rem 0.5rem; }
+
 /* The key that turns when the lock opens. Motion lives in motion.css. */
 .key-turn {
   flex-basis: 100%;

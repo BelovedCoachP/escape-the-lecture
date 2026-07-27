@@ -6,6 +6,7 @@
 // the player resolves the challenge, never before.
 
 import { el } from "./dom.js";
+import { voiceControl } from "./voice.js";
 
 export function renderResponse(challenge, done, api) {
   const wrap = el("div", { className: "response-body" });
@@ -86,6 +87,9 @@ function renderAssessmentCard(assessment, companionName) {
     );
   }
   card.append(speaker, el("p", { textContent: assessment.text }));
+  if (assessment.audioSrc) {
+    card.append(voiceControl(assessment.audioSrc, companionName).node);
+  }
   return card;
 }
 

@@ -185,6 +185,10 @@
       "properties": {
         "name": { "type": "string" },
         "portrait": { "$ref": "#/$defs/image" },
+        "idleVideoSrc": {
+          "type": "string",
+          "description": "v1.1. Optional silent looping video that replaces the static portrait as the companion's living presence. Ambient motion, so the renderer only uses it when the player has not asked for reduced motion; the portrait image and its alt text remain the accessible representation."
+        },
         "voiced": { "type": "boolean", "default": false },
         "textAlwaysVisible": {
           "const": true,

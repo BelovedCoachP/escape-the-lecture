@@ -16,6 +16,7 @@ import {
 import { announce, moveFocusTo, prefersReducedMotion } from "../a11y.js";
 import { el } from "./dom.js";
 import { renderContrastChecker } from "./tool.contrast.js";
+import { voiceControl } from "./voice.js";
 import { renderChoice } from "./challenge.choice.js";
 import { renderSort } from "./challenge.sort.js";
 import { renderHunt } from "./challenge.hunt.js";
@@ -80,7 +81,21 @@ export function mountShell(rootEl, content) {
       el("h2", { className: "panel-label", textContent: "Companion" }),
       el("p", { className: "companion-name", textContent: companion.name }),
     );
-    if (companion.portrait) {
+    if (companion.idleVideoSrc && !prefersReducedMotion()) {
+      // The living presence: silent, looping, decorative motion. The
+      // portrait's alt text stays as the accessible name; reduced motion
+      // gets the still image below instead.
+      const idle = el("video", {
+        className: "companion-portrait",
+        muted: true,
+        loop: true,
+        autoplay: true,
+        attrs: { playsinline: "", "aria-label": companion.portrait?.alt ?? companion.name, role: "img" },
+      });
+      idle.append(el("source", { src: companion.idleVideoSrc }));
+      if (companion.portrait) idle.poster = companion.portrait.src;
+      panel.append(idle);
+    } else if (companion.portrait) {
       panel.append(
         el("img", {
           className: "companion-portrait",
@@ -148,7 +163,7 @@ export function renderIntro(ctx) {
   view.append(success);
 
   if (n.openingMedia) {
-    view.append(renderVideoAsText(n.openingMedia, "Opening transmission"));
+    view.append(renderVideo(n.openingMedia, "Opening transmission"));
   }
 
   if (content.meta.objective) {
@@ -225,6 +240,10 @@ export function renderLevel(level, ctx) {
     level.skillTaught.forEach((s) => list.append(el("li", { textContent: s })));
     skills.append(list);
     view.append(skills);
+  }
+
+  if (level.ambientAudio) {
+    view.append(renderAmbientAudio(level.ambientAudio));
   }
 
   const mediaItems = (level.media ?? [])
@@ -322,6 +341,9 @@ function renderCompanionLine(line, ctx) {
     );
   }
   card.append(speaker, el("p", { textContent: line.text }));
+  if (line.audioSrc) {
+    card.append(voiceControl(line.audioSrc, ctx.content.narrative.companion?.name ?? "the companion").node);
+  }
   return card;
 }
 
@@ -495,32 +517,12 @@ function renderLockCard(level, ctx, viewEl) {
   }
 
   if (lock.audioSrc) {
-    const audio = new Audio(lock.audioSrc);
-    audio.preload = "auto";
-    const voiceBtn = el("button", {
-      className: "secondary voice-btn",
-      textContent: "▶ Hear the Archivist",
-    });
-    voiceBtn.addEventListener("click", () => {
-      if (audio.paused) {
-        audio.play().catch(() => {});
-        voiceBtn.textContent = "■ Stop";
-      } else {
-        audio.pause();
-        audio.currentTime = 0;
-        voiceBtn.textContent = "▶ Hear the Archivist";
-      }
-    });
-    audio.addEventListener("ended", () => {
-      voiceBtn.textContent = "▶ Hear the Archivist";
-    });
-    workCol.append(el("p", {}, voiceBtn));
+    const voice = voiceControl(lock.audioSrc, archivist?.name ?? "the Archivist");
+    workCol.append(voice.node);
     // The lock only ever appears as the direct result of the player's last
     // solve, so speaking the line now is that gesture completing, not
     // autoplay; the full text is on screen above and Stop is one press away.
-    audio.play().then(() => {
-      voiceBtn.textContent = "■ Stop";
-    }).catch(() => {});
+    voice.play();
   }
 
   const inputId = `lock-${level.id}`;
@@ -947,7 +949,7 @@ function renderFinaleReveal(finale, ctx, chosenLabel) {
     el("p", { textContent: finale.closingText }),
   );
   if (finale.closingMedia) {
-    closing.append(renderVideoAsText(finale.closingMedia, "Closing transmission"));
+    closing.append(renderVideo(finale.closingMedia, "Closing transmission"));
   }
   const again = el("button", { textContent: "Play again" });
   again.addEventListener("click", () => ctx.actions.playAgain());
@@ -1099,7 +1101,7 @@ function renderMediaAsText(media) {
     return item;
   }
   if (media.kind === "video") {
-    return renderVideoAsText(media, "Video");
+    return renderVideo(media, "Video");
   }
   return null;
 }
@@ -1117,6 +1119,82 @@ function renderVideoAsText(video, label) {
     d.append(dd);
   }
   return d;
+}
+
+// The real player: captions track always attached (the schema guarantees the
+// file is authored), transcript and described transcript as disclosures
+// below, nothing autoplays. If the media file is missing — assets land
+// across sessions — the whole figure degrades to the text rendering above,
+// so the game never shows a dead player.
+function renderVideo(video, label) {
+  const fig = el("figure", { className: "media-item card video-item" });
+  fig.append(el("p", { className: "media-kind", textContent: label }));
+
+  const player = el("video", {
+    className: "video-player",
+    controls: true,
+    preload: "metadata",
+    attrs: { playsinline: "" },
+  });
+  if (video.poster) player.poster = video.poster;
+  const source = el("source", { src: video.src });
+  source.addEventListener("error", () => {
+    fig.replaceWith(renderVideoAsText(video, label));
+  });
+  player.append(source);
+  player.append(
+    el("track", {
+      attrs: {
+        kind: "captions",
+        src: video.captionsSrc,
+        srclang: "en",
+        label: "English",
+        default: "",
+      },
+    }),
+  );
+  fig.append(player);
+
+  const transcript = el("details");
+  transcript.append(
+    el("summary", { textContent: "Transcript" }),
+    el("p", { textContent: video.transcript }),
+  );
+  fig.append(transcript);
+  if (video.describedTranscript) {
+    const described = el("details");
+    described.append(
+      el("summary", { textContent: "Described version" }),
+      el("p", { textContent: video.describedTranscript }),
+    );
+    fig.append(described);
+  }
+  return fig;
+}
+
+// Ambient sound: play-on-demand only, never autoplay (schema-enforced). The
+// control removes itself if the track is not on disk yet.
+function renderAmbientAudio(audioMeta) {
+  const audio = new Audio(audioMeta.src);
+  audio.preload = "metadata";
+  audio.loop = audioMeta.loop === true;
+  const title = audioMeta.title ?? "Ambience";
+  const idleLabel = `▶ ${title}`;
+  const btn = el("button", { className: "secondary voice-btn", textContent: idleLabel });
+  const wrap = el("p", { className: "ambient-audio" }, btn);
+  audio.addEventListener("error", () => wrap.remove());
+  btn.addEventListener("click", () => {
+    if (audio.paused) {
+      audio.play().then(
+        () => (btn.textContent = `■ Stop ${title.toLowerCase()}`),
+        () => wrap.remove(),
+      );
+    } else {
+      audio.pause();
+      btn.textContent = idleLabel;
+    }
+  });
+  return wrap;
 }
 
 // The environment layer. CSS paints the room's backdrop (with a contrast
