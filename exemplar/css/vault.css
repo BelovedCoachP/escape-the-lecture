@@ -680,6 +680,67 @@ button.secondary:hover { background: var(--surface); }
 
 .tool-link { color: var(--accent-cyan); }
 
+/* Tool rooms: sticky checker on the left, the room's work on the right. */
+.level-tool-layout {
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-start;
+}
+
+.level-tool-layout .tool-col {
+  flex: 0 0 21rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.tool-col .tool-card { margin: 0.5rem 0; }
+
+.level-work-flow {
+  flex: 1 1 30rem;
+  min-width: 0;
+}
+
+@media (max-width: 1099px) {
+  .level-tool-layout { flex-direction: column; }
+  .level-tool-layout .tool-col {
+    position: static;
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+/* Lock source material: the list a code is derived from. Line breaks are
+   the puzzle, so they are preserved. */
+.lock-source {
+  margin: 1rem 0;
+  padding: 0.9rem 1.2rem;
+  border-left: 3px solid var(--accent-cyan);
+  background: rgba(15, 23, 42, 0.5);
+  white-space: pre-line;
+  font-family: ui-monospace, Consolas, "Cascadia Mono", monospace;
+  font-size: 0.95rem;
+}
+
+/* Finale stances */
+.stance-list { margin: 1rem 0; }
+
+.stance-row {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  margin: 0.6rem 0;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.stance-row input { margin-top: 0.35rem; }
+
+.stance-row label { font-weight: 400; }
+
+.stance-summary { color: var(--text-muted); }
+
 .seq-pos { font-weight: 700; }
 
 .seq-state { font-weight: 700; }

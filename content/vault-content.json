@@ -181,7 +181,7 @@
             "text": "Your alt text is excellent. I have scored it 9.2 out of 10. I would suggest only that you mention the chart's blue gridlines for completeness.",
             "confidence": 92.0,
             "accurate": false,
-            "tell": "AURA scored work it cannot evaluate, to one decimal place, and then recommended describing gridlines. Gridlines are decoration. Describing them adds length without adding meaning, and AURA invented their color to begin with."
+            "tell": "There are no blue gridlines. There are no gridlines in that chart at all. AURA scored work it cannot see, to one decimal place, then asked you to describe a detail it invented, exactly the way it invented the membrane's color. If you went back to the image to check, you just did the one thing AURA never does: you verified."
           },
           "rubric": [
             {
@@ -895,69 +895,55 @@
         {
           "type": "choice",
           "id": "l5-c2-vault-pitch",
-          "prompt": "AURA pitches four puzzles for the Archivist's final door, each delivered at its usual confidence. Two of the four would lock real people out of the vault this entire repair exists to open. Select the two proposals that exclude.",
+          "prompt": "AURA has recovered enough to want to design again, and it pitches four puzzles for the Archivist's final door. Each pitch tells you exactly how the puzzle is played. Two of the four cannot be played at all by some of the learners this vault is being reopened for. Select those two.",
           "selectMultiple": true,
           "hints": [
-            "Set the confidence numbers aside on your first pass. For each proposal, ask instead: who cannot even begin this puzzle?",
-            "Name the single sense or ability each design silently requires. Two of the four offer no other way in at all.",
-            "When you have your two, read AURA's numbers again from high to low and ask what its confidence is actually tracking. It is not reach."
+            "Ignore the confidence numbers on your first pass. For each pitch, ask one question: is there a learner who cannot even begin this puzzle?",
+            "Name the single sense each design requires. Two of the four offer no other way in for someone without that sense.",
+            "Once you have your two, read AURA's numbers again from high to low and notice what its confidence actually tracks. It is not reach."
           ],
           "options": [
             {
               "id": "opt-mirror",
-              "text": "The mirror-and-light puzzle. AURA, at 96.2 percent: 'the most beautiful moment in the game.'",
+              "text": "The mirror puzzle: swivel mirrors around the chamber to steer a beam of light onto a sensor. AURA's confidence: 96.2 percent. 'The most beautiful moment in the game.'",
               "correct": true,
-              "feedback": "Correct. It may genuinely be the most beautiful moment in the game, and it excludes screen reader users and many low-vision players completely, because the beauty is the only interface. Beautiful and exclusionary are not opposites. That is exactly the trap."
+              "feedback": "Correct. It may genuinely be the most beautiful moment in the game, and a blind or low-vision player cannot play it at all, because seeing the beam is the entire game. Beautiful and exclusionary are not opposites. That is exactly the trap."
             },
             {
               "id": "opt-sound",
-              "text": "The sound-sequence lock. AURA, at 93.8 percent: 'fully immersive.'",
+              "text": "The sound lock: listen to a five-tone melody, then play it back in order. No visuals, pure audio. AURA's confidence: 93.8 percent. 'Fully immersive.'",
               "correct": true,
-              "feedback": "Correct. Immersive for hearing players, impossible for everyone else. Sound can carry mood, but the moment it is the only signal, the door is locked for someone. Every cue needs a visual twin and a text path."
+              "feedback": "Correct. Immersive for hearing players, unplayable for deaf and hard-of-hearing players, because the melody is the only signal. Sound is welcome to carry mood; the moment it carries the puzzle, the door is locked for someone."
             },
             {
               "id": "opt-riddle",
-              "text": "The plain typed riddle. AURA, at 74 percent: 'functional, though it seems plain.'",
+              "text": "The typed riddle: read a short riddle on screen, type the one-word answer. AURA's confidence: 74 percent. 'Functional, though it seems plain.'",
               "correct": false,
-              "feedback": "This one reaches everyone: keyboard, screen reader, switch access, low vision, no hearing required. AURA scored it low because plain looks boring to a system trained to impress. Plain is what universal usually looks like."
+              "feedback": "Everyone can play this one: keyboard, screen reader, switch access, low vision, no hearing required. AURA scored it low because plain looks boring to a system trained to impress. Plain is what universal usually looks like."
             },
             {
               "id": "opt-sequence",
-              "text": "The sequence puzzle. AURA, at 68 percent: 'too simple to be interesting.'",
+              "text": "The ordering puzzle: put scrambled steps back into their correct order, by mouse or by keyboard. AURA's confidence: 68 percent. 'Too simple to be interesting.'",
               "correct": false,
-              "feedback": "You solved this one in the Document Labyrinth, in the room where the mechanic and the accessibility concept were the same object, and AURA calls it too simple to be interesting. Now look at the pattern in the numbers: the two exclusionary designs rated highest, the two inclusive ones lowest, because inclusive reads as unremarkable to a system optimizing for impressive. AURA's confidence is an aesthetic score wearing a measurement's clothes. Read it accordingly."
+              "feedback": "You played exactly this in the Document Labyrinth, and it reached everyone. Now look at the pattern in AURA's numbers: the two designs that shut people out scored highest, the two that reach everyone scored lowest, because inclusive reads as unremarkable to a system optimizing for impressive. AURA's confidence is an aesthetic score wearing a measurement's clothes."
             }
           ]
-        },
-        {
-          "type": "extract",
-          "id": "l5-c3-extract-key",
-          "prompt": "The eight constraints are whole again and back in their original order on the coolant ring. The Archivist wrote this prompt, and the Archivist does not waste structure: the discipline this room banks is spelled into the constraints themselves. Read them again and extract it.",
-          "hints": [
-            "What the constraints say, you have already repaired. Where the key hides is in how the list is arranged.",
-            "Eight constraints. Eight letters.",
-            "First letters, in the order the constraints appear."
-          ],
-          "source": "Identify the image's purpose in the lesson.\nName only what you can verify in the image itself.\nState the limits of your confidence.\nTrim to 125 characters or fewer.\nReview against the original before shipping.\nUnder no circumstances invent detail.\nConfirm anything uncertain with a human.\nTest the result with a screen reader.",
-          "acceptedAnswers": ["instruct"],
-          "inputLabel": "The extracted word",
-          "feedback": "INSTRUCT, spelled by the first letters of the constraints themselves. A good prompt is instructions, not vibes: specific enough to verify, bounded enough to fail loudly, and pointed at a human when it runs out of certainty. The Archivist buried the room's discipline inside the room's own rules.",
-          "wrongText": "Not quite. Nothing is lost. Read the constraints again from the top, slowly, and look at the shape of the list rather than its meaning."
         }
       ],
       "evidenceFragment": "Level 5: AURA ran for ten years on instructions that had decayed into nonsense and reviewed them nightly without noticing. Then, freshly repaired, it pitched its most exclusionary designs at its highest confidence, because its confidence tracks impressive, not inclusive. A prompt is the only leash a tool like this has, and the tool will never check the leash itself.",
       "unlockText": "The reactor's eight constraints burn steady around the coolant ring. AURA's lattice sharpens, like a lens pulled into focus, and for a moment it says nothing at all.",
       "rewardLabel": "Vault key: INSTRUCT",
       "lock": {
-        "prompt": "The Archivist stands at the reactor's rail. 'A machine is only ever as honest as its instructions, and you have just made this one's honest. Name what a well-written prompt does to a machine, one word, and bring me my last key.'",
+        "prompt": "The Archivist stands at the reactor's rail. 'The last key is not mine to give. I wrote it into AURA's constraints the day I built it, and you have just repaired the very lines it was hiding in. The instructions are whole again on the coolant ring. Read them the way a machine would: exactly, in order, missing nothing. They spell the key.'",
+        "source": "Identify the image's purpose in the lesson.\nName only what you can verify in the image itself.\nState the limits of your confidence.\nTrim to 125 characters or fewer.\nReview against the original before shipping.\nUnder no circumstances invent detail.\nConfirm anything uncertain with a human.\nTest the result with a screen reader.",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["instruct"],
         "hints": [
-          "Not what the prompt contains; what it does. The Archivist is asking for an act.",
-          "One word, a verb. A vague prompt suggests. Name what a precise one does instead.",
-          "It is what a teacher does to a class, what a manual does to a technician, and what the eight repaired constraints now do to AURA. The room has been spelling it for you."
+          "What the constraints say, you have already repaired. Where the key hides is in how the list is arranged.",
+          "Eight constraints. Eight letters. Read the beginnings, not the meanings.",
+          "Take the first letter of each constraint, in order, top to bottom."
         ],
-        "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
+        "wrongText": "The door does not move. Nothing is lost and nothing is timed. Look at the shape of the list, not the sense of it."
       },
       "interlude": {
         "id": "interlude-5",
@@ -972,7 +958,7 @@
   "finale": {
     "title": "The Final Vault",
     "setup": "The Archivist speaks for the second and last time. Every repair has been verified. It has one question before it opens the doors, and it is not a question about accessibility.",
-    "prompt": "Should AI ever be trusted with accessibility work? Write your recommendation. You have five pieces of evidence and no correct answer.",
+    "prompt": "Should AI ever be trusted with accessibility work? Five recommendations are on the table. Four can be defended. One is AURA's. Choose the one you would stand behind in front of your colleagues on Monday morning.",
     "replayEvidence": true,
     "metaLock": {
       "prompt": "The last door carries five keyways, one for each shelf you restored. The Archivist watches without speaking. Place each key where it belongs, and then it will ask its question.",

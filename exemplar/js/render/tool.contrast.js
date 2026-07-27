@@ -52,13 +52,15 @@ export function renderContrastChecker() {
     row.append(wrap);
     return input;
   };
-  const fgInput = makeField("Text color (hex)", "tool-fg", "#F8FAFC");
-  const bgInput = makeField("Background color (hex)", "tool-bg", "#9B4DEA");
+  // Fields start empty on purpose: prefilled colors would hand the player a
+  // computed ratio for free, and one of this room's answers with it.
+  const fgInput = makeField("Text color (hex)", "tool-fg", "");
+  const bgInput = makeField("Background color (hex)", "tool-bg", "");
 
   const swatch = el("div", {
     className: "tool-swatch",
     attrs: { "aria-hidden": "true" },
-    textContent: "Wing Two",
+    textContent: "Sample text",
   });
   const result = el("p", { className: "tool-result", attrs: { "aria-live": "polite" } });
   const webaim = el("a", {
@@ -72,7 +74,7 @@ export function renderContrastChecker() {
     const bg = normalizeHex(bgInput.value);
     if (!fg || !bg) {
       result.textContent =
-        "Enter both colors as hex values, like #F8FAFC. Three or six digits, with or without the #.";
+        "Enter both colors as hex values, like #DDEEFF. Three or six digits, with or without the #.";
       swatch.style.removeProperty("color");
       swatch.style.removeProperty("background-color");
       webaim.href = "https://webaim.org/resources/contrastchecker/";

@@ -127,6 +127,7 @@
       "additionalProperties": false,
       "properties": {
         "prompt": { "type": "string", "minLength": 1, "description": "The Archivist's challenge. The straight man speaks at the door." },
+        "source": { "type": "string", "description": "v1.1. Material displayed with the lock that the code is derived from, e.g. the list an acrostic reads out of. Rendered with line breaks preserved." },
         "inputLabel": { "type": "string", "description": "Label on the code field. Defaults to 'Vault key'." },
         "acceptedCodes": {
           "type": "array",

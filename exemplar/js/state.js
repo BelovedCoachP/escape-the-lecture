@@ -16,6 +16,7 @@ export function createRun() {
     interludesSeen: {}, // levelId -> true once the rest beat has played
     hintUsage: {}, // challengeId -> count (never penalized; tracked for Session B)
     finaleSubmitted: false,
+    finaleChoice: null, // label of the stance the player stood behind
   };
 }
 

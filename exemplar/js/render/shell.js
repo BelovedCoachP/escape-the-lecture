@@ -217,31 +217,40 @@ export function renderLevel(level, ctx) {
     view.append(collection);
   }
 
+  // A room with a field tool splits below the media: the tool rides in a
+  // sticky left column so it stays in reach while the player works through
+  // the challenges beside it. `flow` is wherever room content lands.
+  let flow = view;
   if (level.tools?.includes("contrast-checker")) {
-    view.append(renderContrastChecker());
+    const split = el("div", { className: "level-tool-layout" });
+    const toolCol = el("div", { className: "tool-col" });
+    toolCol.append(renderContrastChecker());
+    flow = el("div", { className: "level-work-flow" });
+    split.append(toolCol, flow);
+    view.append(split);
   }
 
   (level.companionLines ?? []).forEach((line) => {
-    view.append(renderCompanionLine(line, ctx));
+    flow.append(renderCompanionLine(line, ctx));
   });
 
   const challenges = level.challenges;
   challenges.forEach((challenge, i) => {
-    view.append(
-      renderChallengeCard(challenge, i + 1, challenges.length, level, ctx, view),
+    flow.append(
+      renderChallengeCard(challenge, i + 1, challenges.length, level, ctx, flow),
     );
   });
 
   // End state: the lock is the level's exit. Challenges solved but lock shut
   // shows the lock; lock opened shows the restored card.
   if (isLevelRestored(run, level)) {
-    view.append(renderRestoredCard(level, ctx));
+    flow.append(renderRestoredCard(level, ctx));
   } else if (challengesComplete(run, level)) {
-    view.append(renderLockCard(level, ctx, view));
+    flow.append(renderLockCard(level, ctx, flow));
   }
 
   // Room controls close the page; a lock that appears mid-run slots in above.
-  view.append(renderRestartControl(level, ctx));
+  flow.append(renderRestartControl(level, ctx));
 
   refs.main.append(view);
 }
@@ -460,6 +469,12 @@ function renderLockCard(level, ctx, viewEl) {
   }
   workCol.append(el("p", { className: "archivist-voice", textContent: lock.prompt }));
 
+  if (lock.source) {
+    workCol.append(
+      el("blockquote", { className: "lock-source prewrap", textContent: lock.source }),
+    );
+  }
+
   if (lock.audioSrc) {
     const audio = new Audio(lock.audioSrc);
     audio.preload = "auto";
@@ -671,36 +686,101 @@ export function renderFinale(ctx) {
     view.append(renderCompanionLine(finale.companionAssessment, ctx));
   }
 
+  // The recommendation is a stand, not an essay. Four defensible stances and
+  // AURA's own answer share one shuffled list; the player chooses the one
+  // they would defend on Monday. Taking AURA's costs nothing but a retry:
+  // the Archivist hands it back with AURA's record attached.
+  const companionName = ctx.content.narrative.companion?.name ?? "Companion";
   const form = el("section", { className: "card" });
-  const promptId = "finale-response";
   form.append(
     el("h3", { textContent: "Your recommendation" }),
     el("p", { textContent: finale.prompt }),
-    el("label", { textContent: "Write your recommendation", attrs: { for: promptId } }),
   );
-  const textarea = el("textarea", { id: promptId });
-  const submit = el("button", { textContent: "Submit recommendation" });
-  form.append(textarea, el("p", {}, submit));
+
+  const stances = (finale.acceptedPositions ?? []).map((p) => ({
+    label: p.label,
+    summary: p.summary,
+    trap: false,
+  }));
+  if (finale.companionAssessment) {
+    stances.push({
+      label: `${companionName}'s recommendation: yes, trust it`,
+      summary: finale.companionAssessment.text,
+      trap: true,
+    });
+  }
+  for (let i = stances.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [stances[i], stances[j]] = [stances[j], stances[i]];
+  }
+
+  const groupName = "finale-stance";
+  const stanceList = el("div", {
+    className: "stance-list",
+    attrs: { role: "radiogroup", "aria-label": "Choose your recommendation" },
+  });
+  const inputs = [];
+  stances.forEach((stance, i) => {
+    const id = `stance-${i}`;
+    const row = el("div", { className: "stance-row" });
+    const input = el("input", {
+      id,
+      attrs: { type: "radio", name: groupName, value: stance.label },
+    });
+    const label = el("label", { attrs: { for: id } });
+    label.append(
+      el("strong", { textContent: stance.label }),
+      el("span", { className: "stance-summary", textContent: ` ${stance.summary}` }),
+    );
+    inputs.push({ input, stance });
+    row.append(input, label);
+    stanceList.append(row);
+  });
+  const feedback = el("p", { className: "lock-feedback" });
+  const submit = el("button", { textContent: "Stand behind this recommendation" });
+  form.append(stanceList, feedback, el("p", {}, submit));
   view.append(form);
 
   const revealWrap = el("div");
   view.append(revealWrap);
 
+  const finish = (chosenLabel) => {
+    run.finaleSubmitted = true;
+    run.finaleChoice = chosenLabel;
+    saveRun(run, ctx.content.meta.id);
+    inputs.forEach(({ input }) => (input.disabled = true));
+    submit.disabled = true;
+    revealWrap.append(renderFinaleReveal(finale, ctx, chosenLabel));
+    announce("Recommendation made. The vault responds.");
+    moveFocusTo(revealWrap.querySelector("h3"));
+  };
+
   submit.addEventListener("click", () => {
     if (run.finaleSubmitted) return;
-    run.finaleSubmitted = true;
-    saveRun(run, ctx.content.meta.id);
-    textarea.readOnly = true;
-    submit.disabled = true;
-    revealWrap.append(renderFinaleReveal(finale, ctx));
-    announce("Recommendation submitted. The vault responds.");
-    moveFocusTo(revealWrap.querySelector("h3"));
+    const chosen = inputs.find(({ input }) => input.checked);
+    if (!chosen) {
+      const message = "Choose the recommendation you will stand behind.";
+      feedback.textContent = message;
+      announce(message);
+      return;
+    }
+    if (chosen.stance.trap) {
+      const message = `The Archivist does not take it. 'That is ${companionName}'s answer. It has been wrong in front of you five times tonight, and it will not be the one standing in front of your colleagues on Monday. I asked for yours.' Nothing is lost. Choose again.`;
+      feedback.textContent = message;
+      announce(message);
+      return;
+    }
+    feedback.textContent = "";
+    finish(chosen.stance.label);
   });
 
   if (run.finaleSubmitted) {
-    textarea.readOnly = true;
+    inputs.forEach(({ input }) => {
+      input.disabled = true;
+      if (input.value === run.finaleChoice) input.checked = true;
+    });
     submit.disabled = true;
-    revealWrap.append(renderFinaleReveal(finale, ctx));
+    revealWrap.append(renderFinaleReveal(finale, ctx, run.finaleChoice));
   }
 
   refs.main.append(view);
@@ -733,7 +813,14 @@ function renderMetaLock(metaLock, ctx) {
     );
     const select = el("select", { id: selectId, className: "lock-input" });
     select.append(el("option", { value: "", textContent: "Choose a key" }));
-    run.keys.forEach((key) => {
+    // Each keyway shuffles its own option order. Keys were earned in room
+    // order, and offering them that way would answer the puzzle by position.
+    const shuffled = [...run.keys];
+    for (let j = shuffled.length - 1; j > 0; j--) {
+      const k = Math.floor(Math.random() * (j + 1));
+      [shuffled[j], shuffled[k]] = [shuffled[k], shuffled[j]];
+    }
+    shuffled.forEach((key) => {
       select.append(el("option", { value: key.label, textContent: key.label }));
     });
     selects.push({ select, slot });
@@ -773,13 +860,25 @@ function renderMetaLock(metaLock, ctx) {
   return card;
 }
 
-function renderFinaleReveal(finale, ctx) {
+function renderFinaleReveal(finale, ctx, chosenLabel) {
   const wrap = el("div");
   const companionName = ctx.content.narrative.companion?.name ?? "Companion";
 
+  if (chosenLabel) {
+    const chosen = el("section", { className: "card" });
+    chosen.append(
+      el("h3", { textContent: "The Archivist accepts it" }),
+      el("p", {
+        className: "archivist-voice",
+        textContent: `'${chosenLabel}.' The Archivist repeats it once, the way you file something you intend to keep. 'Defensible. Argued from what you saw, not from what you were told. That is the whole discipline.'`,
+      }),
+    );
+    wrap.append(chosen);
+  }
+
   if (finale.rubric?.length) {
     const rubricCard = el("section", { className: "card" });
-    rubricCard.append(el("h3", { textContent: "The expert rubric" }));
+    rubricCard.append(el("h3", { textContent: "What a strong recommendation accounts for" }));
     const list = el("ul", { className: "rubric-list" });
     finale.rubric.forEach((r) => {
       const item = el("li", { className: "rubric-item" });
@@ -802,18 +901,20 @@ function renderFinaleReveal(finale, ctx) {
   if (finale.acceptedPositions?.length) {
     const positions = el("section", { className: "card" });
     positions.append(
-      el("h3", { textContent: "Four defensible positions" }),
+      el("h3", { textContent: "The defensible positions" }),
       el("p", {
         textContent:
-          "There is no single correct answer. Compare your recommendation against these.",
+          "There was no correct answer. There were answers you could defend, and one you could not.",
       }),
     );
     finale.acceptedPositions.forEach((p) => {
       const d = el("details");
+      const isChosen = chosenLabel && p.label === chosenLabel;
       d.append(
-        el("summary", { textContent: p.label }),
+        el("summary", { textContent: isChosen ? `${p.label} — your stand ✓` : p.label }),
         el("p", { textContent: p.summary }),
       );
+      if (isChosen) d.open = true;
       positions.append(d);
     });
     wrap.append(positions);
