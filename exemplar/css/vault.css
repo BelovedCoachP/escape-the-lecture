@@ -287,6 +287,22 @@ a { color: var(--brand-blue); }
   border-color: rgba(0, 216, 255, 0.35);
 }
 
+/* Docked under her portrait in the rail: tighter, quieter, no repeated name. */
+.companion-line.in-rail {
+  margin: 0.75rem 0 0;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+}
+
+.companion-line.in-rail .speaker { margin: 0 0 0.4rem; }
+
+.companion-line.in-rail .confidence-badge { margin-left: 0; }
+
+.companion-line.in-rail .voice-btn {
+  font-size: 0.9rem;
+  padding: 0.45rem 1rem;
+}
+
 .companion-line .speaker {
   color: var(--accent-cyan);
   font-family: var(--font-display);

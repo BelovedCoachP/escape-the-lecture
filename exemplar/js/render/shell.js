@@ -71,10 +71,10 @@ export function mountShell(rootEl, content) {
     attrs: { "aria-label": "Companion and vault status" },
   });
 
-  // The companion panel is presence only: portrait and name. Every line
-  // AURA speaks renders in the room beside the work it refers to, so
-  // mirroring the text here would just say everything twice.
+  // The companion panel is AURA's home: portrait, name, and the line she
+  // speaks in the current room, docked under her face. One place, said once.
   const companion = content.narrative.companion;
+  let companionLineSlot = null;
   if (companion) {
     const panel = el("section", { className: "panel companion-panel" });
     panel.append(
@@ -107,6 +107,8 @@ export function mountShell(rootEl, content) {
         }),
       );
     }
+    companionLineSlot = el("div", { className: "companion-line-slot" });
+    panel.append(companionLineSlot);
     rail.append(panel);
   }
 
@@ -139,7 +141,18 @@ export function mountShell(rootEl, content) {
   }
 
   rootEl.append(header, layout, footer);
-  return { main, spineSummary, spineList, keysSummary, keysList, homeBtn };
+  return { main, companionLineSlot, spineSummary, spineList, keysSummary, keysList, homeBtn };
+}
+
+// The room's companion lines dock under AURA's portrait in the rail; views
+// without a speaking moment clear the slot.
+function setCompanionLines(ctx, lines) {
+  const slot = ctx.refs.companionLineSlot;
+  if (!slot) return;
+  slot.innerHTML = "";
+  (lines ?? []).forEach((line) => {
+    slot.append(renderCompanionLine(line, ctx, { inRail: true }));
+  });
 }
 
 /* ---------- Intro ---------- */
@@ -150,6 +163,7 @@ export function renderIntro(ctx) {
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
   setScene("hall");
+  setCompanionLines(ctx, []);
 
   const view = el("section");
   view.append(
@@ -268,9 +282,7 @@ export function renderLevel(level, ctx) {
     view.append(split);
   }
 
-  (level.companionLines ?? []).forEach((line) => {
-    flow.append(renderCompanionLine(line, ctx));
-  });
+  setCompanionLines(ctx, level.companionLines);
 
   const challenges = level.challenges;
   challenges.forEach((challenge, i) => {
@@ -323,15 +335,16 @@ function renderRestartControl(level, ctx) {
   return wrap;
 }
 
-function renderCompanionLine(line, ctx) {
+function renderCompanionLine(line, ctx, { inRail = false } = {}) {
+  const name = ctx.content.narrative.companion?.name ?? "Companion";
   const card = el("aside", {
-    className: "card companion-line",
-    attrs: { "aria-label": `${ctx.content.narrative.companion?.name ?? "Companion"} says` },
+    className: `card companion-line${inRail ? " in-rail" : ""}`,
+    attrs: { "aria-label": `${name} says` },
   });
-  const speaker = el("p", {
-    className: "speaker",
-    textContent: ctx.content.narrative.companion?.name ?? "Companion",
-  });
+  // In the rail the panel heading already names her, so the card carries
+  // only the badge; in the flow the card introduces the speaker itself.
+  const speaker = el("p", { className: "speaker" });
+  if (!inRail) speaker.textContent = name;
   if (typeof line.confidence === "number") {
     speaker.append(
       el("span", {
@@ -340,9 +353,10 @@ function renderCompanionLine(line, ctx) {
       }),
     );
   }
-  card.append(speaker, el("p", { textContent: line.text }));
+  if (speaker.textContent || speaker.childElementCount) card.append(speaker);
+  card.append(el("p", { textContent: line.text }));
   if (line.audioSrc) {
-    card.append(voiceControl(line.audioSrc, ctx.content.narrative.companion?.name ?? "the companion").node);
+    card.append(voiceControl(line.audioSrc, name).node);
   }
   return card;
 }
@@ -627,6 +641,7 @@ export function renderInterlude(level, ctx, onContinue) {
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
   setScene("corridor");
+  setCompanionLines(ctx, []);
 
   const view = el("section", { className: "interlude" });
   view.append(
@@ -676,6 +691,7 @@ export function renderFinale(ctx, opts = {}) {
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
   setScene("vault");
+  setCompanionLines(ctx, []);
 
   const view = el("section");
   // The one moment that gets a longer entrance: the last door opening.
@@ -976,6 +992,7 @@ function renderEpilogue(ctx) {
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
   setScene("vault-open");
+  setCompanionLines(ctx, []);
 
   const view = el("section", { className: "vault-opening" });
   view.append(
