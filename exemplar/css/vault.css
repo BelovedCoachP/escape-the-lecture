@@ -587,6 +587,22 @@ button.secondary {
 /* Repair */
 .repair-seg { margin: 1rem 0; }
 
+/* The corrupted original, kept on screen beside the work. Reference, not
+   input: the player can wipe the field without losing the evidence. */
+.repair-original {
+  margin: 0.25rem 0 0.35rem;
+  font-family: ui-monospace, Consolas, "Cascadia Mono", monospace;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.repair-original-label {
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .repair-seg .option-feedback { margin-left: 0; }
 
 .repair-input {

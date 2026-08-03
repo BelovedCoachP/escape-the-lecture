@@ -77,11 +77,11 @@ if (content.finale.companionAssessment) {
 // The Archivist at each lock: dialogue only, never the narration around it.
 const ARCHIVIST_LOCK_DIALOGUE = {
   "invisible-image":
-    "You gave four images their words back. One discipline did that work. Name it, one word, and the shelf returns to me.",
+    "You gave four images their words back. One skill did that work. Name it, one word, and the shelf returns to me.",
   "color-chamber":
-    "Required from optional. Passing from failing. Signal from decoration. You spent this room telling things apart, and never once by color alone. Name the discipline, one word, and the chamber is mine again.",
+    "Required from optional. Passing from failing. Signal from decoration. You spent this room telling things apart, and never once by color alone. Name the skill, one word, and the chamber is mine again.",
   "caption-conspiracy":
-    "Thirty-four hundred hours of speech, and every hour deserved to arrive in text exactly as it left the speaker. You did that work here, and you caught the machine doing something else in its place. Name the discipline, one word, and the wing is mine again.",
+    "Thirty-four hundred hours of speech, and every hour deserved to arrive in text exactly as it left the speaker. You did that work here, and you caught the machine doing something else in its place. Name the skill, one word, and the wing is mine again.",
   "document-labyrinth":
     "You changed nothing a sighted reader will ever notice. Order restored, headings made real, links given names. Tell me what you gave this document back. One word, and the wing returns to me.",
   "prompt-reactor":

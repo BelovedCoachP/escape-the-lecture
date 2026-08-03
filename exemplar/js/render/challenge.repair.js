@@ -18,6 +18,13 @@ export function renderRepair(challenge, done, api) {
     if (segment.context) {
       seg.append(el("p", { className: "bin-desc", textContent: segment.context }));
     }
+    // The corrupted original stays on screen while the player works, so
+    // erasing the input never erases the evidence of what needs fixing.
+    const original = el("p", { className: "repair-original" });
+    original.append(
+      el("span", { className: "repair-original-label", textContent: "As captured: " }),
+      el("span", { textContent: segment.broken }),
+    );
     const inputId = `${challenge.id}-${segment.id}`;
     const status = el("span", { className: "sort-status" });
     const label = el("label", { attrs: { for: inputId } });
@@ -32,7 +39,7 @@ export function renderRepair(challenge, done, api) {
       attrs: { type: "text", autocomplete: "off", spellcheck: "false" },
     });
     const feedback = el("p", { className: "option-feedback", hidden: true });
-    seg.append(label, input, feedback);
+    seg.append(original, label, input, feedback);
     wrap.append(seg);
     return { segment, input, status, feedback };
   });

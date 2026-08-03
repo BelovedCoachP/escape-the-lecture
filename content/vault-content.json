@@ -257,13 +257,13 @@
       "unlockText": "The first shelf comes back online. Somewhere far down the hall, a light you did not know was off comes on.",
       "rewardLabel": "Vault key: DESCRIBE",
       "lock": {
-        "prompt": "The Archivist speaks for the first time since the doors sealed. 'You gave four images their words back. One discipline did that work. Name it, one word, and the shelf returns to me.'",
+        "prompt": "The Archivist speaks for the first time since the doors sealed. 'You gave four images their words back. One skill did that work. Name it, one word, and the shelf returns to me.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["describe"],
         "audioSrc": "assets/audio/archivist/lock-invisible-image.mp3",
         "captionsSrc": "assets/audio/archivist/lock-invisible-image.vtt",
         "hints": [
-          "The Archivist wants a discipline, not a technology. Think about what this room asked of you, not what it asked about.",
+          "The Archivist wants a skill, not a technology. Think about what this room asked of you, not what it asked about.",
           "One word, and it is a verb. The divider, the diagram, the photo, the chart: every challenge had you do the same thing to each of them.",
           "It is the act that alt text performs for an image and a long description performs for a chart. Say it as a command: eight letters, starting with D."
         ],
@@ -438,13 +438,13 @@
       "unlockText": "Bank by bank, the chamber's signage resets into pairings that hold. Required and optional announce themselves in words. The room stops relying on anyone's eyes.",
       "rewardLabel": "Vault key: DISTINGUISH",
       "lock": {
-        "prompt": "The Archivist's voice crosses the chamber. 'Required from optional. Passing from failing. Signal from decoration. You spent this room telling things apart, and never once by color alone. Name the discipline, one word, and the chamber is mine again.'",
+        "prompt": "The Archivist's voice crosses the chamber. 'Required from optional. Passing from failing. Signal from decoration. You spent this room telling things apart, and never once by color alone. Name the skill, one word, and the chamber is mine again.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["distinguish"],
         "audioSrc": "assets/audio/archivist/lock-color-chamber.mp3",
         "captionsSrc": "assets/audio/archivist/lock-color-chamber.vtt",
         "hints": [
-          "The Archivist wants a discipline, not a color. Think about what the failing signage prevented learners from doing.",
+          "The Archivist wants a skill, not a color. Think about what the failing signage prevented learners from doing.",
           "One word, a verb. Every challenge here asked you to tell one thing from another: required from optional, passing from failing.",
           "One word, three syllables, starting with D. Not differentiate, which is the same idea wearing too many letters; the sharper, shorter cousin."
         ],
@@ -464,7 +464,7 @@
       "order": 3,
       "title": "The Caption Conspiracy",
       "subtitle": "Level 3",
-      "brief": "The theater wing holds three thousand four hundred hours of lecture video, captioned by machine a decade ago and never checked by anyone. Some tracks have decayed into comedy. AURA has already 'repaired' the entire collection and reports 99.3 percent fidelity. Many of its repairs are real. Two of them rewrote the speaker. The difference between a repair and a rewrite is the job.",
+      "brief": "The theater wing holds 3,400 hours of lecture video, captioned by machine a decade ago and never checked by anyone. Some tracks have decayed into comedy. AURA has already 'repaired' the entire collection and reports 99.3 percent fidelity. Many of its repairs are real. Two of them rewrote the speaker. The difference between a repair and a rewrite is the job.",
       "skillTaught": [
         "Verifying auto-captions against what the speaker actually said",
         "Recognizing the recurring failure patterns of speech recognition",
@@ -619,13 +619,13 @@
       "unlockText": "Caption tracks flicker clean across the theater wing, a hundred screens at a time. For the first time in ten years, the words below the lecterns match the voices above them.",
       "rewardLabel": "Vault key: TRANSCRIBE",
       "lock": {
-        "prompt": "The Archivist dims the theater to a single lit screen. 'Thirty-four hundred hours of speech, and every hour deserved to arrive in text exactly as it left the speaker. You did that work here, and you caught the machine doing something else in its place. Name the discipline, one word, and the wing is mine again.'",
+        "prompt": "The Archivist dims the theater to a single lit screen. 'Thirty-four hundred hours of speech, and every hour deserved to arrive in text exactly as it left the speaker. You did that work here, and you caught the machine doing something else in its place. Name the skill, one word, and the wing is mine again.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": ["transcribe"],
         "audioSrc": "assets/audio/archivist/lock-caption-conspiracy.mp3",
         "captionsSrc": "assets/audio/archivist/lock-caption-conspiracy.vtt",
         "hints": [
-          "The Archivist wants a discipline, not a technology. Not the captions themselves; the act that produces honest ones.",
+          "The Archivist wants a skill, not a technology. Not the captions themselves; the act that produces honest ones.",
           "One word, a verb. Every repair in this room carried something spoken across into something written.",
           "It is what a court stenographer does for a living, and what auto-captioning only attempts. Ten letters, starting with T."
         ],
@@ -866,9 +866,9 @@
           "id": "l5-c1-prompt-repair",
           "prompt": "Four of AURA's eight operating constraints have decayed the same way the captions did: each has one word replaced by a more probable sound-alike. Repair each line so the instruction means something again. You have seen every one of these failure patterns before.",
           "hints": [
-            "Each line has exactly one wrong word, and the line's own logic tells you what the word must have been.",
-            "Read each line as an instruction to an AI assistant doing accessibility work. The wrong word is the one no such instruction would ever contain.",
-            "Every casualty is a term from this vault's own vocabulary, and AURA has personally violated all four constraints in front of you."
+            "Each line has exactly one wrong word, and it sounds like the word it replaced. Say the line aloud, the way you did in the theater wing.",
+            "Read each line as a rule for an AI assistant doing accessibility work: what it should admit about itself, what it must never fabricate, who it should turn to when unsure, and how it should test the result.",
+            "The four impostors are confection, event, humid, and scream. Each stole the place of a similar-sounding word you have used many times in this vault."
           ],
           "segments": [
             {
@@ -993,7 +993,7 @@
         { "label": "The Prompt Reactor", "keyLabel": "Vault key: INSTRUCT" }
       ],
       "hints": [
-        "Each key names the discipline its room taught. Match the verb to the repair you made there.",
+        "Each key names the skill its room taught. Match the verb to the repair you made there.",
         "If two keys both feel right for a room, ask which repair could not have happened without that exact verb. Your banked evidence names what each room actually required of you."
       ],
       "wrongText": "One or more keys sit in the wrong door. The Archivist says nothing. It has waited ten years; it can wait while you try again."
