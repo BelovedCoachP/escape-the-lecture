@@ -260,23 +260,27 @@ export function renderLevel(level, ctx) {
     view.append(renderAmbientAudio(level.ambientAudio));
   }
 
+  // Reference column: field tools and the room's source material ride in a
+  // sticky left column, in reach while the player works through the
+  // challenges beside them — no scrolling back and forth to look at the
+  // artifact a question is about. `flow` is wherever room content lands.
   const mediaItems = (level.media ?? [])
     .map((m) => renderMediaAsText(m))
     .filter(Boolean);
-  if (mediaItems.length) {
-    const collection = el("div", { className: "media-collection" });
-    collection.append(...mediaItems);
-    view.append(collection);
-  }
-
-  // A room with a field tool splits below the media: the tool rides in a
-  // sticky left column so it stays in reach while the player works through
-  // the challenges beside it. `flow` is wherever room content lands.
-  let flow = view;
+  const toolCards = [];
   if (level.tools?.includes("contrast-checker")) {
+    toolCards.push(renderContrastChecker());
+  }
+  let flow = view;
+  if (toolCards.length || mediaItems.length) {
     const split = el("div", { className: "level-tool-layout" });
     const toolCol = el("div", { className: "tool-col" });
-    toolCol.append(renderContrastChecker());
+    toolCol.append(...toolCards);
+    if (mediaItems.length) {
+      const collection = el("div", { className: "media-collection" });
+      collection.append(...mediaItems);
+      toolCol.append(collection);
+    }
     flow = el("div", { className: "level-work-flow" });
     split.append(toolCol, flow);
     view.append(split);

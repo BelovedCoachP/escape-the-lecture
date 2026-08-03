@@ -54,6 +54,7 @@ export function renderSort(challenge, done, api) {
         actions.querySelectorAll("button").forEach((b) => (b.disabled = false));
         btn.disabled = true;
         statusSpan.textContent = "";
+        li.classList.remove("is-wrong");
         const unsorted = challenge.items.length - Object.keys(placement).length;
         api.announce(
           `Placed in ${bin.label}. ${unsorted === 0 ? "All items placed." : `${unsorted} unsorted.`}`,
@@ -70,13 +71,16 @@ export function renderSort(challenge, done, api) {
     itemEls[item.id] = { li, statusSpan, actions };
   });
 
+  // The verdict lands where the eyes are: a visible status line beside the
+  // button that was just pressed, plus marks and borders on the items.
+  const status = el("p", { className: "attempt-feedback" });
   const verify = el("button", { textContent: "Verify sorting" });
   verify.addEventListener("click", () => {
     const unplaced = challenge.items.filter((i) => !placement[i.id]);
     if (unplaced.length) {
-      api.announce(
-        `${unplaced.length} item${unplaced.length === 1 ? " is" : "s are"} still unsorted.`,
-      );
+      const message = `✗ ${unplaced.length} item${unplaced.length === 1 ? " is" : "s are"} still unsorted. Everything needs a shelf before verifying.`;
+      status.textContent = message;
+      api.announce(message);
       return;
     }
     const wrong = challenge.items.filter((i) => placement[i.id] !== i.correctBin);
@@ -84,15 +88,18 @@ export function renderSort(challenge, done, api) {
       challenge.items.forEach((i) => {
         const ok = placement[i.id] === i.correctBin;
         itemEls[i.id].statusSpan.textContent = ok ? " ✓ placed well" : " ✗ reconsider this one";
+        itemEls[i.id].li.classList.toggle("is-wrong", !ok);
       });
-      api.announce(
-        `${challenge.items.length - wrong.length} of ${challenge.items.length} placed correctly. Reconsider the marked items; nothing is lost.`,
-      );
+      const message = `✗ ${challenge.items.length - wrong.length} of ${challenge.items.length} placed correctly. The marked items need another look; nothing is lost.`;
+      status.textContent = message;
+      api.announce(message);
       return;
     }
+    status.textContent = "";
     challenge.items.forEach((i) => {
       const refs = itemEls[i.id];
       refs.statusSpan.textContent = " ✓";
+      refs.li.classList.remove("is-wrong");
       refs.actions.remove();
       refs.li.append(el("p", { className: "option-feedback", textContent: i.feedback }));
     });
@@ -101,7 +108,7 @@ export function renderSort(challenge, done, api) {
     api.complete();
   });
 
-  wrap.append(tray, binsWrap, el("p", {}, verify));
+  wrap.append(tray, binsWrap, status, el("p", {}, verify));
   return wrap;
 }
 

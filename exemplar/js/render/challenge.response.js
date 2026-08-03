@@ -18,28 +18,45 @@ export function renderResponse(challenge, done, api) {
     return wrap;
   }
 
-  const inputId = `${challenge.id}-response`;
-  const maxLength = challenge.maxLength ?? 600;
-  wrap.append(el("label", { textContent: "Your answer", attrs: { for: inputId } }));
-  const textarea = el("textarea", {
-    id: inputId,
-    attrs: { maxlength: String(maxLength) },
-  });
-  if (challenge.placeholder) textarea.placeholder = challenge.placeholder;
-  const counter = el("p", { className: "char-count", textContent: `0 of ${maxLength} characters` });
-  textarea.addEventListener("input", () => {
-    counter.textContent = `${textarea.value.length} of ${maxLength} characters`;
+  // One labeled box per asked-for artifact. A single prompt that wants alt
+  // text AND a long description gets two fields, not one box with a
+  // convention buried in the placeholder.
+  const fields = challenge.fields?.length
+    ? challenge.fields
+    : [{ label: "Your answer", maxLength: challenge.maxLength ?? 600, placeholder: challenge.placeholder }];
+
+  const entries = fields.map((field, i) => {
+    const inputId = `${challenge.id}-response-${i}`;
+    const maxLength = field.maxLength ?? challenge.maxLength ?? 600;
+    wrap.append(el("label", { textContent: field.label, attrs: { for: inputId } }));
+    const textarea = el("textarea", {
+      id: inputId,
+      attrs: { maxlength: String(maxLength) },
+    });
+    if (field.placeholder) textarea.placeholder = field.placeholder;
+    const counter = el("p", { className: "char-count", textContent: `0 of ${maxLength} characters` });
+    textarea.addEventListener("input", () => {
+      counter.textContent = `${textarea.value.length} of ${maxLength} characters`;
+    });
+    wrap.append(textarea, counter);
+    return { field, textarea };
   });
 
+  const status = el("p", { className: "attempt-feedback" });
   const submit = el("button", { textContent: "Submit for assessment" });
   const revealWrap = el("div");
 
   submit.addEventListener("click", () => {
-    if (textarea.value.trim().length === 0) {
-      api.announce("Write your answer before submitting.");
+    const empty = entries.find((e) => e.textarea.value.trim().length === 0);
+    if (empty) {
+      const message = `✗ Write your ${empty.field.label.toLowerCase()} before submitting.`;
+      status.textContent = message;
+      api.announce(message);
+      empty.textarea.focus();
       return;
     }
-    textarea.readOnly = true;
+    status.textContent = "";
+    entries.forEach((e) => (e.textarea.readOnly = true));
     submit.disabled = true;
 
     const reveal = el("div", { className: "response-reveal" });
@@ -71,7 +88,7 @@ export function renderResponse(challenge, done, api) {
     }
   });
 
-  wrap.append(textarea, counter, el("p", {}, submit), revealWrap);
+  wrap.append(status, el("p", {}, submit), revealWrap);
   return wrap;
 }
 

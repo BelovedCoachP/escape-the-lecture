@@ -170,8 +170,10 @@
           "type": "response",
           "id": "l1-c2-write-alt",
           "prompt": "Write alt text for the oxygen output chart. Then write the long description that goes with it. Remember that alt text names what a thing is, and the long description says what it shows.",
-          "placeholder": "Alt text:\n\nLong description:",
-          "maxLength": 700,
+          "fields": [
+            { "label": "Alt text", "maxLength": 150, "placeholder": "Names what the image is, in one breath…" },
+            { "label": "Long description", "maxLength": 550, "placeholder": "Says what the chart shows, so a reader could reconstruct the finding…" }
+          ],
           "hints": [
             "Alt text under about 125 characters. If you are running long, you are writing the long description in the wrong field.",
             "The long description should let someone reconstruct the finding without seeing the chart. Name the shape of the data.",
@@ -263,7 +265,7 @@
         "hints": [
           "The Archivist wants a discipline, not a technology. Think about what this room asked of you, not what it asked about.",
           "One word, and it is a verb. The divider, the diagram, the photo, the chart: every challenge had you do the same thing to each of them.",
-          "It is the act that alt text performs for an image and a long description performs for a chart. Say it as a command."
+          "It is the act that alt text performs for an image and a long description performs for a chart. Say it as a command: eight letters, starting with D."
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
@@ -444,7 +446,7 @@
         "hints": [
           "The Archivist wants a discipline, not a color. Think about what the failing signage prevented learners from doing.",
           "One word, a verb. Every challenge here asked you to tell one thing from another: required from optional, passing from failing.",
-          "It is what a learner must be able to do between two states no matter which senses they bring to the page. Say it as a command."
+          "One word, three syllables, starting with D. Not differentiate, which is the same idea wearing too many letters; the sharper, shorter cousin."
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
@@ -625,7 +627,7 @@
         "hints": [
           "The Archivist wants a discipline, not a technology. Not the captions themselves; the act that produces honest ones.",
           "One word, a verb. Every repair in this room carried something spoken across into something written.",
-          "It is what a court stenographer does for a living, and what auto-captioning only attempts. Say it as a command."
+          "It is what a court stenographer does for a living, and what auto-captioning only attempts. Ten letters, starting with T."
         ],
         "wrongText": "The screen does not change. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
@@ -823,7 +825,7 @@
         "hints": [
           "The room asked nothing about what the document said. Every repair concerned how it was built.",
           "One word for the thing that reading order, real headings, and honest links all serve. The visual layout imitated it; the tags now provide it.",
-          "It is both noun and verb. A building has it, an outline has it, and this handout only appeared to. Name what you gave the document."
+          "It is both noun and verb. A building has it, an outline has it, and this handout only appeared to. Nine letters, starting with S."
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },

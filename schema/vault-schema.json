@@ -626,6 +626,22 @@
         "prompt": { "type": "string", "minLength": 1 },
         "placeholder": { "type": "string" },
         "maxLength": { "type": "integer", "default": 600 },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "description": "v1.1. Labeled entry fields for prompts that ask for more than one artifact (alt text plus long description). When present, the renderer shows one labeled box per field; placeholder and maxLength above apply only to the single-box form.",
+          "items": {
+            "type": "object",
+            "required": ["label"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "type": "string", "minLength": 1 },
+              "placeholder": { "type": "string" },
+              "maxLength": { "type": "integer" }
+            }
+          }
+        },
         "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
         "companionAssessment": { "$ref": "#/$defs/companionLine" },
         "rubric": { "$ref": "#/$defs/rubric" },

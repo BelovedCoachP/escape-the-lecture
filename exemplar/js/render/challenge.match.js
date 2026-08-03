@@ -33,13 +33,14 @@ export function renderMatch(challenge, done, api) {
     return { pair, select, status, feedback };
   });
 
+  const status = el("p", { className: "attempt-feedback" });
   const verify = el("button", { textContent: "Verify matches" });
   verify.addEventListener("click", () => {
     const unset = rows.filter((r) => r.select.value === "");
     if (unset.length) {
-      api.announce(
-        `${unset.length} item${unset.length === 1 ? " needs" : "s need"} a match before verifying.`,
-      );
+      const message = `✗ ${unset.length} item${unset.length === 1 ? " needs" : "s need"} a match before verifying.`;
+      status.textContent = message;
+      api.announce(message);
       return;
     }
     let correct = 0;
@@ -49,11 +50,12 @@ export function renderMatch(challenge, done, api) {
       if (ok) correct += 1;
     });
     if (correct < rows.length) {
-      api.announce(
-        `${correct} of ${rows.length} matched correctly. Reconsider the marked items; nothing is lost.`,
-      );
+      const message = `✗ ${correct} of ${rows.length} matched correctly. The marked items need another look; nothing is lost.`;
+      status.textContent = message;
+      api.announce(message);
       return;
     }
+    status.textContent = "";
     rows.forEach((r) => {
       r.select.disabled = true;
       r.feedback.hidden = false;
@@ -64,7 +66,7 @@ export function renderMatch(challenge, done, api) {
     api.complete();
   });
 
-  wrap.append(el("p", {}, verify));
+  wrap.append(status, el("p", {}, verify));
   return wrap;
 }
 

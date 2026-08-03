@@ -523,6 +523,13 @@ button.secondary {
 
 .sort-item .option-feedback { margin-left: 0; }
 
+/* Wrong placements carry a border alongside their text mark, so a scan of
+   the bins finds them without reading every line. Transparent by default
+   to keep layout steady. */
+.sort-item { border: 1px solid transparent; }
+
+.sort-item.is-wrong { border-color: var(--brand-pink-deep); border-radius: var(--radius); }
+
 .sort-status { font-weight: 700; }
 
 .sort-actions {
@@ -758,7 +765,20 @@ button.secondary {
   flex: 0 0 21rem;
   position: sticky;
   top: 1rem;
+  /* Source material can outrun the viewport; the column scrolls within
+     itself so everything stays reachable while stuck. */
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
 }
+
+/* Reference-column media: compact exhibits. */
+.tool-col .media-item { margin: 0.75rem 0; }
+
+.tool-col figure.media-item { padding: 0.6rem; }
+
+.tool-col .media-alt { font-size: 0.85rem; }
+
+.tool-col .media-kind { margin: 0.4rem 0 0.2rem; }
 
 .tool-col .tool-card { margin: 0.5rem 0; }
 
@@ -1031,10 +1051,15 @@ label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
 /* Level 1, The Invisible Image: the gallery. Exhibit frames, pink light. */
 [data-level="invisible-image"] .view-eyebrow { color: var(--brand-pink); }
 
-[data-level="invisible-image"] .media-collection {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
+/* The gallery's exhibits live in the reference column now, stacked; the
+   two-column grid only returns when the column has wrapped to full width
+   on narrow screens. */
+@media (max-width: 1099px) {
+  [data-level="invisible-image"] .media-collection {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
 }
 
 @media (max-width: 699px) {

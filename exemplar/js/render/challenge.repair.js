@@ -37,6 +37,7 @@ export function renderRepair(challenge, done, api) {
     return { segment, input, status, feedback };
   });
 
+  const status = el("p", { className: "attempt-feedback" });
   const verify = el("button", { textContent: "Verify repairs" });
   verify.addEventListener("click", () => {
     let repaired = 0;
@@ -48,11 +49,12 @@ export function renderRepair(challenge, done, api) {
       if (ok) repaired += 1;
     });
     if (repaired < segments.length) {
-      api.announce(
-        `${repaired} of ${segments.length} lines repaired. The broken lines are marked; keep going, nothing is lost.`,
-      );
+      const message = `✗ ${repaired} of ${segments.length} lines repaired. The broken lines are marked; keep going, nothing is lost.`;
+      status.textContent = message;
+      api.announce(message);
       return;
     }
+    status.textContent = "";
     segments.forEach((s) => {
       s.input.readOnly = true;
       s.feedback.hidden = false;
@@ -63,7 +65,7 @@ export function renderRepair(challenge, done, api) {
     api.complete();
   });
 
-  wrap.append(el("p", {}, verify));
+  wrap.append(status, el("p", {}, verify));
   return wrap;
 }
 
