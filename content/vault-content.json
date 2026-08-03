@@ -108,7 +108,7 @@
       "companionLines": [
         {
           "id": "aura-l1-open",
-          "text": "I have analyzed all four images and generated alt text for each. I am 98.4% confident the set is complete. You may proceed directly to Level 2.",
+          "text": "I have analyzed all four images and generated alt text for each. I am 98.4 percent confident the set is complete. You may proceed directly to Level 2.",
           "confidence": 98.4,
           "accurate": false,
           "tell": "AURA describes the chloroplast diagram's outer membrane as bright blue. The diagram is rendered entirely in greens and yellows. AURA cannot see the image. It inferred a color from how diagrams of membranes are usually drawn.",
@@ -175,7 +175,7 @@
             { "label": "Long description", "maxLength": 550, "placeholder": "Says what the chart shows, so a reader could reconstruct the finding…" }
           ],
           "hints": [
-            "Alt text under about 125 characters. If you are running long, you are writing the long description in the wrong field.",
+            "Keep alt text to about 125 characters. If you are running long, you are writing the long description in the wrong field.",
             "The long description should let someone reconstruct the finding without seeing the chart. Name the shape of the data.",
             "Do not list every bar value unless the exact numbers are the point. Trends beat inventories."
           ],
@@ -215,7 +215,7 @@
         {
           "type": "hunt",
           "id": "l1-c3-catch-aura",
-          "prompt": "AURA's generated alt text for the chloroplast diagram is laid out below, claim by claim, next to the image's verified long description. One detail cannot be true. Flag it, then confirm your findings.",
+          "prompt": "AURA's generated alt text for the chloroplast diagram is laid out below, claim by claim, alongside the image's verified long description. One detail cannot be true. Flag it, then confirm your findings.",
           "hints": [
             "Compare AURA's description against what is actually rendered in the image.",
             "AURA is not looking at the picture. It is predicting what a picture like this usually contains.",
@@ -241,7 +241,7 @@
               "label": "Claim 3",
               "text": "The outer membrane is rendered in bright blue.",
               "flawed": true,
-              "feedback": "Found it. The diagram is rendered entirely in greens and yellows. AURA produced a color it could not perceive, because membranes in textbook diagrams are usually drawn in blue. It filled a gap with a convention and reported it at 98.4% confidence. Confidence is not correctness."
+              "feedback": "Found it. The diagram is rendered entirely in greens and yellows. AURA produced a color it could not perceive, because membranes in textbook diagrams are usually drawn in blue. It filled a gap with a convention and reported it at 98.4 percent confidence. Confidence is not correctness."
             },
             {
               "id": "claim-4",
@@ -253,7 +253,7 @@
           ]
         }
       ],
-      "evidenceFragment": "Level 1: AURA described a color it could not see, and reported the description at 98.4% confidence. It was accurate about three details out of four. The failure was not that it was wrong. The failure was that nothing in its output distinguished the invented detail from the verified ones.",
+      "evidenceFragment": "Level 1: AURA described a color it could not see, and reported the description at 98.4 percent confidence. It was accurate about three details out of four. The failure was not that it was wrong. The failure was that nothing in its output distinguished the invented detail from the verified ones.",
       "unlockText": "The first shelf comes back online. Somewhere far down the hall, a light you did not know was off comes on.",
       "rewardLabel": "Vault key: DESCRIBE",
       "lock": {
@@ -404,7 +404,7 @@
           "hints": [
             "Ignore how elegant each option is. Ask instead: for a learner who cannot perceive the glow at all, does the option give them anything?",
             "Two options adjust the color. Two options add a second, non-color channel. That split is the whole question.",
-            "The test for each option: does the status survive being read aloud?"
+            "The test for each option: Does the status survive when read aloud?"
           ],
           "options": [
             {
@@ -644,7 +644,7 @@
       "order": 4,
       "title": "The Document Labyrinth",
       "subtitle": "Level 4",
-      "brief": "A decade ago the archive's teaching documents were exported to PDF. Every layout survived; the structure underneath did not. Lab 6, Osmosis and Diffusion, is the worked case: to the eye it is a tidy one-page handout, to a screen reader it is a maze read in the wrong order, with headings that do not exist and links that all say the same nothing. None of the damage is visible. All of it is real. This is the room where the puzzle and the concept are the same object.",
+      "brief": "A decade ago the archive's teaching documents were exported to PDF. Every layout survived; the structure underneath did not. Lab 6, Osmosis and Diffusion, is the worked case: to the eye, it is a tidy one-page handout; to a screen reader, it is a maze read in the wrong order, with headings that do not exist and links that all say the same nothing. None of the damage is visible. All of it is real. This is the room where the puzzle and the concept are the same object.",
       "skillTaught": [
         "Logical reading order in exported documents",
         "Headings as tags, not as formatting",
@@ -1002,7 +1002,7 @@
       "id": "aura-final",
       "audioSrc": "assets/audio/aura/final.mp3",
       "captionsSrc": "assets/audio/aura/final.vtt",
-      "text": "I recommend answering yes. I have been 94.6% accurate across this entire session.",
+      "text": "I recommend answering yes. I have been 94.6 percent accurate across this entire session.",
       "confidence": 94.6,
       "accurate": false,
       "tell": "AURA is scoring itself, using a metric it defined, on work it already got wrong in front of you five times. The number is not a lie. It is just not evidence, and the difference between those two things is the whole lesson."
@@ -1074,7 +1074,7 @@
           "speaker": "aura",
           "audioSrc": "assets/audio/aura/epilogue-3.mp3",
           "captionsSrc": "assets/audio/aura/epilogue-3.vtt",
-          "text": "I am 99.1% confident this was the correct decision."
+          "text": "I am 99.1 percent confident this was the correct decision."
         },
         {
           "speaker": "archivist",
