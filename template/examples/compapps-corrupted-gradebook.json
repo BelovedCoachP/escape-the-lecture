@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-corrupted-gradebook",
+    "title": "The Corrupted Gradebook",
+    "author": "QM Connect Workshop",
+    "course": "Digital and Information Literacy (ITE 152)",
+    "objective": "Use spreadsheet formulas, safe sorting, and cell references correctly on real data.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "Grades are due at noon and the department gradebook spreadsheet opened this morning with its totals column showing errors, its rows in chaos, and a well-meaning assistant offering shortcuts. Repair the formula, sort without destroying anyone's grade, and document the reference rule so this never happens again.",
+    "roleTitle": "Spreadsheet Medic",
+    "successCondition": "The gradebook is submitted when every total is real and every row is whole. There is no clock in this room; noon is a fiction the registrar made up.",
+    "companion": {
+      "name": "CELL-E",
+      "textAlwaysVisible": true
+    }
+  },
+  "levels": [
+    {
+      "id": "the-workbook",
+      "order": 1,
+      "title": "The Workbook",
+      "brief": "Column A holds names, columns B through E hold scores, and F2 should total row 2 — currently it reads #NAME?. The rows need to be in last-name order for the registrar. CELL-E, the spreadsheet's assistant, has a shortcut for everything and a confidence score for every shortcut.",
+      "companionLines": [
+        {
+          "id": "celle-open",
+          "text": "For the registrar: just select column A and click Sort. Names alphabetized instantly. Efficiency rating: 96.4%. The other columns will not mind.",
+          "confidence": 96.4,
+          "accurate": false,
+          "tell": "Sorting one column reorders the names and leaves every score exactly where it was: each student inherits someone else's grades. It is the fastest possible way to destroy a gradebook, delivered at the highest possible confidence. The other columns very much mind."
+        }
+      ],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-formula",
+          "prompt": "F2 must total the four scores in B2 through E2. Which formula belongs in F2?",
+          "selectMultiple": false,
+          "hints": [
+            "A range has a start, a colon, and an end. Read each option and find the real range.",
+            "One option names a function the spreadsheet has never heard of, which is exactly what #NAME? means.",
+            "A range that adds two cells is different from a range that spans them."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "=SUM(B2:E2)",
+              "correct": true,
+              "feedback": "Correct. SUM over the range B2 through E2 totals all four scores, and keeps working if a column is added inside the range later."
+            },
+            {
+              "id": "o2",
+              "text": "=SUM(B2+E2)",
+              "correct": false,
+              "feedback": "This adds only the first and last scores — the plus sign makes one number before SUM ever sees it. C2 and D2 vanish from everyone's total, quietly."
+            },
+            {
+              "id": "o3",
+              "text": "=ADD(B2:E2)",
+              "correct": false,
+              "feedback": "ADD is not a spreadsheet function, and #NAME? is the spreadsheet telling you so. This is the corruption currently in F2: a formula that sounds right to a person and means nothing to the software."
+            },
+            {
+              "id": "o4",
+              "text": "=B2:E2",
+              "correct": false,
+              "feedback": "A range with no function is a reference, not a calculation. The spreadsheet has been handed four cells and no instructions for what to do with them."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-safe-sort",
+          "prompt": "Put the rows in last-name order without separating anyone from their grades. Arrange the steps of a safe sort.",
+          "hints": [
+            "The single most important decision happens before any menu opens: what exactly is selected?",
+            "Choosing which column to sort by comes after the tool knows which data travels together.",
+            "The last step is the one CELL-E never does. Spot-check a student you know."
+          ],
+          "items": [
+            { "id": "s1", "text": "Select the entire data range: names and all score columns together." },
+            { "id": "s2", "text": "Open the Data menu and choose Sort." },
+            { "id": "s3", "text": "Confirm the range has headers, so row 1 stays put." },
+            { "id": "s4", "text": "Choose the last-name column as the sort key." },
+            { "id": "s5", "text": "Verify one known student still has their own scores across the row." }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5"],
+          "keyboardInstructions": "Select a step, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Selection first, because the sort can only keep together what was selected together — this is exactly where CELL-E's shortcut fails. Then the tool, the headers, the key, and finally the human check that turns 'it ran' into 'it worked.'"
+        },
+        {
+          "type": "response",
+          "id": "c3-references",
+          "prompt": "The gradebook's curve cell is H1, and G2 will hold =F2+H1 copied down for every student. Explain, for the file's documentation, why H1 must be written as $H$1 — and what happens if it is not.",
+          "hints": [
+            "Copying a formula down moves its references down with it. Ask which reference should move and which must not.",
+            "Follow the broken version by hand: what does row 3's formula point at if H1 is left relative?",
+            "The dollar signs are an anchor. Say what they anchor and why this cell needs one."
+          ],
+          "rubric": [
+            {
+              "criterion": "States the rule",
+              "lookFor": "Relative references shift when copied; $H$1 pins the reference so every row reads the same curve cell.",
+              "commonMiss": "Saying dollar signs 'lock the cell' without saying from what."
+            },
+            {
+              "criterion": "Traces the failure",
+              "lookFor": "Without the anchor, row 3 reads H2, row 4 reads H3 — empty cells, so the curve silently becomes zero for everyone after row 2.",
+              "commonMiss": "Claiming the formula would error. It fails silently, which is worse."
+            },
+            {
+              "criterion": "Distinguishes the two references",
+              "lookFor": "F2 should stay relative on purpose: each student's own total must move; only the shared curve is fixed.",
+              "commonMiss": "Anchoring everything, which breaks the copy-down in the other direction."
+            }
+          ],
+          "exemplarAnswer": "F2 stays relative because each row must read its own student's total, but H1 must be $H$1: an absolute reference pinned to the one shared curve cell. Left relative, the copy shifts it to H2, H3, and so on — empty cells — so every student below row 2 silently gets a curve of zero. No error appears; the grades are just wrong."
+        }
+      ],
+      "evidenceFragment": "The Workbook: the fastest shortcut was the one that separated every student from their grades. The safe sort began with selection, and the reference rule was the difference between a curve and a silent zero.",
+      "unlockText": "F2 fills with a real number, the rows land in order with every grade still attached to its student, and the file saves clean.",
+      "rewardLabel": "Gradebook submitted"
+    }
+  ],
+  "finale": {
+    "title": "The Submission",
+    "setup": "Formula repaired, rows sorted whole, references documented.",
+    "prompt": "Before noon: what is the one check you will run on any spreadsheet before trusting what it tells you?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Names a concrete check",
+        "lookFor": "Verify a known row after sorting, trace a copied formula by hand, test one total against a calculator."
+      },
+      {
+        "criterion": "Explains the why",
+        "lookFor": "Connects the check to silent failure — spreadsheets are confident even when wrong."
+      }
+    ],
+    "closingText": "The gradebook submits. Not because the software was sure; because a person checked."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

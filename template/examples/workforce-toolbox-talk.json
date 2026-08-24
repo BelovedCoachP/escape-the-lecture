@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-morning-toolbox-talk",
+    "title": "The Morning Toolbox Talk",
+    "author": "QM Connect Workshop",
+    "course": "Workforce Development: Construction Safety (OSHA-10 prep)",
+    "objective": "Recognize stop-work hazards, apply lockout/tagout in the correct order, and document a near miss usefully.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "First light at the job site, and the crew is waiting on the morning toolbox talk before anyone touches a tool. The foreman hands you the clipboard: walk the site and call the one hazard that stops work, run lockout on the saw that jammed overnight, and write up yesterday's near miss so it never graduates into an incident. The gate opens when the site is safe, and not a minute before.",
+    "roleTitle": "Crew Lead",
+    "successCondition": "The gate opens when the site is safe. There is no production schedule in this room; the schedule is what gets people hurt."
+  },
+  "levels": [
+    {
+      "id": "the-job-site",
+      "order": 1,
+      "title": "The Job Site",
+      "brief": "Four conditions from the morning walk are on the clipboard. The table saw that jammed last night still has its cord in the wall. And the near-miss form from yesterday is blank except for a coffee ring. The crew watches to see what you call first.",
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-stop-work",
+          "prompt": "Four conditions from the walk: (1) an extension cord with cracked insulation running through standing water to the mixer, (2) a pallet of lumber stacked slightly over head height, (3) sawdust accumulating around the chop station, (4) a ladder leaned at too shallow an angle, currently unused. Which one is the immediate stop-work hazard?",
+          "selectMultiple": false,
+          "hints": [
+            "Ask which condition can kill someone in the next five minutes without anyone making a new mistake.",
+            "Three of these are real hazards that can wait for the fix-it list. One cannot wait for anything.",
+            "Two hazards multiply each other when they share a location. Find the pair."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "The damaged cord running through standing water",
+              "correct": true,
+              "feedback": "Correct — stop work, kill the power, clear the area. Damaged insulation plus water plus a live circuit is an electrocution in progress, waiting only for a touch. Nobody walks past this one to fix something else first."
+            },
+            {
+              "id": "o2",
+              "text": "The lumber stacked over head height",
+              "correct": false,
+              "feedback": "A real hazard for the fix-it list — restack it before the day gets busy — but it is not actively energized. It needs a mistake to hurt someone; the cord does not."
+            },
+            {
+              "id": "o3",
+              "text": "The sawdust around the chop station",
+              "correct": false,
+              "feedback": "Housekeeping and a slip risk, and worth ten minutes with a broom before cutting starts. But it is a condition that degrades safety, not one that is dangerous this minute."
+            },
+            {
+              "id": "o4",
+              "text": "The shallow-angled ladder, currently unused",
+              "correct": false,
+              "feedback": "Wrong angle, real fall risk — the moment someone climbs it. Unused, it is a hazard in waiting. Tag it, reset it, and keep your stop-work call for the thing that is already live."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-lockout",
+          "prompt": "The jammed table saw needs its blade cleared. Put the lockout/tagout steps in the order that keeps whoever reaches into that blade alive.",
+          "hints": [
+            "People first: the crew hears about the shutdown before the machine feels it.",
+            "The lock goes on the energy source, not the switch — and stored energy outlives the plug.",
+            "The last step before any hands go in is the one that proves all the others worked."
+          ],
+          "items": [
+            { "id": "s1", "text": "Notify the crew that the saw is coming down for service." },
+            { "id": "s2", "text": "Shut the saw down at its controls." },
+            { "id": "s3", "text": "Isolate the energy source: unplug, or open the breaker feeding it." },
+            { "id": "s4", "text": "Apply your lock and tag to the isolation point." },
+            { "id": "s5", "text": "Release stored energy: let the blade spin down completely." },
+            { "id": "s6", "text": "Try the start switch to verify zero energy before reaching in." }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5", "s6"],
+          "keyboardInstructions": "Select a step, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Notify, shut down, isolate, lock and tag, release stored energy, verify. The order exists because every step closes a door the previous step left open — and the verification try-out at the end is the difference between believing the saw is dead and knowing it."
+        },
+        {
+          "type": "response",
+          "id": "c3-near-miss",
+          "prompt": "Yesterday a framing hammer slid off the second-floor decking and landed where the electrician had been standing thirty seconds earlier. Nobody was hurt. Write the near-miss report: what happened, why it happened, and what change prevents it.",
+          "hints": [
+            "A near miss is a free lesson from an incident that decided not to happen. Report it like it cost something.",
+            "The root cause is not 'the hammer fell.' Ask why it was where it could fall.",
+            "Prevention names a change to the site or the practice, not a request for people to be more careful."
+          ],
+          "rubric": [
+            {
+              "criterion": "States facts, not blame",
+              "lookFor": "What, where, when: a hammer left near an unprotected deck edge fell to the level below.",
+              "commonMiss": "Naming whose hammer it was as if that were the cause."
+            },
+            {
+              "criterion": "Finds the root cause",
+              "lookFor": "No toe boards on the deck edge, no tool lanyard practice, staging tools at the edge.",
+              "commonMiss": "Stopping at 'the hammer slid off' — that is the event, not the cause."
+            },
+            {
+              "criterion": "Prevents with a system, not a wish",
+              "lookFor": "Install toe boards, keep a tool crib away from edges, barricade the drop zone below overhead work.",
+              "commonMiss": "'Remind everyone to be careful,' which changes nothing by Friday."
+            }
+          ],
+          "exemplarAnswer": "At about 3:15 yesterday, a framing hammer staged near the open edge of the second-floor decking slid off and struck the ground where the electrician had been working moments before; no injury. Root cause: tools staged at an unprotected edge with no toe board and no barricaded drop zone below. Corrective action: install toe boards along open edges, stage tools in the crib away from edges, and barricade ground areas under overhead work before trades start below."
+        }
+      ],
+      "evidenceFragment": "The Job Site: the stop-work call went to the hazard that was already live, the lockout order kept hands out of a blade that could still bite, and the near miss became a toe board instead of a funeral.",
+      "unlockText": "The foreman reads the clipboard, nods once, and unlocks the gate. The crew moves, and the site starts making noise the right way.",
+      "rewardLabel": "Site cleared for work"
+    }
+  ],
+  "finale": {
+    "title": "The Gate",
+    "setup": "Hazard called, saw locked out, near miss on paper.",
+    "prompt": "The apprentice asks why you tried the start switch on a saw you had just unplugged. What do you tell them?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Explains verification",
+        "lookFor": "Believing energy is gone and proving it are different; the try-out is the proof."
+      },
+      {
+        "criterion": "Passes on the habit",
+        "lookFor": "Frames it as what we always do, not what we did today."
+      }
+    ],
+    "closingText": "The gate swings open. Not because the schedule demanded it; because the site earned it."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

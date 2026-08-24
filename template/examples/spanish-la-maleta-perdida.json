@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "la-maleta-perdida",
+    "title": "La Maleta Perdida",
+    "author": "QM Connect Workshop",
+    "course": "Beginning Spanish (SPA 101)",
+    "objective": "Use ser, estar, and tener correctly in description, and sequence a real-world service dialogue.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "Your flight landed in Madrid. Your suitcase did not. The lost-baggage counter will release luggage only to travelers who can claim it in Spanish: complete the claim form, handle the conversation in order, and describe what is inside the case so they know it is really yours.",
+    "roleTitle": "Viajero / Viajera",
+    "successCondition": "The suitcase comes back when the claim is complete. There is no clock; the counter is open, and so is your phrasebook.",
+    "companion": {
+      "name": "LINGO",
+      "textAlwaysVisible": true
+    }
+  },
+  "levels": [
+    {
+      "id": "el-mostrador",
+      "order": 1,
+      "title": "El Mostrador",
+      "brief": "The claim form has one blank in the description line. The conversation with the clerk has been cut into strips. And the contents list is empty, because only you know what is in the suitcase. LINGO, your translation app, is very eager to help and very sure of itself.",
+      "companionLines": [
+        {
+          "id": "lingo-open",
+          "text": "For the form, say 'La maleta está negra.' It sounds more native. Fluency score: 95.8%. You are welcome.",
+          "confidence": 95.8,
+          "accurate": false,
+          "tell": "Está marks states and conditions — how something is right now. A suitcase's color is a defining trait, and traits take ser: la maleta es negra. LINGO optimized for sounding smooth, not for the distinction the language actually makes. Sounding fluent and being right are different skills."
+        }
+      ],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-ser-estar",
+          "prompt": "Complete the claim form: 'La maleta ___ negra y grande.' Which verb belongs in the blank?",
+          "selectMultiple": false,
+          "hints": [
+            "Ask whether the sentence describes what the suitcase is like by nature, or how it happens to be at the moment.",
+            "One of these verbs means to have, and the sentence is not about possession.",
+            "Traits that identify a thing — color, size, material — take the verb of essence."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "es",
+              "correct": true,
+              "feedback": "Correcto. Color and size are defining characteristics, and characteristics take ser: la maleta es negra y grande. This is the distinction LINGO smoothed over."
+            },
+            {
+              "id": "o2",
+              "text": "está",
+              "correct": false,
+              "feedback": "Está describes states and locations: la maleta está en Madrid, está abierta. Saying está negra suggests the suitcase is temporarily black today, which is a stranger claim than you mean to make."
+            },
+            {
+              "id": "o3",
+              "text": "tiene",
+              "correct": false,
+              "feedback": "Tiene means it has: la maleta tiene ruedas, tiene una etiqueta roja. Useful for the contents list later, but the blank needs a verb of being, not having."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-dialogo",
+          "prompt": "The conversation strips are out of order. Arrange the exchange with the clerk the way it actually unfolds at the counter.",
+          "hints": [
+            "Every service conversation opens with a greeting and closes with paper.",
+            "You cannot describe the suitcase before someone asks about it, and the clerk cannot ask before knowing your problem.",
+            "Read each strip aloud: whose turn is it, and what did they need to hear first?"
+          ],
+          "items": [
+            { "id": "s1", "text": "Usted: Buenos días. Perdí mi maleta." },
+            { "id": "s2", "text": "Empleada: Lo siento. ¿En qué vuelo llegó usted?" },
+            { "id": "s3", "text": "Usted: En el vuelo 214, de Washington." },
+            { "id": "s4", "text": "Empleada: ¿Cómo es su maleta?" },
+            { "id": "s5", "text": "Usted: Es negra y grande, y tiene una etiqueta roja." },
+            { "id": "s6", "text": "Empleada: Muy bien. Aquí tiene su recibo." }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5", "s6"],
+          "keyboardInstructions": "Select a line, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Greeting and problem, flight question and answer, description question and answer, receipt. Notice the grammar doing quiet work in the middle: ¿Cómo es? asks for traits, and the answer uses es and tiene exactly where they belong."
+        },
+        {
+          "type": "response",
+          "id": "c3-contenido",
+          "prompt": "Prove the suitcase is yours. Write three sentences in Spanish describing what is inside, using tener or hay, with at least three items, one color, and one number.",
+          "hints": [
+            "Two reliable frames: 'La maleta tiene...' and 'Hay... en la maleta.'",
+            "Adjectives agree with their nouns: una camisa blanca, dos libros nuevos.",
+            "Numbers before nouns, colors after: dos camisas azules."
+          ],
+          "rubric": [
+            {
+              "criterion": "Uses tener or hay correctly",
+              "lookFor": "La maleta tiene..., Hay... en la maleta, conjugated and placed correctly.",
+              "commonMiss": "Using es or está to list contents: 'la maleta es dos camisas.'"
+            },
+            {
+              "criterion": "Adjective agreement",
+              "lookFor": "Colors and numbers agree in gender and number with what they describe.",
+              "commonMiss": "Frozen masculine singular adjectives regardless of the noun: 'dos camisas blanco.'"
+            },
+            {
+              "criterion": "Meets the inventory",
+              "lookFor": "At least three items, one color, one number, in three sentences.",
+              "commonMiss": "One long list in a single sentence, or items with no description at all."
+            }
+          ],
+          "exemplarAnswer": "La maleta tiene dos camisas azules y un libro de historia. Hay una cámara pequeña en la maleta. También tiene tres regalos para mi familia."
+        }
+      ],
+      "evidenceFragment": "El Mostrador: the form needed ser because color is a trait, not a state — the one distinction LINGO traded away for smoothness. The dialogue held its order, and the contents list proved the case was yours.",
+      "unlockText": "The clerk smiles, disappears into the back, and returns wheeling a black suitcase with a red tag. Es la suya.",
+      "rewardLabel": "Maleta recuperada"
+    }
+  ],
+  "finale": {
+    "title": "La Salida",
+    "setup": "Form completed, conversation navigated, suitcase described and recovered.",
+    "prompt": "Before you leave the airport: in English, what is one thing about ser versus estar you can now explain to a classmate who is where you were last week?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "States the distinction accurately",
+        "lookFor": "Traits and identity take ser; states, conditions, and locations take estar."
+      },
+      {
+        "criterion": "Teaches with an example",
+        "lookFor": "A concrete pair like 'es negra' versus 'está abierta' from the room or their own."
+      }
+    ],
+    "closingText": "The doors open onto Madrid. Not because your accent was perfect; because your description was yours, and it was right."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

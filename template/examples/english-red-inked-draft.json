@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-red-inked-draft",
+    "title": "The Red-Inked Draft",
+    "author": "QM Connect Workshop",
+    "course": "College Composition (ENG 111)",
+    "objective": "Distinguish a working thesis from its impostors, order an argument logically, and revise a weak topic sentence.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "The writing center's printer ate an essay draft and spat the pieces back out of order, red ink and all. The student comes back for a conference in twenty minutes, and the draft has to make sense by then: find the real thesis among the pretenders, rebuild the argument's skeleton, and fix the one topic sentence the red pen circled twice.",
+    "roleTitle": "Writing Consultant",
+    "successCondition": "The draft is conference-ready when the argument stands on its own. There is no clock in this room, whatever the printer thinks."
+  },
+  "levels": [
+    {
+      "id": "the-writing-center",
+      "order": 1,
+      "title": "The Writing Center",
+      "brief": "Four sentences from page one sit in a pile, each claiming to be the thesis. Six structural pieces of the essay are scattered across the desk. And one topic sentence, circled twice in red, reads like it was written at 2 a.m., because it was.",
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-thesis",
+          "prompt": "The essay argues about social media and student attention. Which of these four sentences is the working thesis?",
+          "selectMultiple": false,
+          "hints": [
+            "A thesis is a claim someone could reasonably argue against. Test each sentence: could a smart person disagree?",
+            "Announcements describe the essay. Facts describe the world. Questions describe neither. Only one kind takes a position.",
+            "Look for the sentence that makes a promise the body paragraphs would have to keep."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "In this essay I will discuss social media and college students.",
+              "correct": false,
+              "feedback": "An announcement. It tells the reader an essay is coming without risking a single claim. Nobody can disagree with a table of contents."
+            },
+            {
+              "id": "o2",
+              "text": "Roughly seven in ten college students report checking social media during class.",
+              "correct": false,
+              "feedback": "A fact, and a useful one — as evidence. A statistic cannot be a thesis because there is nothing to argue; you would look it up, not debate it."
+            },
+            {
+              "id": "o3",
+              "text": "Colleges should teach attention management directly, because social media is engineered to defeat the study habits students already have.",
+              "correct": true,
+              "feedback": "Correct. It takes a position a reasonable person could dispute, gives a reason, and forecasts what the body must prove: the engineering claim and the teach-it-directly solution."
+            },
+            {
+              "id": "o4",
+              "text": "Is social media really as harmful to studying as professors claim?",
+              "correct": false,
+              "feedback": "A question can open an essay, but it cannot anchor one: it asks the reader to take the position the writer was supposed to take."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-skeleton",
+          "prompt": "Rebuild the essay's skeleton. Put the six structural pieces in the order the argument needs them.",
+          "hints": [
+            "The reader needs a reason to care before they get the claim, and the claim before any proof of it.",
+            "The strongest place to face the other side is after your own case is standing, not before it exists.",
+            "The conclusion does not repeat; it answers 'so what.' It can only do that last."
+          ],
+          "items": [
+            { "id": "s1", "text": "Hook: a student rereads the same paragraph four times between notifications." },
+            { "id": "s2", "text": "Context: what the research says about attention and interruption." },
+            { "id": "s3", "text": "Thesis: colleges should teach attention management directly." },
+            { "id": "s4", "text": "Body paragraphs: the evidence, one claim at a time." },
+            { "id": "s5", "text": "Counterargument and response: 'students are adults' — and why that misses the design asymmetry." },
+            { "id": "s6", "text": "Conclusion: what changes if colleges act, and what it costs if they do not." }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5", "s6"],
+          "keyboardInstructions": "Select a piece, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Hook, context, thesis, body, counterargument, conclusion. Each piece earns the next: attention before claim, claim before proof, proof before rebuttal, and the 'so what' only after there is a case to care about."
+        },
+        {
+          "type": "response",
+          "id": "c3-topic-sentence",
+          "prompt": "The twice-circled topic sentence reads: 'There are many things about social media.' Its paragraph is about how notification design interrupts studying. Rewrite the topic sentence so it does its job.",
+          "hints": [
+            "A topic sentence makes one specific claim the rest of the paragraph will prove.",
+            "Connect it upward to the thesis and downward to the evidence that follows.",
+            "'Many things' is the enemy. Replace it with the one thing this paragraph is actually about."
+          ],
+          "rubric": [
+            {
+              "criterion": "Makes one specific, arguable claim",
+              "lookFor": "A sentence about notification design and interrupted study, not 'many things.'",
+              "commonMiss": "Trading vague for broad: 'Social media affects students in numerous ways.'"
+            },
+            {
+              "criterion": "Serves the thesis",
+              "lookFor": "The claim clearly supports the argument that attention management should be taught.",
+              "commonMiss": "A true but orphaned claim that belongs in a different essay."
+            },
+            {
+              "criterion": "Forecasts the paragraph's evidence",
+              "lookFor": "A reader can predict what kind of proof comes next.",
+              "commonMiss": "A claim so general that any evidence would fit under it."
+            }
+          ],
+          "exemplarAnswer": "Notification systems are deliberately engineered to interrupt, which is why even disciplined students lose study time they never decided to give up. (The paragraph can now deliver the design evidence and the time-loss data, and the sentence pulls its weight in the larger argument.)"
+        }
+      ],
+      "evidenceFragment": "The Writing Center: the real thesis was the only sentence taking a risk. The skeleton held because each piece earned the next, and the 2 a.m. sentence just needed one specific claim to stand up.",
+      "unlockText": "The pages settle into order, and the draft reads like an argument instead of a pile. The student's conference is going to go fine.",
+      "rewardLabel": "Draft restored"
+    }
+  ],
+  "finale": {
+    "title": "The Conference",
+    "setup": "Thesis found, skeleton rebuilt, topic sentence rewritten.",
+    "prompt": "The student asks what you actually did. In one or two sentences, what will you tell them to check in every draft from now on?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Names a revision habit",
+        "lookFor": "Testing the thesis for arguability, checking that each topic sentence makes one claim, ordering before polishing."
+      },
+      {
+        "criterion": "Says it like a consultant",
+        "lookFor": "Advice the student can apply alone, not a critique of this draft only."
+      }
+    ],
+    "closingText": "The draft goes back in the folder, whole. Not because the printer relented; because the argument finally held its own shape."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-quarantine-folder",
+    "title": "The Quarantine Folder",
+    "author": "QM Connect Workshop",
+    "course": "Cybersecurity Fundamentals (ITN 260)",
+    "objective": "Identify phishing indicators, execute incident response in order, and communicate a security warning clearly.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "The mail filter caught four messages overnight and locked them in quarantine, but it cannot tell which are threats and which are business the college actually needs. Meanwhile, someone in the bursar's office already clicked something. Sort the quarantine, run the response in the right order, and write the warning that keeps the next person from clicking.",
+    "roleTitle": "Security Analyst",
+    "successCondition": "The folder clears when the threats are named, the incident is contained, and the campus is warned. There is no clock; panic is the attacker's tool, not yours."
+  },
+  "levels": [
+    {
+      "id": "the-soc",
+      "order": 1,
+      "title": "The Security Operations Desk",
+      "brief": "Four quarantined emails wait on the screen. A ticket from the bursar's office reads: 'I think I clicked the link. What do I do first?' And the campus-wide warning template is blank. Everything the attackers wrote is designed to make someone hurry. Do not.",
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-triage",
+          "prompt": "Review the four quarantined messages. Select the TWO that are phishing. (1) From 'President Whitfield' <president.whitfield@gmail-secure-mail.com>: 'Are you at your desk? I need gift cards for donors in the next hour. Keep this confidential.' (2) From IT Services <helpdesk@college.edu>: 'Scheduled maintenance Saturday 2-4 a.m.; systems unavailable. Ticket #48221.' (3) From 'Payroll Portal' <notice@co11ege-payroll.com>: 'Your direct deposit is on hold. Verify your credentials within 24 hours or forfeit this cycle.' (4) From the library <circulation@college.edu>: 'The book you requested is ready for pickup at the front desk.'",
+          "selectMultiple": true,
+          "hints": [
+            "Read the actual addresses character by character, not the display names.",
+            "Urgency plus secrecy plus an unusual payment method is a signature, not a coincidence.",
+            "Two messages ask you to do something under time pressure. Two simply inform you. Start there."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "Message 1: the president's gift card request",
+              "correct": true,
+              "feedback": "Phishing. The display name says president; the address is an external lookalike domain. Urgency, secrecy, and gift cards are the executive-impersonation signature. Real leadership does not procure gift cards by email in an hour."
+            },
+            {
+              "id": "o2",
+              "text": "Message 2: the IT maintenance notice",
+              "correct": false,
+              "feedback": "Legitimate. Internal domain, a ticket number that can be verified in the system, no link demanding action, no deadline pressure. Informing is not phishing."
+            },
+            {
+              "id": "o3",
+              "text": "Message 3: the payroll verification demand",
+              "correct": true,
+              "feedback": "Phishing. Look closely at the domain: co11ege, with two digit ones for the letter l. A credential harvest wearing a deadline — the threat of losing pay is the pressure that makes people skip the reading."
+            },
+            {
+              "id": "o4",
+              "text": "Message 4: the library pickup notice",
+              "correct": false,
+              "feedback": "Legitimate. Internal domain, asks nothing of you but a walk to the front desk, and matches a request you made. The filter caught it out of caution, which is what filters are for."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-response",
+          "prompt": "The bursar's clerk clicked the payroll link and entered their password before doubting it. Put the incident-response steps in the order that limits the damage.",
+          "hints": [
+            "The first two moves cut off the attacker's access: one to the machine, one to the account.",
+            "Reporting comes before investigation you cannot do yourself; security cannot contain what it does not know about.",
+            "Documentation is last, but only because everything in it has to have happened first."
+          ],
+          "items": [
+            { "id": "s1", "text": "Disconnect the affected computer from the network." },
+            { "id": "s2", "text": "Change the compromised password from a different, clean device." },
+            { "id": "s3", "text": "Report the incident to the security office with the original email attached." },
+            { "id": "s4", "text": "Watch the affected accounts for unauthorized activity." },
+            { "id": "s5", "text": "Document the timeline: what was clicked, when, and what was done about it." }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5"],
+          "keyboardInstructions": "Select a step, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Contain the machine, contain the account, escalate, monitor, document. The first two minutes decide how far a stolen credential travels; everything after that is making sure the story is complete and the next response is faster."
+        },
+        {
+          "type": "response",
+          "id": "c3-warning",
+          "prompt": "Write the two-to-three-sentence campus warning about the payroll message. Name two specific indicators people can check for themselves, and tell them exactly what to do if they already clicked.",
+          "hints": [
+            "A warning that says 'be careful' teaches nothing. Name what to look at.",
+            "Your two strongest indicators are in the sender's address and in what the message demands.",
+            "End with the action for people who already clicked; shame keeps incidents unreported."
+          ],
+          "rubric": [
+            {
+              "criterion": "Names two concrete indicators",
+              "lookFor": "The lookalike domain (digits for letters) and the urgent credential demand, described so a non-technical reader can check.",
+              "commonMiss": "Generic advice — 'watch out for suspicious emails' — with nothing checkable."
+            },
+            {
+              "criterion": "Gives the already-clicked path",
+              "lookFor": "Change your password from another device and contact security; no blame attached.",
+              "commonMiss": "Only warning the people who have not clicked yet."
+            },
+            {
+              "criterion": "Stays calm and short",
+              "lookFor": "Two or three sentences a busy person will actually read.",
+              "commonMiss": "A page of policy that transfers the urgency-pressure from the attacker to you."
+            }
+          ],
+          "exemplarAnswer": "A fake 'Payroll Portal' email is circulating that demands you verify your credentials within 24 hours; the sender's address uses the digits '11' in place of the letters 'll' in college, and no legitimate office threatens your pay by email. Do not click the link. If you already entered your password, change it now from a different device and contact the security office — you will not be in trouble, and you will help us stop it."
+        }
+      ],
+      "evidenceFragment": "The Security Desk: both threats ran on manufactured urgency, and both fell to slow reading — a lookalike domain here, a gift-card script there. The response order bought back what the click gave away.",
+      "unlockText": "The quarantine folder empties: two messages released to their inboxes, two preserved as evidence. The bursar's password is dead, and the attacker is holding a key to a changed lock.",
+      "rewardLabel": "Quarantine cleared"
+    }
+  ],
+  "finale": {
+    "title": "The Debrief",
+    "setup": "Threats identified, incident contained, campus warned.",
+    "prompt": "One line for the debrief: what does manufactured urgency do to people, and what is your personal rule for it now?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Names the mechanism",
+        "lookFor": "Urgency short-circuits verification; the deadline is the attack."
+      },
+      {
+        "criterion": "States a usable rule",
+        "lookFor": "Something like: the more urgent the demand, the slower I read the sender's address."
+      }
+    ],
+    "closingText": "The folder closes. Not because the filter got smarter; because the people did."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

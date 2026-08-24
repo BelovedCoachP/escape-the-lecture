@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-locked-med-cart",
+    "title": "The Locked Med Cart",
+    "author": "QM Connect Workshop",
+    "course": "Health Sciences: Nursing Fundamentals",
+    "objective": "Apply medication-order safety checks, sequence the nursing process, and hand off a patient using SBAR.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "Morning medication pass in the simulation lab, and the med cart has locked itself over a flagged order. Three orders sit in the queue, and the cart will not open until someone proves they can tell the safe one from the two that should stop any nurse cold. Then the shift ends, and your patient becomes someone else's — if your handoff is good enough to keep them safe without you.",
+    "roleTitle": "Student Nurse",
+    "successCondition": "The cart opens when the checks are done and the handoff holds. There is no clock; the five rights do not hurry.",
+    "companion": {
+      "name": "DOSSIE",
+      "textAlwaysVisible": true
+    }
+  },
+  "levels": [
+    {
+      "id": "the-sim-lab",
+      "order": 1,
+      "title": "The Simulation Lab",
+      "brief": "Three medication orders glow on the cart's screen. The nursing-process cards from this morning's lecture are scattered across the counter. And the SBAR handoff sheet is blank. DOSSIE, the cart's assistant, has helpfully pre-approved all three orders.",
+      "companionLines": [
+        {
+          "id": "dossie-open",
+          "text": "I have reviewed all three orders and they look fine to me. Approval confidence: 95.3%. The prescriber is very experienced. You may begin the pass.",
+          "confidence": 95.3,
+          "accurate": false,
+          "tell": "One order has no route at all, and another asks for ten times the strength of the tablets stocked in the cart. DOSSIE verified that the orders exist, not that they are safe — and 'the prescriber is experienced' is an appeal to authority, not a check. The five rights exist because experience makes errors too."
+        }
+      ],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-orders",
+          "prompt": "Three orders in the queue: (1) 'Medication A 5 mg by mouth once daily' for a patient with no relevant allergies. (2) 'Medication B 10 mg daily' — no route written. (3) 'Medication C 50 mg by mouth now,' where the cart stocks Medication C only in 5 mg tablets and the usual dose is 5 mg. Which order is safe to administer as written?",
+          "selectMultiple": false,
+          "hints": [
+            "Run each order through the five rights: patient, drug, dose, route, time. A safe order answers all five.",
+            "An order that is missing one of the rights is not a guess the nurse gets to make.",
+            "When a written dose is ten times the stocked and usual dose, the likeliest explanation is a decimal that went missing."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "Order 1: Medication A, 5 mg by mouth once daily",
+              "correct": true,
+              "feedback": "Correct. Drug, dose, route, and frequency are all present and consistent with the stocked medication — every right is checkable, so the order can be verified rather than assumed."
+            },
+            {
+              "id": "o2",
+              "text": "Order 2: Medication B, 10 mg daily",
+              "correct": false,
+              "feedback": "No route. By mouth, injection, and IV are different orders with different risks, and guessing is not among a nurse's rights. This order goes back to the prescriber for clarification before anything leaves the cart."
+            },
+            {
+              "id": "o3",
+              "text": "Order 3: Medication C, 50 mg now",
+              "correct": false,
+              "feedback": "A tenfold red flag: the written dose is ten times both the usual dose and the stocked tablet strength — the classic signature of a misplaced decimal. This is exactly the order the safety checks exist to stop. Hold it and call the prescriber."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-adpie",
+          "prompt": "The nursing-process cards are scattered. Put the five phases in the order the process runs.",
+          "hints": [
+            "You cannot name the problem before you have looked at the patient.",
+            "A plan needs a problem, and an action needs a plan.",
+            "The last phase asks one question: did it work? Everything else has to exist before that question makes sense."
+          ],
+          "items": [
+            { "id": "s1", "text": "Assessment: gather data about the patient." },
+            { "id": "s2", "text": "Diagnosis: name the problem the data shows." },
+            { "id": "s3", "text": "Planning: set goals and choose interventions." },
+            { "id": "s4", "text": "Implementation: carry out the interventions." },
+            { "id": "s5", "text": "Evaluation: measure whether it worked, and adjust." }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5"],
+          "keyboardInstructions": "Select a phase, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Assessment, diagnosis, planning, implementation, evaluation. Each phase is built from the one before it, and evaluation loops back to assessment — which is why the process is drawn as a circle on every whiteboard in the building."
+        },
+        {
+          "type": "response",
+          "id": "c3-sbar",
+          "prompt": "Shift change. Your patient: recovering from knee surgery yesterday, pain controlled this morning but reported 7 out of 10 at last check, slightly elevated pulse, due for the held Medication C conversation with the prescriber. Write the SBAR handoff: Situation, Background, Assessment, Recommendation.",
+          "hints": [
+            "One or two sentences per letter. SBAR is a structure, not an essay.",
+            "Assessment is what you observe and measure, not what you hope.",
+            "The recommendation is the sentence the next nurse acts on first. Make it impossible to miss."
+          ],
+          "rubric": [
+            {
+              "criterion": "All four parts, in order",
+              "lookFor": "Situation, Background, Assessment, Recommendation, each doing its own job.",
+              "commonMiss": "A single narrative paragraph the next nurse has to mine for the facts."
+            },
+            {
+              "criterion": "Objective data in the assessment",
+              "lookFor": "Pain 7/10, elevated pulse — numbers and observations, not impressions.",
+              "commonMiss": "'Patient seems uncomfortable,' which the next nurse cannot compare against anything."
+            },
+            {
+              "criterion": "An actionable recommendation",
+              "lookFor": "Follow up on the held order with the prescriber; reassess pain within the hour.",
+              "commonMiss": "Ending on background with no ask, leaving the held order to be rediscovered."
+            }
+          ],
+          "exemplarAnswer": "Situation: This is the patient in bed 4, post-op day one from knee surgery, currently reporting pain of 7 out of 10. Background: Pain was well controlled this morning; a Medication C order was held for a suspected tenfold dosing error and is awaiting prescriber clarification. Assessment: Pain trending up over the shift with a mildly elevated pulse, consistent with undertreated pain. Recommendation: Contact the prescriber about the held order within the hour and reassess pain after any intervention."
+        }
+      ],
+      "evidenceFragment": "The Simulation Lab: DOSSIE approved everything because the orders existed; the five rights stopped the missing route and the wandering decimal. The handoff carried the held order forward instead of letting the next shift rediscover it.",
+      "unlockText": "The cart unlocks with a click that sounds almost approving. Your patient's chart is complete, and the next nurse starts their shift already knowing what you know.",
+      "rewardLabel": "Cart unlocked"
+    }
+  ],
+  "finale": {
+    "title": "The Shift Change",
+    "setup": "Orders checked, process ordered, handoff written.",
+    "prompt": "Before you clock out: DOSSIE was 95.3 percent confident about an order that was ten times too strong. What is your rule for automated approvals now?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Separates existence from safety",
+        "lookFor": "The system checked that orders were present; the nurse checks that they are right."
+      },
+      {
+        "criterion": "Keeps the human check",
+        "lookFor": "A stated habit: run the five rights personally, every pass, regardless of the software's confidence."
+      }
+    ],
+    "closingText": "The cart locks behind you, satisfied. Not because the software signed off; because you did."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-locked-listening-booth",
+    "title": "The Locked Listening Booth",
+    "author": "QM Connect Workshop",
+    "course": "Music Appreciation (MUS 121)",
+    "objective": "Identify musical eras from stylistic evidence and describe music using core musical elements.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "The library's listening booth locked itself after a software update, with your playlist for tomorrow's exam still inside. The booth's assistant will release the door to anyone who can prove they listen like a musician: place a piece in its era, put the eras themselves in order, and describe what you hear in the language of the discipline.",
+    "roleTitle": "Listener",
+    "successCondition": "The booth unlocks when the listening is proven. There is no clock; music has never cared what time it is.",
+    "companion": {
+      "name": "DJ-9",
+      "textAlwaysVisible": true
+    }
+  },
+  "levels": [
+    {
+      "id": "the-booth",
+      "order": 1,
+      "title": "The Booth",
+      "brief": "Three panels glow on the booth door: a mystery piece described but unnamed, a timeline with its eras scrambled, and an empty listening journal. DJ-9, the booth's assistant, has already filled in its own answers. It would like you to know it has excellent taste.",
+      "companionLines": [
+        {
+          "id": "dj9-open",
+          "text": "I have identified the mystery piece already: sweeping, emotional, clearly Romantic. Confidence: 93.7%. You may skip to the journal.",
+          "confidence": 93.7,
+          "accurate": false,
+          "tell": "The description DJ-9 read names a harpsichord playing continuo, terraced dynamics, and a single steady mood. Every one of those is Baroque evidence. DJ-9 matched the word 'expressive' to the era with the biggest reputation for feelings instead of listening to the clues."
+        }
+      ],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-era",
+          "prompt": "The mystery piece: a harpsichord plays continuous accompaniment beneath an ornamented violin melody. The volume shifts in sudden steps rather than gradual swells, and a single affect holds from first bar to last. Which era is this?",
+          "selectMultiple": false,
+          "hints": [
+            "Do not ask which era the piece feels like. Ask which era built instruments and habits like these.",
+            "One instrument in the description had essentially retired from orchestras by 1800.",
+            "Sudden steps of loud and soft have a name, and the name has an era attached to it."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "Baroque",
+              "correct": true,
+              "feedback": "Correct. Harpsichord continuo, ornamented melody, terraced dynamics, and a single sustained affect are the Baroque fingerprint. You identified it from evidence, which is the whole skill."
+            },
+            {
+              "id": "o2",
+              "text": "Romantic",
+              "correct": false,
+              "feedback": "Romantic music swells and recedes gradually, and by then the harpsichord had been replaced by the piano for nearly a century. This is DJ-9's answer, reached by matching mood words instead of evidence."
+            },
+            {
+              "id": "o3",
+              "text": "Twentieth century",
+              "correct": false,
+              "feedback": "Twentieth-century music tends to break the very conventions this piece follows faithfully: functional harmony, steady affect, continuo texture. Nothing here is being broken."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-timeline",
+          "prompt": "The booth's timeline panel has shuffled the eras. Put them back in chronological order, earliest first.",
+          "hints": [
+            "Two of these eras are named for rebirth and for ornament; rebirth comes first.",
+            "The era of powdered wigs and balanced phrases sits between ornament and emotion.",
+            "Chant is oldest. Feeling-forward is most recent of the five."
+          ],
+          "items": [
+            { "id": "s1", "text": "Medieval" },
+            { "id": "s2", "text": "Renaissance" },
+            { "id": "s3", "text": "Baroque" },
+            { "id": "s4", "text": "Classical" },
+            { "id": "s5", "text": "Romantic" }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5"],
+          "keyboardInstructions": "Select an era, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Medieval, Renaissance, Baroque, Classical, Romantic. Each era pushed against the one before it, which is why the order is the story: polyphony blooming out of chant, ornament out of balance, feeling out of form."
+        },
+        {
+          "type": "response",
+          "id": "c3-journal",
+          "prompt": "The listening journal is empty. Describe the mystery piece in two or three sentences using at least three musical elements by name: for example melody, rhythm, dynamics, texture, or timbre.",
+          "hints": [
+            "Name the element, then say what the music does with it. 'The dynamics shift in sudden steps' beats 'it gets loud.'",
+            "The description on the door panel already handed you observations for three elements. Translate them into your own sentences.",
+            "A reader who has never heard the piece should be able to imagine it from your journal entry."
+          ],
+          "rubric": [
+            {
+              "criterion": "Names at least three musical elements",
+              "lookFor": "Three element terms used correctly: melody, rhythm, dynamics, texture, timbre, harmony, form.",
+              "commonMiss": "Describing feelings ('it sounds fancy') without naming any element."
+            },
+            {
+              "criterion": "Ties each element to an observation",
+              "lookFor": "Each named element comes with what the music actually does: ornamented melody, terraced dynamics, continuo texture.",
+              "commonMiss": "Listing element names with no description attached to them."
+            }
+          ],
+          "exemplarAnswer": "The melody is highly ornamented, carried by a violin over a steady harpsichord continuo, so the texture keeps a clear top line above constant accompaniment. The dynamics move in terraced steps rather than gradual swells, and the timbre of the harpsichord gives the whole piece a bright, plucked edge."
+        }
+      ],
+      "evidenceFragment": "The Booth: the era was in the evidence, not the mood. DJ-9 matched a feeling to a reputation; you matched instruments and dynamics to a century.",
+      "unlockText": "The booth door slides open, and your playlist is exactly where you left it. Somewhere in its circuits, DJ-9 quietly revises its confidence.",
+      "rewardLabel": "Booth unlocked"
+    }
+  ],
+  "finale": {
+    "title": "The Door",
+    "setup": "Era identified from evidence, timeline restored, journal written in the language of the discipline.",
+    "prompt": "Before the booth lets you go: what is one piece of stylistic evidence you will listen for on the exam that you would have missed a week ago?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Names concrete evidence",
+        "lookFor": "A specific listenable feature: continuo, terraced dynamics, ornamentation, an instrument's timbre."
+      },
+      {
+        "criterion": "Connects it to identification",
+        "lookFor": "Says what the evidence points to, not just that it exists."
+      }
+    ],
+    "closingText": "The booth unlocks. Not because you named the piece; because you could show your listening."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

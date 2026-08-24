@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-undated-letter",
+    "title": "The Undated Letter",
+    "author": "QM Connect Workshop",
+    "course": "U.S. History I (HIS 121)",
+    "objective": "Date and evaluate a primary source using internal evidence and source analysis.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "A donated box of family papers holds one letter with the date torn away. The archive will not accession an undated document, and the donor is waiting. Everything you need is inside the letter itself: date it from internal evidence, anchor it on the timeline, and write the source assessment that makes it usable to historians.",
+    "roleTitle": "Archivist's Apprentice",
+    "successCondition": "The letter is accessioned when its date and its worth are established. There is no clock; the letter has already waited a hundred and sixty years.",
+    "companion": {
+      "name": "ARCHIE",
+      "textAlwaysVisible": true
+    }
+  },
+  "levels": [
+    {
+      "id": "the-reading-room",
+      "order": 1,
+      "title": "The Reading Room",
+      "brief": "The letter, in a soldier's hand: 'This war drags into its third year... the President's proclamation has freed those enslaved in the states in rebellion, and the men debate it around every fire... we march north tomorrow.' ARCHIE, the archive's cataloging assistant, has already proposed a date with great enthusiasm.",
+      "companionLines": [
+        {
+          "id": "archie-open",
+          "text": "A war, a President, an army marching: this is clearly a Revolutionary War letter, 1776. Confidence: 94.1%. Shall I file it under Founding Documents?",
+          "confidence": 94.1,
+          "accurate": false,
+          "tell": "There was no President of the United States in 1776; the office begins with Washington in 1789. And the proclamation the letter quotes frees 'those enslaved in the states in rebellion,' which is the Emancipation Proclamation, January 1863. ARCHIE matched 'war letter' to the most famous war instead of reading the evidence in the sentences."
+        }
+      ],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-date",
+          "prompt": "Using only the letter's internal evidence — a war in its third year, the President's proclamation freeing those enslaved in states in rebellion, an army about to march north — when was this letter most likely written?",
+          "selectMultiple": false,
+          "hints": [
+            "Date the proclamation first. The letter cannot be earlier than the document it quotes.",
+            "A war in its third year: count forward from the war's first shots.",
+            "Marching north narrows the year further. One famous northern campaign followed the proclamation by months."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "Spring or summer of 1863",
+              "correct": true,
+              "feedback": "Correct. The Emancipation Proclamation took effect January 1, 1863; a war begun in April 1861 is in its third year; and a march north in mid-1863 points toward the Gettysburg campaign. Three independent clues, one date."
+            },
+            {
+              "id": "o2",
+              "text": "Summer of 1776",
+              "correct": false,
+              "feedback": "This is ARCHIE's answer. No President existed in 1776, and no proclamation freed enslaved people in 'states in rebellion' during the Revolution. Famous is not the same as fitting."
+            },
+            {
+              "id": "o3",
+              "text": "Spring of 1865",
+              "correct": false,
+              "feedback": "By spring 1865 the war is in its fourth year and ending at Appomattox, not dragging into its third. Close eras still have to answer to every clue, and this one fails the arithmetic."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-timeline",
+          "prompt": "Anchor the letter by putting these five events in chronological order, earliest first.",
+          "hints": [
+            "Start with the shot that starts the war and end with the surrender that ends it.",
+            "The proclamation was announced after a bloody autumn battle and took effect at the new year.",
+            "The letter itself sits between the proclamation and the surrender; place its neighbors carefully."
+          ],
+          "items": [
+            { "id": "s1", "text": "Attack on Fort Sumter begins the war (April 1861)" },
+            { "id": "s2", "text": "Battle of Antietam (September 1862)" },
+            { "id": "s3", "text": "Emancipation Proclamation takes effect (January 1863)" },
+            { "id": "s4", "text": "Battle of Gettysburg (July 1863)" },
+            { "id": "s5", "text": "Surrender at Appomattox (April 1865)" }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5"],
+          "keyboardInstructions": "Select an event, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Sumter, Antietam, Emancipation, Gettysburg, Appomattox. Antietam gave Lincoln the standing to announce the proclamation; the proclamation reframed the war the letter describes; Gettysburg is the northern march the writer never got to name."
+        },
+        {
+          "type": "response",
+          "id": "c3-assessment",
+          "prompt": "Write the source assessment for the accession file: who wrote this, what is it strong evidence of, and what should a historian be cautious about when using it?",
+          "hints": [
+            "A source can be completely honest and still limited. Say what this writer could actually see.",
+            "Strong evidence of experience and attitude is different from strong evidence of facts and figures.",
+            "Caution is not dismissal. Name the limits, then name what survives them."
+          ],
+          "rubric": [
+            {
+              "criterion": "Identifies the perspective",
+              "lookFor": "A common soldier writing privately during the war, with the access and blind spots that position carries.",
+              "commonMiss": "Treating the letter as an official account of the war."
+            },
+            {
+              "criterion": "Distinguishes kinds of evidence",
+              "lookFor": "Strong for soldier morale and reception of the proclamation; weak for strategy, casualty figures, or events beyond his campfire.",
+              "commonMiss": "Rating the source simply 'reliable' or 'unreliable' as a whole."
+            },
+            {
+              "criterion": "Names a specific caution",
+              "lookFor": "One concrete limit: single viewpoint, camp rumor, sentiment shaped for the recipient at home.",
+              "commonMiss": "Generic caution ('sources can be biased') with nothing tied to this letter."
+            }
+          ],
+          "exemplarAnswer": "The writer is a Union soldier recording camp life for someone at home in mid-1863. The letter is strong evidence of how ordinary soldiers received the Emancipation Proclamation and of morale in its third year, because it reports what the writer heard and felt firsthand. A historian should be cautious using it for anything beyond his line of sight: troop movements and debates 'around every fire' arrive through rumor and a single sympathetic voice, honest but narrow."
+        }
+      ],
+      "evidenceFragment": "The Reading Room: the date was inside the letter the whole time. ARCHIE matched the story to the most famous war; the evidence answered to exactly one year.",
+      "unlockText": "The accession stamp comes down, and the letter joins the collection with a date it carried for a hundred and sixty years without saying aloud.",
+      "rewardLabel": "Letter accessioned"
+    }
+  ],
+  "finale": {
+    "title": "The Accession File",
+    "setup": "Dated from internal evidence, anchored on the timeline, assessed as a source.",
+    "prompt": "Before the file closes: what is one question you will now ask of every primary source before you trust it?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Asks a source-analysis question",
+        "lookFor": "Who wrote it, when, for whom, what could they actually see, what does it quote?"
+      },
+      {
+        "criterion": "Shows why it matters",
+        "lookFor": "Connects the question to how the letter almost got filed in the wrong century."
+      }
+    ],
+    "closingText": "The drawer closes on a dated letter. Not because someone remembered; because the evidence testified."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}

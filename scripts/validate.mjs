@@ -83,6 +83,24 @@ if (validate(example)) {
   }
 }
 
+// The example gallery: every discipline room ships valid against both
+// schemas, same guarantee as the bundled example.
+const examplesDir = join(root, "template", "examples");
+for (const file of readdirSync(examplesDir).filter((f) => f.endsWith(".json"))) {
+  const room = JSON.parse(readFileSync(join(examplesDir, file), "utf8"));
+  for (const [label, check] of [["template schema", validateTemplate], ["full schema", validate]]) {
+    if (check(room)) {
+      console.log(`PASS  template/examples/${file}  (${label})`);
+    } else {
+      failed = true;
+      console.error(`FAIL  template/examples/${file}  (${label})`);
+      for (const err of check.errors) {
+        console.error(`      ${err.instancePath || "(root)"}  ${err.message}`);
+      }
+    }
+  }
+}
+
 if (failed) {
   console.error("\nValidation failed. Invalid content does not publish.");
   process.exit(1);

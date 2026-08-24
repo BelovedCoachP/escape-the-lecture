@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-broken-receipt",
+    "title": "The Broken Receipt",
+    "author": "QM Connect Workshop",
+    "course": "Developmental / Applied Algebra",
+    "objective": "Translate a real situation into a linear equation, solve it in defensible steps, and verify the solution.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "The bookstore's register jammed mid-receipt and the manager needs the day's numbers reconciled before the deposit. Two lines survived, half-readable under a coffee stain. The register will reprint the receipt for anyone who can rebuild the math it lost: model the sale, solve it in order, and prove the answer checks.",
+    "roleTitle": "Auditor",
+    "successCondition": "The register reprints when the numbers reconcile. There is no clock; arithmetic does not expire.",
+    "companion": {
+      "name": "TALLY",
+      "textAlwaysVisible": true
+    }
+  },
+  "levels": [
+    {
+      "id": "the-register",
+      "order": 1,
+      "title": "The Register",
+      "brief": "Line one of the receipt reads: three identical notebooks and one $4.50 pen, total $18.00. Line two is worse: two identical binders, three folders at $1.25 each, total $12.75, with the binder price under the stain. TALLY, the register's assistant, has already offered to guess.",
+      "companionLines": [
+        {
+          "id": "tally-open",
+          "text": "Statistically, notebooks are usually about $6. Three sixes are eighteen. Case closed, confidence 90.2%. The pen was probably free.",
+          "confidence": 90.2,
+          "accurate": false,
+          "tell": "TALLY's answer ignores the pen entirely: three notebooks at $6 spend the whole $18.00 before the $4.50 pen is paid for. A guess that feels close is not a model. The equation includes every item or it is the wrong equation."
+        }
+      ],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-model",
+          "prompt": "Line one: three identical notebooks and one $4.50 pen came to $18.00. Let n be the price of one notebook. Which equation models the sale?",
+          "selectMultiple": false,
+          "hints": [
+            "Translate item by item: what gets multiplied, what gets added, what does it all equal?",
+            "The pen was bought once. Ask each equation how many times it charges for the pen.",
+            "Parentheses change who gets multiplied. Read each option aloud as a shopping trip."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "3n + 4.50 = 18.00",
+              "correct": true,
+              "feedback": "Correct. Three notebooks at n each, plus one pen, equals the total. Every item appears exactly once, which is what a model owes the situation."
+            },
+            {
+              "id": "o2",
+              "text": "3(n + 4.50) = 18.00",
+              "correct": false,
+              "feedback": "This charges for three pens, not one: the parentheses multiply the pen by three along with the notebook. Read as a shopping trip, this customer bought three notebook-and-pen bundles."
+            },
+            {
+              "id": "o3",
+              "text": "n + 4.50 = 18.00 × 3",
+              "correct": false,
+              "feedback": "This buys one notebook and one pen but triples the total instead. The 3 belongs to the notebooks, not to the $18.00 the register actually printed."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-solve",
+          "prompt": "Put the solution steps for 3n + 4.50 = 18.00 in the order a careful solver performs them.",
+          "hints": [
+            "Undo the equation in reverse: what was done last to n is undone first.",
+            "You cannot divide the group until the loose $4.50 has left both sides.",
+            "The check is not decoration. It is the last step because it needs the answer to exist."
+          ],
+          "items": [
+            { "id": "s1", "text": "Write the model: 3n + 4.50 = 18.00." },
+            { "id": "s2", "text": "Subtract 4.50 from both sides: 3n = 13.50." },
+            { "id": "s3", "text": "Divide both sides by 3: n = 4.50." },
+            { "id": "s4", "text": "State the answer in context: one notebook costs $4.50." },
+            { "id": "s5", "text": "Check: 3(4.50) + 4.50 = 13.50 + 4.50 = 18.00. It reconciles." }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5"],
+          "keyboardInstructions": "Select a step, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Model, isolate the term, isolate the variable, interpret, verify. The order is the logic: each step needs the one before it, and the check at the end is what separates an answer from a claim."
+        },
+        {
+          "type": "response",
+          "id": "c3-stained-line",
+          "prompt": "Line two, under the stain: two identical binders and three folders at $1.25 each totaled $12.75. Write the equation, solve for the binder price, and show your check.",
+          "hints": [
+            "Same recipe as line one: multiply what repeats, add what is bought once, set equal to the printed total.",
+            "The folders are not the unknown. Compute their share first and the equation gets simpler.",
+            "Your check should land exactly on $12.75. If it lands close, the model or the arithmetic is off."
+          ],
+          "rubric": [
+            {
+              "criterion": "Models the sale correctly",
+              "lookFor": "2b + 3(1.25) = 12.75, or the equivalent 2b + 3.75 = 12.75.",
+              "commonMiss": "Multiplying the binder price by three or the folder price by two."
+            },
+            {
+              "criterion": "Solves in defensible steps",
+              "lookFor": "Subtracts 3.75, divides by 2, arrives at b = 4.50.",
+              "commonMiss": "Jumping to a number with no visible steps to audit."
+            },
+            {
+              "criterion": "Shows the check",
+              "lookFor": "Substitutes back: 2(4.50) + 3.75 = 12.75.",
+              "commonMiss": "Stopping at the answer. An audit without a check is a guess with confidence."
+            }
+          ],
+          "exemplarAnswer": "Let b be the binder price. The model is 2b + 3(1.25) = 12.75, so 2b + 3.75 = 12.75. Subtracting 3.75 gives 2b = 9.00, and dividing by 2 gives b = 4.50. Check: 2(4.50) + 3.75 = 9.00 + 3.75 = 12.75, which matches the receipt exactly."
+        }
+      ],
+      "evidenceFragment": "The Register: TALLY guessed a plausible price and spent the pen's money twice. The model charged for every item exactly once, and the check proved it to the penny.",
+      "unlockText": "The register hums, and the reprinted receipt slides out whole: every line readable, every total reconciled.",
+      "rewardLabel": "Receipt reprinted"
+    }
+  ],
+  "finale": {
+    "title": "The Deposit",
+    "setup": "Both lines rebuilt, both totals checked, the deposit ready.",
+    "prompt": "Before you hand the manager the deposit: what is the one habit from this register you will use on your next word problem?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Names a transferable habit",
+        "lookFor": "Modeling before solving, undoing operations in reverse, or checking by substitution."
+      },
+      {
+        "criterion": "Grounds it in the room",
+        "lookFor": "References the receipt, the stained line, or TALLY's double-spent pen."
+      }
+    ],
+    "closingText": "The drawer opens. Not because the numbers looked right; because you proved they were."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}
