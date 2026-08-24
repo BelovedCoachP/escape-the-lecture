@@ -51,6 +51,38 @@ for (const file of files) {
   }
 }
 
+// The Template contract: the example room must satisfy the template subset
+// schema AND the full schema. This is the alignment claim made on stage —
+// a faculty room and the Exemplar are the same data structure — kept true
+// by CI instead of by promise.
+const templateSchema = JSON.parse(
+  readFileSync(join(root, "template", "template-schema.json"), "utf8"),
+);
+const validateTemplate = ajv.compile(templateSchema);
+const example = JSON.parse(
+  readFileSync(join(root, "template", "example-room.json"), "utf8"),
+);
+
+if (validateTemplate(example)) {
+  console.log("PASS  template/example-room.json  (template schema)");
+} else {
+  failed = true;
+  console.error("FAIL  template/example-room.json  (template schema)");
+  for (const err of validateTemplate.errors) {
+    console.error(`      ${err.instancePath || "(root)"}  ${err.message}`);
+  }
+}
+
+if (validate(example)) {
+  console.log("PASS  template/example-room.json  (full schema)");
+} else {
+  failed = true;
+  console.error("FAIL  template/example-room.json  (full schema — subset relationship broken)");
+  for (const err of validate.errors) {
+    console.error(`      ${err.instancePath || "(root)"}  ${err.message}`);
+  }
+}
+
 if (failed) {
   console.error("\nValidation failed. Invalid content does not publish.");
   process.exit(1);

@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.1",
+  "meta": {
+    "id": "the-lost-lab-notebook",
+    "title": "The Lost Lab Notebook",
+    "author": "Example Faculty",
+    "course": "Intro Biology",
+    "objective": "Apply the steps of the scientific method to evaluate an experimental design.",
+    "renderer": "template",
+    "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
+  },
+  "narrative": {
+    "premise": "Your lab partner left one thing behind before break: a notebook with the final experiment half-finished. The lab locks at five. Reconstruct what the experiment was testing, put the procedure back in order, and write the missing conclusion before the door seals for the semester.",
+    "roleTitle": "Lab Detective",
+    "successCondition": "The room opens when the notebook is whole again. There is no clock; the lock waits for the work, not the hour.",
+    "companion": {
+      "name": "LABBY",
+      "textAlwaysVisible": true
+    }
+  },
+  "levels": [
+    {
+      "id": "the-bench",
+      "order": 1,
+      "title": "The Bench",
+      "brief": "The notebook lies open beside a beaker of murky water and two trays of bean seedlings, one tall, one struggling. Three pages matter: the hypothesis page, the scrambled procedure, and the empty conclusion.",
+      "companionLines": [
+        {
+          "id": "labby-open",
+          "text": "I have read the notebook cover to cover. The experiment is obviously about how much water beans need. You can skip to the conclusion.",
+          "confidence": 91.5,
+          "accurate": false,
+          "tell": "The watering log shows both trays received identical water. The only difference recorded between the trays is hours of light. LABBY predicted the most common bean experiment instead of reading this one."
+        }
+      ],
+      "challenges": [
+        {
+          "type": "choice",
+          "id": "c1-hypothesis",
+          "prompt": "The hypothesis page is smudged, but the data table survived: two identical trays, identical watering, one wrapped in shade cloth. Which hypothesis was this experiment actually testing?",
+          "selectMultiple": false,
+          "hints": [
+            "Ignore what bean experiments usually test. Read what this setup actually varies.",
+            "A good experiment changes exactly one thing between the trays. Find the one recorded difference.",
+            "The watering log rules two options out; the shade cloth rules in the one that remains."
+          ],
+          "options": [
+            {
+              "id": "o1",
+              "text": "Seedlings given more water grow taller.",
+              "correct": false,
+              "feedback": "The watering log shows both trays received exactly 50 mL daily. Water was controlled, not varied, so this experiment cannot test it. This is also LABBY's guess, which should tell you something about guessing from what is usual instead of what is written."
+            },
+            {
+              "id": "o2",
+              "text": "Seedlings given more light grow taller.",
+              "correct": true,
+              "feedback": "Correct. Light is the only variable the setup changes: one tray open, one under shade cloth, everything else identical. The tall tray is the unshaded one."
+            },
+            {
+              "id": "o3",
+              "text": "Bean seeds germinate faster in warmer soil.",
+              "correct": false,
+              "feedback": "Nothing in the setup measures or varies temperature, and both trays sit on the same bench. A hypothesis has to match what the experiment can actually observe."
+            }
+          ]
+        },
+        {
+          "type": "sequence",
+          "id": "c2-procedure",
+          "prompt": "The procedure page tore, and the steps were taped back in the wrong order. Put the experiment back in the order a scientist would run it.",
+          "hints": [
+            "Start from what must exist before anything else can happen.",
+            "You cannot measure a difference before both conditions exist. You cannot conclude before you measure.",
+            "Plant, then split the conditions, then wait and water equally, then measure, then compare."
+          ],
+          "items": [
+            { "id": "s1", "text": "Plant ten bean seeds in each of two identical trays." },
+            { "id": "s2", "text": "Cover one tray with shade cloth; leave the other in full light." },
+            { "id": "s3", "text": "Water both trays with 50 mL daily for two weeks." },
+            { "id": "s4", "text": "Measure the height of every seedling in both trays." },
+            { "id": "s5", "text": "Compare the average heights between the trays." }
+          ],
+          "correctOrder": ["s1", "s2", "s3", "s4", "s5"],
+          "keyboardInstructions": "Select a step, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "explanation": "Setup before conditions, conditions before the controlled wait, measurement before comparison. Each step depends on the one before it, which is why order is the experiment."
+        },
+        {
+          "type": "response",
+          "id": "c3-conclusion",
+          "prompt": "The conclusion page is blank. Using the hypothesis and the data (unshaded tray average: 18 cm; shaded tray average: 9 cm), write the conclusion your partner should have written.",
+          "hints": [
+            "A conclusion answers the hypothesis, in one or two sentences, using the numbers.",
+            "State what was compared, what the difference was, and what that says about the hypothesis.",
+            "Do not claim more than the data shows: one experiment supports; it does not prove."
+          ],
+          "rubric": [
+            {
+              "criterion": "Answers the hypothesis directly",
+              "lookFor": "Says whether more light produced taller seedlings in this experiment.",
+              "commonMiss": "Restating the procedure instead of answering the question."
+            },
+            {
+              "criterion": "Uses the data",
+              "lookFor": "Cites both averages, 18 cm versus 9 cm, or the size of the difference.",
+              "commonMiss": "Writing 'the plants grew better' with no numbers."
+            },
+            {
+              "criterion": "Claims the right amount",
+              "lookFor": "Words like 'supports' rather than 'proves'; one run of one experiment.",
+              "commonMiss": "Concluding that light is the only factor that matters for all plants."
+            }
+          ],
+          "exemplarAnswer": "The data support the hypothesis that seedlings given more light grow taller: over two weeks with identical watering, the unshaded tray averaged 18 cm while the shaded tray averaged 9 cm. One experiment supports the hypothesis; repeating it would strengthen the conclusion."
+        }
+      ],
+      "evidenceFragment": "The Bench: the setup varied light, not water. The companion guessed the usual experiment instead of reading this one, and the notebook knew better.",
+      "unlockText": "The notebook closes itself around a complete experiment. Somewhere in the hall, the five o'clock lock decides it can wait after all.",
+      "rewardLabel": "Notebook restored"
+    }
+  ],
+  "finale": {
+    "title": "The Door",
+    "setup": "The notebook is whole: hypothesis read correctly, procedure in order, conclusion written from the data.",
+    "prompt": "Before the door opens: what is the one habit from this room you will use on your own next lab report?",
+    "replayEvidence": true,
+    "rubric": [
+      {
+        "criterion": "Names a specific habit",
+        "lookFor": "One concrete practice: reading what the setup varies, ordering steps by dependency, or concluding only what the data supports."
+      },
+      {
+        "criterion": "Connects it to the evidence",
+        "lookFor": "References what actually happened in the room, not a generic study tip."
+      }
+    ],
+    "closingText": "The door opens. Not because time ran out; because the work was complete, and you could show it."
+  },
+  "a11y": {
+    "audioAutoplay": false,
+    "colorOnlySignals": false,
+    "keyboardAlternatives": true,
+    "reducedMotion": "respected",
+    "timeLimit": "none",
+    "targetLevel": "WCAG 2.1 AA"
+  }
+}
