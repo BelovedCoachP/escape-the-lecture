@@ -31,6 +31,10 @@ export function renderSequence(challenge, done, api) {
     items = items.reverse();
   }
 
+  if (Array.isArray(api.draft.order) && api.draft.order.length === items.length &&
+      new Set(api.draft.order).size === items.length && api.draft.order.every(id => items.some(item => item.id === id))) {
+    items = api.draft.order.map(id => items.find(item => item.id === id));
+  }
   const rows = items.map((item) => {
     const li = el("li", { className: "seq-item" });
     const posSpan = el("span", { className: "seq-pos" });
@@ -77,6 +81,7 @@ export function renderSequence(challenge, done, api) {
     if (delta < 0) list.insertBefore(row.li, children[target]);
     else list.insertBefore(children[target], row.li);
     refreshPositions();
+    api.saveDraft({ order: [...list.children].map(li => rows.find(row => row.li === li).item.id) });
     (viaGrab ? row.grab : delta < 0 ? row.up : row.down).focus();
     api.announce(`Moved. Position ${positionOf(row.li)} of ${rows.length}.`);
   };

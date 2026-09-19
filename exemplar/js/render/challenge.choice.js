@@ -32,6 +32,11 @@ export function renderChoice(challenge, done, api) {
         value: option.id,
       },
     });
+    input.checked = api.draft[option.id] === true;
+    input.addEventListener("change", () => {
+      rows.forEach(r => { api.draft[r.option.id] = r.input.checked; });
+      api.saveDraft(api.draft);
+    });
     const label = el("label", { textContent: option.text, attrs: { for: inputId } });
     const feedback = el("p", { className: "option-feedback", hidden: true });
     const row = el("div", { className: "choice-row" });
@@ -40,11 +45,13 @@ export function renderChoice(challenge, done, api) {
     return { option, input, feedback };
   });
 
+  const status = el("p", { className: "attempt-feedback" });
   const submit = el("button", { textContent: "Confirm selection" });
   submit.addEventListener("click", () => {
     const chosen = rows.filter((r) => r.input.checked);
     if (chosen.length === 0) {
-      api.announce("Select at least one option first.");
+      status.textContent = "Select at least one option first.";
+      api.announce(status.textContent);
       return;
     }
     const correctSet = challenge.options.filter((o) => o.correct).map((o) => o.id);
@@ -54,6 +61,7 @@ export function renderChoice(challenge, done, api) {
       chosenIds.every((id) => correctSet.includes(id));
 
     if (!solved) {
+      status.textContent = "Not yet. Read the feedback, adjust your selection, and try again.";
       rows.forEach((r) => {
         if (r.input.checked) {
           r.feedback.hidden = false;
@@ -68,6 +76,7 @@ export function renderChoice(challenge, done, api) {
       return;
     }
 
+    status.textContent = "";
     rows.forEach((r) => {
       r.input.disabled = true;
       r.feedback.hidden = false;
@@ -78,7 +87,7 @@ export function renderChoice(challenge, done, api) {
     api.complete();
   });
 
-  wrap.append(fs, el("p", {}, submit));
+  wrap.append(fs, status, el("p", {}, submit));
   return wrap;
 }
 

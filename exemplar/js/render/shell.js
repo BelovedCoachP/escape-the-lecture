@@ -16,7 +16,7 @@ import {
 import { announce, moveFocusTo, prefersReducedMotion } from "../a11y.js";
 import { el } from "./dom.js";
 import { renderContrastChecker } from "./tool.contrast.js";
-import { voiceControl } from "./voice.js";
+import { voiceControl, stopVoices } from "./voice.js";
 import { renderChoice } from "./challenge.choice.js";
 import { renderSort } from "./challenge.sort.js";
 import { renderHunt } from "./challenge.hunt.js";
@@ -94,7 +94,18 @@ export function mountShell(rootEl, content) {
       });
       idle.append(el("source", { src: companion.idleVideoSrc }));
       if (companion.portrait) idle.poster = companion.portrait.src;
-      panel.append(idle);
+      const toggle = el("button", { className: "secondary", textContent: "Pause AURA animation" });
+      toggle.addEventListener("click", async () => {
+        if (idle.paused) { try { await idle.play(); } catch {} }
+        else idle.pause();
+      });
+      const update = () => { toggle.textContent = idle.paused ? "Play AURA animation" : "Pause AURA animation"; };
+      idle.addEventListener("play", update);
+      idle.addEventListener("pause", update);
+      window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", event => {
+        if (event.matches) idle.pause();
+      });
+      panel.append(idle, toggle);
     } else if (companion.portrait) {
       panel.append(
         el("img", {
@@ -160,6 +171,7 @@ function setCompanionLines(ctx, lines) {
 export function renderIntro(ctx) {
   const { content, refs } = ctx;
   const n = content.narrative;
+  refs.main.querySelectorAll("video, audio").forEach(media => media.pause());
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
   setScene("hall");
@@ -172,6 +184,7 @@ export function renderIntro(ctx) {
     el("p", { textContent: n.premise }),
   );
 
+  view.append(el("p", { className: "play-guide", textContent: "Work through five wings, solve each room's challenges, then use its hints to find a one-word key. There is no timer or penalty for retries. Your answers and progress save in this browser when storage is available. AURA is a scripted character whose claims need checking." }));
   const success = el("div", { className: "callout" });
   success.append(el("p", { textContent: n.successCondition }));
   view.append(success);
@@ -232,6 +245,7 @@ export function renderIntro(ctx) {
 
 export function renderLevel(level, ctx) {
   const { refs, run } = ctx;
+  refs.main.querySelectorAll("video, audio").forEach(media => media.pause());
   refs.main.innerHTML = "";
   // Each room carries its own visual identity; CSS keys off this attribute.
   refs.main.dataset.level = level.id;
@@ -321,7 +335,9 @@ function renderRestartControl(level, ctx) {
     wrap.innerHTML = "";
     const question = el("span", {
       className: "restart-question",
-      textContent: "Restart this room and clear its progress? ",
+      textContent: ctx.run.vaultOpened
+        ? "Restart this room and clear its progress? You will also need to reopen the final vault. "
+        : "Restart this room and clear its progress? ",
     });
     const yes = el("button", { textContent: "Yes, start over" });
     const no = el("button", { className: "secondary", textContent: "Keep going" });
@@ -332,7 +348,7 @@ function renderRestartControl(level, ctx) {
       restart.focus();
     });
     wrap.append(question, yes, no);
-    announce("Restart this room and clear its progress? Choose yes or keep going.");
+    announce(question.textContent + "Choose yes or keep going.");
     yes.focus();
   });
   wrap.append(restart);
@@ -397,6 +413,11 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
   const done = (run.completed[level.id] ?? []).includes(challenge.id);
   const api = {
     announce,
+    draft: run.drafts[challenge.id] ?? {},
+    saveDraft: (draft) => {
+      run.drafts[challenge.id] = draft;
+      saveRun(run, ctx.content.meta.id);
+    },
     complete: () => finishChallenge(challenge, level, ctx, viewEl),
     companionName: ctx.content.narrative.companion?.name ?? "Companion",
   };
@@ -464,6 +485,7 @@ function renderPlaceholderBody(challenge, done, api) {
 
 function finishChallenge(challenge, level, ctx, viewEl) {
   const { run } = ctx;
+  if ((run.completed[level.id] ?? []).includes(challenge.id)) return;
   markChallengeComplete(run, level.id, challenge.id);
   if (challengesComplete(run, level)) {
     bankEvidence(run, level.id, level.evidenceFragment);
@@ -534,8 +556,9 @@ function renderLockCard(level, ctx, viewEl) {
     );
   }
 
+  let lockVoice;
   if (lock.audioSrc) {
-    const voice = voiceControl(lock.audioSrc, archivist?.name ?? "the Archivist");
+    const voice = lockVoice = voiceControl(lock.audioSrc, archivist?.name ?? "the Archivist");
     workCol.append(voice.node);
     // The lock only ever appears as the direct result of the player's last
     // solve, so speaking the line now is that gesture completing, not
@@ -557,6 +580,7 @@ function renderLockCard(level, ctx, viewEl) {
   const turn = el("button", { textContent: "Turn the key" });
 
   const attempt = () => {
+    if (run.locksOpened[level.id]) return;
     const guess = input.value.trim().toLowerCase().replace(/\s+/g, " ");
     const accepted = lock.acceptedCodes.some(
       (c) => c.trim().toLowerCase().replace(/\s+/g, " ") === guess,
@@ -569,12 +593,14 @@ function renderLockCard(level, ctx, viewEl) {
       input.select();
       return;
     }
+    lockVoice?.stop();
     openLock(run, level);
     saveRun(run, ctx.content.meta.id);
     announce(
       `The key turns. ${level.rewardLabel ? level.rewardLabel + " banked to your keyring. " : ""}Shelf restored.`,
     );
     const finish = () => {
+      if (!card.isConnected || ctx.run !== run) return;
       const restored = renderRestoredCard(level, ctx);
       card.replaceWith(restored);
       renderSpine(ctx);
@@ -642,6 +668,7 @@ function renderRestoredCard(level, ctx) {
 export function renderInterlude(level, ctx, onContinue) {
   const { refs } = ctx;
   const interlude = level.interlude;
+  refs.main.querySelectorAll("video, audio").forEach(media => media.pause());
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
   setScene("corridor");
@@ -692,6 +719,7 @@ export function renderInterlude(level, ctx, onContinue) {
 export function renderFinale(ctx, opts = {}) {
   const { content, refs, run } = ctx;
   const finale = content.finale;
+  refs.main.querySelectorAll("video, audio").forEach(media => media.pause());
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
   setScene("vault");
@@ -913,7 +941,7 @@ function renderFinaleReveal(finale, ctx, chosenLabel) {
       el("h3", { textContent: "The Archivist accepts it" }),
       el("p", {
         className: "archivist-voice",
-        textContent: `'${chosenLabel}.' The Archivist repeats it once, the way you file something you intend to keep. 'Defensible. Argued from what you saw, not from what you were told. That is the whole discipline.'`,
+        textContent: `'${chosenLabel}.' The Archivist repeats it once, the way you file something you intend to keep. 'Defensible. Argued from what you saw, not from what you were told. That is the whole skill.'`,
       }),
     );
     wrap.append(chosen);
@@ -993,6 +1021,7 @@ function renderFinaleReveal(finale, ctx, chosenLabel) {
 function renderEpilogue(ctx) {
   const { refs, content } = ctx;
   const ep = content.finale.epilogue;
+  refs.main.querySelectorAll("video, audio").forEach(media => media.pause());
   refs.main.innerHTML = "";
   delete refs.main.dataset.level;
   setScene("vault-open");
@@ -1220,9 +1249,9 @@ function renderVideo(video, label) {
 
   const player = el("video", {
     className: "video-player",
+    attrs: { "aria-label": label, playsinline: "" },
     controls: true,
     preload: "metadata",
-    attrs: { playsinline: "" },
   });
   if (video.poster) player.poster = video.poster;
   const source = el("source", { src: video.src });
@@ -1262,8 +1291,10 @@ function renderVideo(video, label) {
 
 // Ambient sound: play-on-demand only, never autoplay (schema-enforced). The
 // control removes itself if the track is not on disk yet.
+const ambientPlayers = new Set();
 function renderAmbientAudio(audioMeta) {
   const audio = new Audio(audioMeta.src);
+  ambientPlayers.add(audio);
   audio.preload = "metadata";
   audio.loop = audioMeta.loop === true;
   const title = audioMeta.title ?? "Ambience";
@@ -1289,6 +1320,10 @@ function renderAmbientAudio(audioMeta) {
 // scrim) off this attribute, so the screen looks like the place the player
 // is standing: the hall, each wing, the corridor between them, the door.
 function setScene(scene) {
+  stopVoices();
+  document.querySelectorAll("#vault-main video, #vault-main audio").forEach(media => media.pause());
+  for (const audio of ambientPlayers) audio.pause();
+  ambientPlayers.clear();
   document.body.dataset.scene = scene;
 }
 

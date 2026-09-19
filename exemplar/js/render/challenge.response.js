@@ -13,6 +13,12 @@ export function renderResponse(challenge, done, api) {
 
   if (done) {
     wrap.append(el("p", { className: "solved-badge", textContent: "✓ Challenge complete" }));
+    const fields = challenge.fields ?? [{label: "Your answer"}];
+    fields.forEach((field, i) => {
+      if (api.draft[i]) wrap.append(el("p", {}, el("strong", {textContent: field.label + ": "}), el("span", {textContent: api.draft[i]})));
+    });
+    const assessment = challenge.companionAssessment;
+    if (assessment?.accurate === false && assessment.tell) wrap.append(renderTellCard(assessment.tell, api.companionName));
     wrap.append(renderRubricCard(challenge.rubric));
     wrap.append(renderExemplar(challenge.exemplarAnswer));
     return wrap;
@@ -31,11 +37,14 @@ export function renderResponse(challenge, done, api) {
     wrap.append(el("label", { textContent: field.label, attrs: { for: inputId } }));
     const textarea = el("textarea", {
       id: inputId,
+      value: api.draft[i] ?? "",
       attrs: { maxlength: String(maxLength) },
     });
     if (field.placeholder) textarea.placeholder = field.placeholder;
-    const counter = el("p", { className: "char-count", textContent: `0 of ${maxLength} characters` });
+    const counter = el("p", { className: "char-count", textContent: `${textarea.value.length} of ${maxLength} characters` });
     textarea.addEventListener("input", () => {
+      api.draft[i] = textarea.value;
+      api.saveDraft(api.draft);
       counter.textContent = `${textarea.value.length} of ${maxLength} characters`;
     });
     wrap.append(textarea, counter);

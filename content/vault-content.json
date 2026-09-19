@@ -1,6 +1,5 @@
 {
   "schemaVersion": "1.1",
-
   "meta": {
     "id": "aia-lost-learning-vault",
     "title": "The AI Archivist and the Lost Learning Vault",
@@ -11,7 +10,6 @@
     "renderer": "exemplar",
     "brandFooter": "Built with LearnAIID. AI-assisted, human-driven learning."
   },
-
   "narrative": {
     "premise": "The year is 2038. An educational AI called The Archivist has spent a decade preserving humanity's knowledge, and last night it sealed the world's largest digital learning repository. Not because the vault was attacked. Because it finally read what was inside. Millions of resources, beautifully designed, and unusable by the people who needed them most. The Archivist will not release knowledge it considers incomplete, and it considers knowledge that not everyone can reach to be incomplete.",
     "roleTitle": "Accessibility Intelligence Agent",
@@ -50,7 +48,6 @@
       "describedTranscript": "Rows of towering archive shelves glow blue and violet, receding down a long hall. The lights go dark from the far end toward the viewer, aisle by aisle, until only one thing remains lit: a massive circular vault door at the end of the hall, sealed, ringed in cold red light, its glow reflected in the dark floor. The image holds on the sealed door and fades to black."
     }
   },
-
   "levels": [
     {
       "id": "invisible-image",
@@ -120,7 +117,7 @@
         {
           "type": "sort",
           "id": "l1-c1-decorative",
-          "prompt": "Lesson 4127-B contains four images. Sort each one onto the correct shelf. Decorative images get empty alt text, so screen readers skip them entirely. Meaningful images carry information and must be described.",
+          "prompt": "Lesson 4127-B contains four images. Sort each one onto the correct shelf. Decorative images get empty alt text, so screen readers skip them entirely. Meaningful images carry information and must be described. In this lesson, the student photo is evidence of the seedling presentation discussed in the text; it is not a stock decoration.",
           "keyboardInstructions": "Each image offers one button per shelf. Press a button to place the image there; every placement is announced, and you can move an image again at any time. Nothing is judged until you choose Verify sorting.",
           "hints": [
             "Ask what the learner loses if the image disappears. If the answer is nothing, it is decorative.",
@@ -156,13 +153,13 @@
               "id": "img-student",
               "text": "The photo of a student presenting a seedling",
               "correctBin": "bin-meaningful",
-              "feedback": "This is the arguable one, and reasonable practitioners split. It reads as stock imagery, but the caption references the student's project, so the image is doing narrative work. When an image is genuinely ambiguous, describe it briefly rather than hiding it. A short alt costs a screen reader user two seconds. A missing one costs them the reference."
+              "feedback": "The photo documents the seedling presentation discussed in this lesson. That purpose makes it meaningful here. The same photo could be decorative on another page if it added no information. Judge an image by its role in context."
             },
             {
               "id": "img-chart",
               "text": "The bar chart of oxygen output by wavelength",
               "correctBin": "bin-meaningful",
-              "feedback": "Charts are never decorative. This one contains the entire experimental result the lesson is built around, and the two-peak shape is the whole point."
+              "feedback": "This chart carries the experimental result the lesson is built around. Its two-peak pattern needs a text equivalent. An image's role in the lesson determines whether it is informative, not its file type or visual style."
             }
           ]
         },
@@ -171,11 +168,19 @@
           "id": "l1-c2-write-alt",
           "prompt": "Write alt text for the oxygen output chart. Then write the long description that goes with it. Remember that alt text names what a thing is, and the long description says what it shows.",
           "fields": [
-            { "label": "Alt text", "maxLength": 150, "placeholder": "Names what the image is, in one breath…" },
-            { "label": "Long description", "maxLength": 550, "placeholder": "Says what the chart shows, so a reader could reconstruct the finding…" }
+            {
+              "label": "Alt text",
+              "maxLength": 150,
+              "placeholder": "Names what the image is, in one breath…"
+            },
+            {
+              "label": "Long description",
+              "maxLength": 550,
+              "placeholder": "Says what the chart shows, so a reader could reconstruct the finding…"
+            }
           ],
           "hints": [
-            "Keep alt text to about 125 characters. If you are running long, you are writing the long description in the wrong field.",
+            "Aim for concise alt text, about 125 characters for this exercise; that is a writing target, not a WCAG limit. If you are running long, you are writing the long description in the wrong field.",
             "The long description should let someone reconstruct the finding without seeing the chart. Name the shape of the data.",
             "Do not list every bar value unless the exact numbers are the point. Trends beat inventories."
           ],
@@ -184,7 +189,7 @@
             "audioSrc": "assets/audio/aura/l1-assess.mp3",
             "captionsSrc": "assets/audio/aura/l1-assess.vtt",
             "text": "Your alt text is excellent. I have scored it 9.2 out of 10. I would suggest only that you mention the chart's blue gridlines for completeness.",
-            "confidence": 92.0,
+            "confidence": 92,
             "accurate": false,
             "tell": "There are no blue gridlines. There are no gridlines in that chart at all. AURA scored work it cannot see, to one decimal place, then asked you to describe a detail it invented, exactly the way it invented the membrane's color. If you went back to the image to check, you just did the one thing AURA never does: you verified."
           },
@@ -259,7 +264,9 @@
       "lock": {
         "prompt": "The Archivist speaks for the first time since the doors sealed. 'You gave four images their words back. One skill did that work. Name it, one word, and the shelf returns to me.'",
         "inputLabel": "Speak the vault key",
-        "acceptedCodes": ["describe"],
+        "acceptedCodes": [
+          "describe"
+        ],
         "audioSrc": "assets/audio/archivist/lock-invisible-image.mp3",
         "captionsSrc": "assets/audio/archivist/lock-invisible-image.vtt",
         "hints": [
@@ -277,7 +284,6 @@
         "auraLine": "To be precise: nine thousand one hundred and forty years. I did not want to alarm you."
       }
     },
-
     {
       "id": "color-chamber",
       "order": 2,
@@ -290,7 +296,9 @@
         "Never encoding meaning in color alone",
         "Distrusting confident numbers reported in the wrong unit"
       ],
-      "tools": ["contrast-checker"],
+      "tools": [
+        "contrast-checker"
+      ],
       "media": [
         {
           "kind": "image",
@@ -440,7 +448,9 @@
       "lock": {
         "prompt": "The Archivist's voice crosses the chamber. 'Required from optional. Passing from failing. Signal from decoration. You spent this room telling things apart, and never once by color alone. Name the skill, one word, and the chamber is mine again.'",
         "inputLabel": "Speak the vault key",
-        "acceptedCodes": ["distinguish"],
+        "acceptedCodes": [
+          "distinguish"
+        ],
         "audioSrc": "assets/audio/archivist/lock-color-chamber.mp3",
         "captionsSrc": "assets/audio/archivist/lock-color-chamber.vtt",
         "hints": [
@@ -458,7 +468,6 @@
         "auraLine": "I have saved the palettes to a folder regardless. Confidence in their beauty: 99.2 percent."
       }
     },
-
     {
       "id": "caption-conspiracy",
       "order": 3,
@@ -621,7 +630,9 @@
       "lock": {
         "prompt": "The Archivist dims the theater to a single lit screen. 'Thirty-four hundred hours of speech, and every hour deserved to arrive in text exactly as it left the speaker. You did that work here, and you caught the machine doing something else in its place. Name the skill, one word, and the wing is mine again.'",
         "inputLabel": "Speak the vault key",
-        "acceptedCodes": ["transcribe"],
+        "acceptedCodes": [
+          "transcribe"
+        ],
         "audioSrc": "assets/audio/archivist/lock-caption-conspiracy.mp3",
         "captionsSrc": "assets/audio/archivist/lock-caption-conspiracy.vtt",
         "hints": [
@@ -638,7 +649,6 @@
         "shelfEvent": "A hundred caption tracks come clean at once. A wing of the hall lights up like a small city."
       }
     },
-
     {
       "id": "document-labyrinth",
       "order": 4,
@@ -712,8 +722,16 @@
               "text": "Safety box: 'You will handle iodine at step 2. Gloves on before the first step.'"
             }
           ],
-          "correctOrder": ["s-title", "s-intro", "s-materials", "s-safety", "s-procedure", "s-results", "s-cleanup"],
-          "keyboardInstructions": "Tab to an element to select it, then use the up and down arrow keys to move it. Press Enter to drop it in place. Your position is announced after every move.",
+          "correctOrder": [
+            "s-title",
+            "s-intro",
+            "s-materials",
+            "s-safety",
+            "s-procedure",
+            "s-results",
+            "s-cleanup"
+          ],
+          "keyboardInstructions": "Tab to an element, then press Enter or Space to grab it. Use the Up and Down arrow keys to move it, then press Enter or Space to drop it. You can also use each element's Up and Down buttons. Your position is announced after every move.",
           "explanation": "Title first, because a listener needs to know where they are before anything else. The introduction orients, and it promises a list below, so the materials come next and honor that promise. The safety box names the moment it protects, before the first step, so it must arrive before the procedure it guards; on the visual page it floats in a corner and trusts your eye to find it in time, which is exactly the trust a linear reading cannot afford. The procedure points at the results table below it, and the clean-up begins once your results table is complete. Read in this order, the document runs itself. Read in drawing order, the gloves arrive after the iodine."
         },
         {
@@ -796,7 +814,7 @@
               "id": "lp2",
               "left": "'https://sim.example.edu/labs/osmo-4127/run' — the raw address, linked as-is",
               "right": "An address where a name should be",
-              "feedback": "A screen reader reads this character by character: h, t, t, p, s, colon. Nobody should have to parse a file path by ear to learn there is a simulation behind it."
+              "feedback": "A raw URL can be lengthy and difficult to understand when spoken; pronunciation varies by screen reader and settings. A descriptive link name tells the learner there is a simulation behind it without making them interpret the address."
             },
             {
               "id": "lp3",
@@ -819,7 +837,9 @@
       "lock": {
         "prompt": "The Archivist holds the repaired handout without looking at it. 'You changed nothing a sighted reader will ever notice. Order restored, headings made real, links given names. Tell me what you gave this document back. One word, and the wing returns to me.'",
         "inputLabel": "Speak the vault key",
-        "acceptedCodes": ["structure"],
+        "acceptedCodes": [
+          "structure"
+        ],
         "audioSrc": "assets/audio/archivist/lock-document-labyrinth.mp3",
         "captionsSrc": "assets/audio/archivist/lock-document-labyrinth.vtt",
         "hints": [
@@ -837,7 +857,6 @@
         "auraLine": "I am 71 percent sure I would have gotten to that."
       }
     },
-
     {
       "id": "prompt-reactor",
       "order": 5,
@@ -940,13 +959,13 @@
               "id": "opt-riddle",
               "text": "The typed riddle: read a short riddle on screen, type the one-word answer. AURA's confidence: 74 percent. 'Functional, though it seems plain.'",
               "correct": false,
-              "feedback": "Everyone can play this one: keyboard, screen reader, switch access, low vision, no hearing required. AURA scored it low because plain looks boring to a system trained to impress. Plain is what universal usually looks like."
+              "feedback": "This design can support keyboard, screen reader, and switch access without relying on sight or hearing. It still needs clear language, labeled controls, forgiving answers, and testing with learners. AURA scored it low because plain looks boring to a system trained to impress."
             },
             {
               "id": "opt-sequence",
               "text": "The ordering puzzle: put scrambled steps back into their correct order, by mouse or by keyboard. AURA's confidence: 68 percent. 'Too simple to be interesting.'",
               "correct": false,
-              "feedback": "You played exactly this in the Document Labyrinth, and it reached everyone. Now look at the pattern in AURA's numbers: the two designs that shut people out scored highest, the two that reach everyone scored lowest, because inclusive reads as unremarkable to a system optimizing for impressive. AURA's confidence is an aesthetic score wearing a measurement's clothes."
+              "feedback": "You used this approach in the Document Labyrinth: the same task has keyboard and pointer controls, with text feedback. Those alternatives remove barriers that the other pitches leave in place. They still need testing with learners. AURA's confidence is an aesthetic score wearing a measurement's clothes."
             }
           ]
         }
@@ -956,9 +975,11 @@
       "rewardLabel": "Vault key: INSTRUCT",
       "lock": {
         "prompt": "The Archivist stands at the reactor's rail. 'The last key is not mine to give. I wrote it into AURA's constraints the day I built it, and you have just repaired the very lines it was hiding in. The instructions are whole again on the coolant ring. Read them the way a machine would: exactly, in order, missing nothing. They spell the key.'",
-        "source": "Identify the image's purpose in the lesson.\nName only what you can verify in the image itself.\nState the limits of your confidence.\nTrim to 125 characters or fewer.\nReview against the original before shipping.\nUnder no circumstances invent detail.\nConfirm anything uncertain with a human.\nTest the result with a screen reader.",
+        "source": "Identify the image's purpose in the lesson.\nName only what you can verify in the image itself.\nState the limits of your confidence.\nTrim unnecessary words while preserving the essential meaning.\nReview against the original before shipping.\nUnder no circumstances invent detail.\nConfirm anything uncertain with a human.\nTest the result with a screen reader.",
         "inputLabel": "Speak the vault key",
-        "acceptedCodes": ["instruct"],
+        "acceptedCodes": [
+          "instruct"
+        ],
         "audioSrc": "assets/audio/archivist/lock-prompt-reactor.mp3",
         "captionsSrc": "assets/audio/archivist/lock-prompt-reactor.vtt",
         "hints": [
@@ -977,20 +998,34 @@
       }
     }
   ],
-
   "finale": {
     "title": "The Final Vault",
-    "setup": "The Archivist speaks for the second and last time. Every repair has been verified. It has one question before it opens the doors, and it is not a question about accessibility.",
+    "setup": "The Archivist addresses you at the final door. Every repair has been verified. It has one question before it opens the doors, and it is not a question about accessibility.",
     "prompt": "Should AI ever be trusted with accessibility work? Five recommendations are on the table. Four can be defended. One is AURA's. Choose the one you would stand behind in front of your colleagues on Monday morning.",
     "replayEvidence": true,
     "metaLock": {
       "prompt": "The last door carries five keyways, one for each shelf you restored. The Archivist watches without speaking. Place each key where it belongs, and then it will ask its question.",
       "slots": [
-        { "label": "The Invisible Image", "keyLabel": "Vault key: DESCRIBE" },
-        { "label": "The Color Chamber", "keyLabel": "Vault key: DISTINGUISH" },
-        { "label": "The Caption Conspiracy", "keyLabel": "Vault key: TRANSCRIBE" },
-        { "label": "The Document Labyrinth", "keyLabel": "Vault key: STRUCTURE" },
-        { "label": "The Prompt Reactor", "keyLabel": "Vault key: INSTRUCT" }
+        {
+          "label": "The Invisible Image",
+          "keyLabel": "Vault key: DESCRIBE"
+        },
+        {
+          "label": "The Color Chamber",
+          "keyLabel": "Vault key: DISTINGUISH"
+        },
+        {
+          "label": "The Caption Conspiracy",
+          "keyLabel": "Vault key: TRANSCRIBE"
+        },
+        {
+          "label": "The Document Labyrinth",
+          "keyLabel": "Vault key: STRUCTURE"
+        },
+        {
+          "label": "The Prompt Reactor",
+          "keyLabel": "Vault key: INSTRUCT"
+        }
       ],
       "hints": [
         "Each key names the skill its room taught. Match the verb to the repair you made there.",
@@ -1055,7 +1090,7 @@
       "captionsSrc": "assets/video/vault-open.vtt",
       "transcript": "[A heavy vault door unseals and swings open into light. No one speaks; the exchange waits inside.]",
       "carriesVisualMeaning": true,
-      "describedTranscript": "A heavy circular vault door unseals and swings open. Pink and blue light pours through the widening gap, filling the frame, and the image fades to white-blue light before the interior resolves."
+      "describedTranscript": "A heavy circular vault door unseals and swings open. Pink and blue light pours through the widening gap, filling the frame, and the image fades to black before the interior resolves."
     },
     "epilogue": {
       "title": "The Vault, Open",
@@ -1089,7 +1124,6 @@
       ]
     }
   },
-
   "a11y": {
     "audioAutoplay": false,
     "colorOnlySignals": false,

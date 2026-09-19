@@ -10,7 +10,7 @@ import {
   renderProgressSpine,
 } from "./render/shell.js";
 import { announce, moveFocusTo } from "./a11y.js";
-import { encodeResume, isLevelReachable, saveRun } from "./state.js";
+import { encodeResume, isLevelReachable, isLevelRestored, saveRun } from "./state.js";
 
 export function showIntro(ctx) {
   ctx.run.view = "intro";
@@ -26,6 +26,7 @@ export function goToLevel(ctx, order) {
   // Rooms unlock in order; the spine only offers reachable rooms, and this
   // guard keeps programmatic paths honest too.
   if (!isLevelReachable(ctx.run, ctx.content, level)) return;
+  if (!ctx.run.visitedLevels.includes(level.id)) ctx.run.visitedLevels.push(level.id);
   ctx.run.view = "level";
   ctx.run.currentLevelOrder = order;
   syncHash(ctx);
@@ -71,6 +72,7 @@ function proceed(ctx) {
 }
 
 export function openFinale(ctx) {
+  if (!ctx.content.levels.every(level => isLevelRestored(ctx.run, level))) return;
   ctx.run.view = "finale";
   syncHash(ctx);
   renderFinale(ctx);
@@ -83,8 +85,7 @@ export function openFinale(ctx) {
 function syncHash(ctx) {
   const target = "#" + encodeResume(ctx.run);
   if (location.hash !== target) {
-    ctx.suppressHashEvent = true;
-    location.hash = target;
+    history.pushState(null, "", target);
   }
 }
 

@@ -16,3 +16,13 @@ export function el(tag, { attrs, ...props } = {}, ...children) {
 export function normalize(text) {
   return text.trim().toLowerCase().replace(/\s+/g, " ");
 }
+
+// Accept a plain number or a complete ratio, never only the first number
+// from an invalid answer such as "4.3:2" or "4.3 or 7".
+export function parseNumericAnswer(text) {
+  const match = text.trim().match(/^([+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))(?:\s*(?::|\/|to)\s*([+]?(?:\d+(?:[.,]\d+)?|[.,]\d+)))?$/i);
+  if (!match) return NaN;
+  const numerator = Number(match[1].replace(',', '.'));
+  const denominator = match[2] ? Number(match[2].replace(',', '.')) : 1;
+  return denominator > 0 ? numerator / denominator : NaN;
+}

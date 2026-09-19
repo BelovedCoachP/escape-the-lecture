@@ -31,15 +31,18 @@ export function renderExtract(challenge, done, api) {
   });
   const input = el("input", {
     id: inputId,
+    value: api.draft.value ?? "",
     className: "extract-input",
     attrs: { type: "text", autocomplete: "off", spellcheck: "false" },
   });
+  input.addEventListener("input", () => api.saveDraft({ value: input.value }));
   const feedback = el("p", { className: "option-feedback", hidden: true });
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const verify = el("button", { textContent: "Confirm answer" });
 
   const attempt = () => {
+    if (verify.disabled) return;
     if (input.value.trim() === "") {
       status.textContent = "Enter your answer first.";
       api.announce("Enter your answer first.");

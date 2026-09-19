@@ -1,7 +1,7 @@
 // Boot sequence: load content, validate it client-side, mount the shell,
 // start at level 1 or the hash resume target. If validation fails, the app
-// refuses to render. That refusal is the runtime half of the accessibility
-// guarantee: an inaccessible room cannot be expressed as valid content.
+// refuses to render. Structural validation complements, but cannot replace,
+// keyboard, screen-reader, media, and visual testing.
 
 import { loadContent, validateContent } from "./content.js";
 import {
@@ -14,7 +14,7 @@ import {
 } from "./state.js";
 import { mountShell } from "./render/shell.js";
 import { showIntro, goToLevel, openFinale, advance } from "./router.js";
-import { initAnnouncer } from "./a11y.js";
+import { initAnnouncer, moveFocusTo } from "./a11y.js";
 
 const CONTENT_URL = "../content/vault-content.json";
 
@@ -38,7 +38,7 @@ async function boot(rootEl) {
       rootEl,
       "This room failed validation and will not open.",
       result.errors.map((e) => `${e.path}: ${e.message}`),
-      "The schema is the accessibility guarantee. Fix the content and reload.",
+      "The content does not meet the required structure. Fix the content and reload.",
     );
     return;
   }
@@ -54,7 +54,6 @@ async function boot(rootEl) {
     run: saved ? Object.assign(createRun(), saved) : createRun(),
     refs,
     actions: {},
-    suppressHashEvent: false,
     hasSavedRun: Boolean(saved && saved.view !== "intro"),
     // Captured now because showIntro rewrites run.view to "intro" before the
     // player ever clicks Continue.
@@ -100,24 +99,26 @@ async function boot(rootEl) {
   };
   refs.homeBtn.addEventListener("click", () => ctx.actions.goHome());
 
+  document.querySelector(".skip-link")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    moveFocusTo(refs.main);
+  });
+
   window.addEventListener("hashchange", () => {
-    if (ctx.suppressHashEvent) {
-      ctx.suppressHashEvent = false;
-      return;
-    }
+    if (location.hash === "#vault-main") { moveFocusTo(refs.main); return; }
     const resume = decodeResume(location.hash, content);
     if (!resume) {
-      showIntro(ctx);
+      ctx.actions.goHome();
       return;
     }
-    applyResume(ctx.run, resume, content);
+    if (!applyResume(ctx.run, resume, content)) { ctx.actions.goHome(); return; }
     if (resume.view === "finale") openFinale(ctx);
     else goToLevel(ctx, resume.currentLevelOrder);
   });
 
   const resume = decodeResume(location.hash, content);
   if (resume) {
-    applyResume(ctx.run, resume, content);
+    if (!applyResume(ctx.run, resume, content)) { showIntro(ctx); return; }
     if (resume.view === "finale") openFinale(ctx);
     else goToLevel(ctx, resume.currentLevelOrder);
   } else {

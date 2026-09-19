@@ -17,7 +17,7 @@ export function renderSort(challenge, done, api) {
   );
 
   // placement state: itemId -> binId (or undefined while in the tray)
-  const placement = {};
+  const placement = { ...api.draft };
 
   const trayList = el("ul", { className: "sort-list" });
   const tray = el("section", { className: "sort-tray" });
@@ -50,9 +50,12 @@ export function renderSort(challenge, done, api) {
       });
       btn.addEventListener("click", () => {
         placement[item.id] = bin.id;
+        api.saveDraft(placement);
         binLists[bin.id].append(li);
         actions.querySelectorAll("button").forEach((b) => (b.disabled = false));
-        btn.disabled = true;
+        btn.setAttribute("aria-pressed", "true");
+        actions.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+        btn.focus();
         statusSpan.textContent = "";
         li.classList.remove("is-wrong");
         const unsorted = challenge.items.length - Object.keys(placement).length;
@@ -67,7 +70,8 @@ export function renderSort(challenge, done, api) {
       statusSpan,
       actions,
     );
-    trayList.append(li);
+    (binLists[placement[item.id]] ?? trayList).append(li);
+    [...actions.children].forEach((button, index) => button.setAttribute("aria-pressed", String(challenge.bins[index].id === placement[item.id])));
     itemEls[item.id] = { li, statusSpan, actions };
   });
 

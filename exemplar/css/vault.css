@@ -1259,3 +1259,18 @@ label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
 }
 
 .fatal li { font-family: ui-monospace, Consolas, monospace; font-size: 0.9rem; margin: 0.3rem 0; }
+
+/* Keep narrow reference panels and long answer options within the viewport. */
+@media (max-width: 1099px) {
+  .level-tool-layout .tool-col { max-height: none; overflow: visible; }
+}
+.hint-rail { min-width: min(100%, 15rem); }
+.match-select { min-width: 0; max-width: 100%; }
+.sort-place[aria-pressed="true"] { border-color: var(--accent-cyan); background: rgba(0,216,255,0.12); }
+
+[data-level="document-labyrinth"] .media-alt { color: #334155; }
+
+@media (max-width: 1099px) {
+  .level-work-flow { width: 100%; }
+}
+.card { overflow-wrap: anywhere; }

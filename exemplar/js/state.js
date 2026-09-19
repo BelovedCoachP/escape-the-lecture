@@ -8,6 +8,8 @@ export function createRun() {
   return {
     view: "intro", // "intro" | "level" | "finale"
     currentLevelOrder: 1,
+    visitedLevels: [], // rooms entered legitimately remain available for replay
+    drafts: {}, // unfinished challenge answers, saved on each change
     completed: {}, // levelId -> array of completed challenge ids
     evidence: [], // { levelId, fragment } in the order banked
     keys: [], // { levelId, label } banked when a lock opens; the keyring
@@ -56,7 +58,7 @@ export function bankKey(run, levelId, label) {
 export function isLevelReachable(run, content, level) {
   const orders = content.levels.map((l) => l.order).sort((a, b) => a - b);
   if (level.order === orders[0]) return true;
-  if (isLevelRestored(run, level)) return true;
+  if (isLevelRestored(run, level) || run.visitedLevels?.includes(level.id)) return true;
   const prevOrder = [...orders].reverse().find((o) => o < level.order);
   const prev = content.levels.find((l) => l.order === prevOrder);
   return prev ? isLevelRestored(run, prev) : true;
@@ -65,6 +67,10 @@ export function isLevelReachable(run, content, level) {
 // Full reset of one room: challenges, lock, its key, its evidence, and its
 // interlude, so replaying the room replays all of it.
 export function resetLevel(run, level) {
+  for (const challenge of level.challenges) delete run.drafts?.[challenge.id];
+  run.vaultOpened = false;
+  run.finaleSubmitted = false;
+  run.finaleChoice = null;
   delete run.completed[level.id];
   delete run.locksOpened[level.id];
   delete run.interludesSeen[level.id];
@@ -125,7 +131,18 @@ export function loadSavedRun(contentId) {
     const parsed = JSON.parse(raw);
     // A saved run from different content is not this room's progress.
     if (!parsed?.run || parsed.contentId !== contentId) return null;
-    return parsed.run;
+    const saved = parsed.run;
+    const record = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+    if (!record(saved) || !["intro", "level", "finale"].includes(saved.view) ||
+        !Number.isInteger(saved.currentLevelOrder) ||
+        !record(saved.completed) || !Object.values(saved.completed).every(v => Array.isArray(v) && v.every(id => typeof id === "string")) ||
+        !record(saved.locksOpened) || !record(saved.interludesSeen) ||
+        !Array.isArray(saved.keys) || !saved.keys.every(k => record(k) && typeof k.levelId === "string" && typeof k.label === "string") ||
+        !Array.isArray(saved.evidence) || !saved.evidence.every(e => record(e) && typeof e.levelId === "string" && typeof e.fragment === "string")) return null;
+    if (!Array.isArray(saved.visitedLevels) || !saved.visitedLevels.every(id => typeof id === "string")) saved.visitedLevels = [];
+    if (!record(saved.drafts)) saved.drafts = {};
+    for (const [id, draft] of Object.entries(saved.drafts)) if (!record(draft)) delete saved.drafts[id];
+    return saved;
   } catch {
     return null;
   }
@@ -139,18 +156,14 @@ export function clearSavedRun() {
   }
 }
 
+// A location is not evidence of completion. Never award progress from a URL.
 export function applyResume(run, resume, content) {
-  // Jumping ahead marks earlier levels restored so the progress spine and the
-  // finale's evidence replay stay coherent for a resumed run.
+  if (resume.view === "finale") {
+    if (!content.levels.every(level => isLevelRestored(run, level))) return false;
+  } else if (resume.view === "level") {
+    const level = content.levels.find(level => level.order === resume.currentLevelOrder);
+    if (!level || !isLevelReachable(run, content, level)) return false;
+  } else return false;
   Object.assign(run, resume);
-  const upTo =
-    resume.view === "finale" ? Infinity : resume.currentLevelOrder ?? 1;
-  for (const level of content.levels) {
-    if (level.order < upTo) {
-      run.completed[level.id] = level.challenges.map((c) => c.id);
-      bankEvidence(run, level.id, level.evidenceFragment);
-      openLock(run, level);
-      run.interludesSeen[level.id] = true;
-    }
-  }
+  return true;
 }

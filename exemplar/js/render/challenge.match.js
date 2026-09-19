@@ -27,6 +27,12 @@ export function renderMatch(challenge, done, api) {
     rightOptions.forEach((r) =>
       select.append(el("option", { value: r, textContent: r })),
     );
+    select.value = api.draft[pair.id] ?? "";
+    select.addEventListener("change", () => {
+      api.draft[pair.id] = select.value;
+      api.saveDraft(api.draft);
+      status.textContent = "";
+    });
     const feedback = el("p", { className: "option-feedback", hidden: true });
     row.append(label, select, feedback);
     wrap.append(row);

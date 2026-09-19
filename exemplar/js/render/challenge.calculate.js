@@ -2,7 +2,7 @@
 // runs the numbers the companion did not. Unlimited attempts, nothing timed,
 // and the input forgives units and stray characters around the number.
 
-import { el } from "./dom.js";
+import { el, parseNumericAnswer } from "./dom.js";
 
 export function renderCalculate(challenge, done, api) {
   const wrap = el("div", { className: "calculate-body" });
@@ -22,24 +22,25 @@ export function renderCalculate(challenge, done, api) {
   });
   const input = el("input", {
     id: inputId,
+    value: api.draft.value ?? "",
     className: "calc-input",
     attrs: { type: "text", inputmode: "decimal", autocomplete: "off" },
   });
   const unitNote = challenge.unit
     ? el("span", { className: "calc-unit", textContent: challenge.unit })
     : null;
+  input.addEventListener("input", () => api.saveDraft({ value: input.value }));
   const feedback = el("p", { className: "option-feedback", hidden: true });
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const verify = el("button", { textContent: "Check the number" });
 
   const attempt = () => {
-    // Take the part before any ":" (ratios), then the first number in it.
-    const raw = input.value.split(":")[0].match(/-?\d+(\.\d+)?/);
-    const value = raw ? Number(raw[0]) : NaN;
+    if (verify.disabled) return;
+    const value = parseNumericAnswer(input.value);
     if (Number.isNaN(value)) {
-      status.textContent = "Enter a number first.";
-      api.announce("Enter a number first.");
+      status.textContent = "Enter one number, or a complete ratio such as 7:1.";
+      api.announce("Enter one number, or a complete ratio such as 7:1.");
       return;
     }
     const tolerance = challenge.tolerance ?? 0;

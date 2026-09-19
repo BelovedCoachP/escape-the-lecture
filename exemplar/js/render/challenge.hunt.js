@@ -28,10 +28,11 @@ export function renderHunt(challenge, done, api) {
   });
 
   const parts = challenge.artifact.map((part) => {
-    const flagState = el("span", { className: "flag-state", textContent: "" });
+    const selected = api.draft[part.id] === true;
+    const flagState = el("span", { className: "flag-state", textContent: selected ? " — flagged" : "" });
     const btn = el("button", {
       className: "flag-btn",
-      attrs: { "aria-pressed": "false" },
+      attrs: { "aria-pressed": String(selected) },
     });
     btn.append(
       el("span", { className: "flag-label", textContent: part.label ? `${part.label}. ` : "" }),
@@ -42,6 +43,8 @@ export function renderHunt(challenge, done, api) {
     btn.addEventListener("click", () => {
       const pressed = btn.getAttribute("aria-pressed") === "true";
       btn.setAttribute("aria-pressed", String(!pressed));
+      api.draft[part.id] = !pressed;
+      api.saveDraft(api.draft);
       flagState.textContent = pressed ? "" : " — flagged";
       const count = parts.filter(
         (p) => p.btn.getAttribute("aria-pressed") === "true",

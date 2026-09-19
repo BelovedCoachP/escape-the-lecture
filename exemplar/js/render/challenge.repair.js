@@ -35,10 +35,15 @@ export function renderRepair(challenge, done, api) {
     const input = el("input", {
       id: inputId,
       className: "repair-input",
-      value: segment.broken,
+      value: api.draft[segment.id] ?? segment.broken,
       attrs: { type: "text", autocomplete: "off", spellcheck: "false" },
     });
     const feedback = el("p", { className: "option-feedback", hidden: true });
+    input.addEventListener("input", () => {
+      api.draft[segment.id] = input.value;
+      api.saveDraft(api.draft);
+      status.textContent = "";
+    });
     seg.append(original, label, input, feedback);
     wrap.append(seg);
     return { segment, input, status, feedback };
