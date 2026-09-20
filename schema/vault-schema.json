@@ -207,8 +207,11 @@
           }
         },
         "hints": { "$ref": "#/$defs/challengeBase/properties/hints" },
-        "wrongText": { "type": "string" }
-      }
+        "wrongText": { "type": "string" },
+        "audioSrc": { "type": "string", "minLength": 1 },
+        "captionsSrc": { "type": "string", "minLength": 1 }
+      },
+      "dependentRequired": { "audioSrc": ["captionsSrc"] }
     },
 
     "companion": {

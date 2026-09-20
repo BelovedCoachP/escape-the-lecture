@@ -866,6 +866,23 @@ function renderMetaLock(metaLock, ctx) {
     el("p", { className: "archivist-voice", textContent: metaLock.prompt }),
   );
 
+  const archivist = ctx.content.narrative.archivist;
+  if (archivist?.portrait) {
+    const portrait = archivist.portrait;
+    const row = el("div", { className: "archivist-row" },
+      el("img", { className: "archivist-portrait", src: portrait.src,
+        alt: portrait.decorative ? "" : portrait.alt, attrs: { decoding: "async" } }),
+      el("p", { className: "archivist-name", textContent: archivist.name }));
+    card.insertBefore(row, card.querySelector(".archivist-voice"));
+  }
+  if (metaLock.audioSrc) {
+    const voice = voiceControl(metaLock.audioSrc, archivist?.name ?? "the Archivist");
+    card.append(voice.node);
+    // Match the wing locks. Blocked autoplay retains the manual Hear control;
+    // the complete transcript remains visible. Scene changes stop this voice.
+    voice.play();
+  }
+
   (metaLock.hints ?? []).forEach((hint, i) => {
     const d = el("details");
     d.append(

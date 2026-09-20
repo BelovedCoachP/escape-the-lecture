@@ -1,18 +1,18 @@
 # Escape the Lecture: Page's alpha preparation list
 
-Updated September 19, 2026. Page has chosen an alpha release without a faculty pilot. A pilot is not a release requirement. This list separates new assets from presentation checks; no coding work is assigned to Page.
+Updated September 20, 2026. Page has chosen an alpha release without a faculty pilot. A pilot is not a release requirement. This list separates new assets from presentation checks; no coding work is assigned to Page.
 
-## 1. Record the final lock narration
+## 1. Final lock narration received and integrated locally
 
-The missing recording is for **The Final Vault / Five keyways**, before the recommendation puzzle. The five individual wing locks are already voiced. The opened-vault exchange already has Archivist and AURA recordings; it does not need to be recreated.
+The supplied recording is for **The Final Vault / Five keyways**, before the recommendation puzzle. The five individual wing locks are already voiced. The opened-vault exchange already has Archivist and AURA recordings; it does not need to be recreated.
 
-Record in the Archivist's established voice: calm, deliberate, quietly expectant. Keep a short pause between sentences. Approximately 15–20 seconds, without music or sound effects.
+Page supplied the final narration on September 20. The verified spoken script is:
 
 > The last door carries five keyways, one for each shelf you restored. Place each key where it belongs. Then I have one final question for you.
 
-Deliver **archivist-final-keyways.mp3**. A WAV master is welcome but optional. MP3 at 44.1 or 48 kHz, mono or stereo, is suitable. Avoid clipping; leave a little silence at the beginning and end. Do not read the keys or their answers aloud in this recording.
+Source: C:/Users/paged/Downloads/final key for escape room.mp3. Original recording preserved byte for byte (SHA-256 FB21E9C6B4E1570A48FF3AFD1D75B2200A33EE9FC274B09D6B7BDC387EF8E536).
 
-Agent integration after delivery: replace the current sentence saying the Archivist watches without speaking; use the exact recorded script on screen; connect playback with visible Hear/Stop controls; create and time the matching VTT from the actual recording; stop speech when leaving or solving the lock; verify replay and missing-file fallback. Do not invent caption timings before receiving the audio. This asset is **pending**, not present in the published alpha.
+Completed September 20: Page supplied the MP3; Groq transcription, explicitly approved by Page, matched the script above. Duration: 12.434 seconds. Original bytes copied to exemplar/assets/audio/archivist/final-keyways.mp3 with matching final-keyways.vtt. The final keyway prompt now matches the recording, and playback uses the existing Hear/Stop and scene-change cleanup. No further recording is needed. These game changes are local until the separate GitHub Pages publication is approved.
 
 ## 2. Finish the presentation materials
 

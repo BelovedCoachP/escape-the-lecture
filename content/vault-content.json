@@ -1004,7 +1004,7 @@
     "prompt": "Should AI ever be trusted with accessibility work? Five recommendations are on the table. Four can be defended. One is AURA's. Choose the one you would stand behind in front of your colleagues on Monday morning.",
     "replayEvidence": true,
     "metaLock": {
-      "prompt": "The last door carries five keyways, one for each shelf you restored. The Archivist watches without speaking. Place each key where it belongs, and then it will ask its question.",
+      "prompt": "The last door carries five keyways, one for each shelf you restored. Place each key where it belongs. Then I have one final question for you.",
       "slots": [
         {
           "label": "The Invisible Image",
@@ -1031,7 +1031,9 @@
         "Each key names the skill its room taught. Match the verb to the repair you made there.",
         "If two keys both feel right for a room, ask which repair could not have happened without that exact verb. Your banked evidence names what each room actually required of you."
       ],
-      "wrongText": "One or more keys sit in the wrong door. The Archivist says nothing. It has waited ten years; it can wait while you try again."
+      "wrongText": "One or more keys sit in the wrong door. The Archivist says nothing. It has waited ten years; it can wait while you try again.",
+      "audioSrc": "assets/audio/archivist/final-keyways.mp3",
+      "captionsSrc": "assets/audio/archivist/final-keyways.vtt"
     },
     "companionAssessment": {
       "id": "aura-final",
