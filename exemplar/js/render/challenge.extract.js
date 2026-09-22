@@ -3,6 +3,7 @@
 // step that produces a code for the room's lock.
 
 import { el, normalize } from "./dom.js";
+import { mercy } from "./mercy.js";
 
 export function renderExtract(challenge, done, api) {
   const wrap = el("div", { className: "extract-body" });
@@ -39,6 +40,15 @@ export function renderExtract(challenge, done, api) {
   const feedback = el("p", { className: "option-feedback", hidden: true });
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
+  const relief = mercy({
+    announce: api.announce,
+    answerLines: () => [challenge.acceptedAnswers[0]],
+    onApply: () => {
+      input.value = challenge.acceptedAnswers[0];
+      api.saveDraft({ value: input.value });
+      attempt();
+    },
+  });
   const verify = el("button", { textContent: "Confirm answer" });
 
   const attempt = () => {
@@ -57,6 +67,7 @@ export function renderExtract(challenge, done, api) {
         "That is not it. Read the source again; nothing is lost.";
       status.textContent = `✗ ${message}`;
       api.announce(message);
+      relief.fail(status);
       input.select();
       return;
     }

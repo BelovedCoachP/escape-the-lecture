@@ -3,6 +3,7 @@
 // and the input forgives units and stray characters around the number.
 
 import { el, parseNumericAnswer } from "./dom.js";
+import { mercy } from "./mercy.js";
 
 export function renderCalculate(challenge, done, api) {
   const wrap = el("div", { className: "calculate-body" });
@@ -33,6 +34,18 @@ export function renderCalculate(challenge, done, api) {
   const feedback = el("p", { className: "option-feedback", hidden: true });
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
+  const relief = mercy({
+    announce: api.announce,
+    answerLines: () => [
+      // A unit like ":1" reads as part of the number; a word gets a space.
+      `${challenge.answer}${challenge.unit ? `${/^[a-z]/i.test(challenge.unit) ? " " : ""}${challenge.unit}` : ""}`,
+    ],
+    onApply: () => {
+      input.value = String(challenge.answer);
+      api.saveDraft({ value: input.value });
+      attempt();
+    },
+  });
   const verify = el("button", { textContent: "Check the number" });
 
   const attempt = () => {
@@ -50,6 +63,7 @@ export function renderCalculate(challenge, done, api) {
         "That is not the value. Check the working and try again; nothing is lost.";
       status.textContent = `✗ ${message}`;
       api.announce(message);
+      relief.fail(status);
       input.select();
       return;
     }

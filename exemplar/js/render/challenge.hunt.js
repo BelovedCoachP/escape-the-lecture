@@ -5,6 +5,7 @@
 // alone.
 
 import { el } from "./dom.js";
+import { mercy } from "./mercy.js";
 
 export function renderHunt(challenge, done, api) {
   const wrap = el("div", { className: "hunt-body" });
@@ -61,6 +62,22 @@ export function renderHunt(challenge, done, api) {
 
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
+  const relief = mercy({
+    announce: api.announce,
+    answerLines: () =>
+      challenge.artifact
+        .filter((p) => p.flawed)
+        .map((p) => `Flag: ${p.label ? `${p.label} — ` : ""}${p.text}`),
+    onApply: () => {
+      parts.forEach((p) => {
+        p.btn.setAttribute("aria-pressed", String(p.part.flawed));
+        p.flagState.textContent = p.part.flawed ? " — flagged" : "";
+        api.draft[p.part.id] = p.part.flawed;
+      });
+      api.saveDraft(api.draft);
+      confirm.click();
+    },
+  });
   const confirm = el("button", { textContent: "Confirm findings" });
   confirm.addEventListener("click", () => {
     const flagged = parts.filter((p) => p.btn.getAttribute("aria-pressed") === "true");
@@ -77,6 +94,7 @@ export function renderHunt(challenge, done, api) {
         "Your flags do not match the flaws. Either something true is flagged, or something impossible is not. Adjust and confirm again; nothing is lost.";
       status.textContent = `✗ ${message}`;
       api.announce(message);
+      relief.fail(status);
       return;
     }
     status.textContent = "";

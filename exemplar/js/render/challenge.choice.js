@@ -4,6 +4,7 @@
 // change your mind, try again. Unlimited, untimed.
 
 import { el } from "./dom.js";
+import { mercy } from "./mercy.js";
 
 export function renderChoice(challenge, done, api) {
   const multi = challenge.selectMultiple === true;
@@ -46,6 +47,19 @@ export function renderChoice(challenge, done, api) {
   });
 
   const status = el("p", { className: "attempt-feedback" });
+  const relief = mercy({
+    announce: api.announce,
+    answerLines: () =>
+      challenge.options.filter((o) => o.correct).map((o) => o.text),
+    onApply: () => {
+      rows.forEach((r) => {
+        r.input.checked = r.option.correct === true;
+        api.draft[r.option.id] = r.input.checked;
+      });
+      api.saveDraft(api.draft);
+      submit.click();
+    },
+  });
   const submit = el("button", { textContent: "Confirm selection" });
   submit.addEventListener("click", () => {
     const chosen = rows.filter((r) => r.input.checked);
@@ -73,6 +87,7 @@ export function renderChoice(challenge, done, api) {
       api.announce(
         "Not yet. Read the feedback on what you selected, adjust, and confirm again. Nothing is lost.",
       );
+      relief.fail(status);
       return;
     }
 

@@ -26,6 +26,7 @@ import { renderResponse, renderTellCard } from "./challenge.response.js";
 import { renderMatch } from "./challenge.match.js";
 import { renderCalculate } from "./challenge.calculate.js";
 import { renderExtract } from "./challenge.extract.js";
+import { mercy } from "./mercy.js";
 
 const TYPE_LABELS = {
   choice: "Selection challenge",
@@ -578,6 +579,14 @@ function renderLockCard(level, ctx, viewEl) {
   });
   const feedback = el("p", { className: "lock-feedback" });
   const turn = el("button", { textContent: "Turn the key" });
+  const relief = mercy({
+    announce,
+    answerLines: () => [lock.acceptedCodes[0]],
+    onApply: () => {
+      input.value = lock.acceptedCodes[0];
+      attempt();
+    },
+  });
 
   const attempt = () => {
     if (run.locksOpened[level.id]) return;
@@ -585,6 +594,9 @@ function renderLockCard(level, ctx, viewEl) {
     const accepted = lock.acceptedCodes.some(
       (c) => c.trim().toLowerCase().replace(/\s+/g, " ") === guess,
     );
+    if (!accepted && input.value.trim() !== "") {
+      relief.fail(feedback);
+    }
     if (!accepted) {
       const message =
         lock.wrongText ?? "The door does not move. Nothing is lost; try again.";
@@ -918,6 +930,17 @@ function renderMetaLock(metaLock, ctx) {
 
   const feedback = el("p", { className: "lock-feedback" });
   const open = el("button", { textContent: "Open the vault" });
+  const relief = mercy({
+    announce,
+    answerLines: () =>
+      metaLock.slots.map((slot) => `${slot.label} → ${slot.keyLabel}`),
+    onApply: () => {
+      selects.forEach(({ select, slot }) => {
+        select.value = slot.keyLabel;
+      });
+      open.click();
+    },
+  });
   open.addEventListener("click", () => {
     const allPlaced = selects.every(({ select }) => select.value !== "");
     if (!allPlaced) {
@@ -934,6 +957,7 @@ function renderMetaLock(metaLock, ctx) {
         metaLock.wrongText ?? "One or more keys sit in the wrong door.";
       feedback.textContent = message;
       announce(message);
+      relief.fail(feedback);
       return;
     }
     ctx.run.vaultOpened = true;

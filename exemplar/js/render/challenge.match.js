@@ -3,6 +3,7 @@
 // the answer). Nothing is judged until the player verifies.
 
 import { el } from "./dom.js";
+import { mercy } from "./mercy.js";
 
 export function renderMatch(challenge, done, api) {
   const wrap = el("div", { className: "match-body" });
@@ -40,6 +41,19 @@ export function renderMatch(challenge, done, api) {
   });
 
   const status = el("p", { className: "attempt-feedback" });
+  const relief = mercy({
+    announce: api.announce,
+    answerLines: () => challenge.pairs.map((p) => `${p.left} → ${p.right}`),
+    onApply: () => {
+      rows.forEach((r) => {
+        r.select.value = r.pair.right;
+        api.draft[r.pair.id] = r.select.value;
+        r.status.textContent = "";
+      });
+      api.saveDraft(api.draft);
+      verify.click();
+    },
+  });
   const verify = el("button", { textContent: "Verify matches" });
   verify.addEventListener("click", () => {
     const unset = rows.filter((r) => r.select.value === "");
@@ -59,6 +73,7 @@ export function renderMatch(challenge, done, api) {
       const message = `✗ ${correct} of ${rows.length} matched correctly. The marked items need another look; nothing is lost.`;
       status.textContent = message;
       api.announce(message);
+      relief.fail(status);
       return;
     }
     status.textContent = "";

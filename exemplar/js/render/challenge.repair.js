@@ -4,6 +4,7 @@
 // whitespace-forgiving; attempts are unlimited and nothing is timed.
 
 import { el, normalize } from "./dom.js";
+import { mercy } from "./mercy.js";
 
 export function renderRepair(challenge, done, api) {
   const wrap = el("div", { className: "repair-body" });
@@ -50,6 +51,19 @@ export function renderRepair(challenge, done, api) {
   });
 
   const status = el("p", { className: "attempt-feedback" });
+  const relief = mercy({
+    announce: api.announce,
+    answerLines: () =>
+      challenge.segments.map((s, i) => `Line ${i + 1}: ${s.accepted[0]}`),
+    onApply: () => {
+      segments.forEach((s) => {
+        s.input.value = s.segment.accepted[0];
+        api.draft[s.segment.id] = s.input.value;
+      });
+      api.saveDraft(api.draft);
+      verify.click();
+    },
+  });
   const verify = el("button", { textContent: "Verify repairs" });
   verify.addEventListener("click", () => {
     let repaired = 0;
@@ -64,6 +78,7 @@ export function renderRepair(challenge, done, api) {
       const message = `✗ ${repaired} of ${segments.length} lines repaired. The broken lines are marked; keep going, nothing is lost.`;
       status.textContent = message;
       api.announce(message);
+      relief.fail(status);
       return;
     }
     status.textContent = "";

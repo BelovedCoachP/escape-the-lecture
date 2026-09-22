@@ -6,6 +6,7 @@
 // pointer users (and a second keyboard path) the same power.
 
 import { el } from "./dom.js";
+import { mercy } from "./mercy.js";
 
 export function renderSequence(challenge, done, api) {
   const wrap = el("div", { className: "sequence-body" });
@@ -123,6 +124,22 @@ export function renderSequence(challenge, done, api) {
 
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
+  const relief = mercy({
+    announce: api.announce,
+    answerLines: () =>
+      challenge.correctOrder.map(
+        (id, i) => `${i + 1}. ${challenge.items.find((item) => item.id === id).text}`,
+      ),
+    onApply: () => {
+      challenge.correctOrder.forEach((id) => {
+        const row = rows.find((r) => r.item.id === id);
+        if (row) list.append(row.li);
+      });
+      refreshPositions();
+      api.saveDraft({ order: [...challenge.correctOrder] });
+      verify.click();
+    },
+  });
   const verify = el("button", { textContent: "Verify order" });
   verify.addEventListener("click", () => {
     const currentOrder = rows
@@ -136,6 +153,7 @@ export function renderSequence(challenge, done, api) {
       const message = `The order is not right yet. ${inPlace} of ${challenge.correctOrder.length} elements sit in their correct positions. Nothing is lost; keep working.`;
       status.textContent = `✗ ${message}`;
       api.announce(message);
+      relief.fail(status);
       return;
     }
     status.textContent = "";

@@ -1006,6 +1006,40 @@ select.lock-input option { color: #0F172A; background: #F8FAFC; }
   margin: 0.25rem 0 0.5rem;
 }
 
+/* The mercy card: after three wrong attempts, the Archivist gives the
+   answer. It reads as his intervention — the lock card's orange, a raised
+   panel — never as an error state. */
+.mercy-card {
+  border: 1px solid var(--accent-orange);
+  border-radius: var(--radius);
+  background: rgba(15, 23, 42, 0.6);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+}
+
+.mercy-eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-orange);
+}
+
+.mercy-answers {
+  margin: 0.5rem 0;
+  padding-left: 1.4rem;
+}
+
+.mercy-answers li { margin: 0.25rem 0; }
+
+/* Paper rooms flip light; the mercy card keeps its own dark panel so the
+   orange frame and porcelain text stay AA everywhere. */
+[data-level="document-labyrinth"] .challenge-card .mercy-card {
+  background: rgba(15, 23, 42, 0.92);
+  color: var(--porcelain);
+}
+
 /* Spine navigation: restored and current rooms are revisitable */
 .spine-link {
   font: inherit;

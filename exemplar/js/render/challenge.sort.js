@@ -3,6 +3,7 @@
 // items can be moved again freely. Nothing is judged until Verify.
 
 import { el } from "./dom.js";
+import { mercy } from "./mercy.js";
 
 export function renderSort(challenge, done, api) {
   const wrap = el("div", { className: "sort-body" });
@@ -78,6 +79,31 @@ export function renderSort(challenge, done, api) {
   // The verdict lands where the eyes are: a visible status line beside the
   // button that was just pressed, plus marks and borders on the items.
   const status = el("p", { className: "attempt-feedback" });
+  const relief = mercy({
+    announce: api.announce,
+    answerLines: () =>
+      challenge.items.map((i) => {
+        const bin = challenge.bins.find((b) => b.id === i.correctBin);
+        return `${i.text} → ${bin?.label ?? i.correctBin}`;
+      }),
+    onApply: () => {
+      challenge.items.forEach((i) => {
+        placement[i.id] = i.correctBin;
+        const refs = itemEls[i.id];
+        binLists[i.correctBin].append(refs.li);
+        refs.li.classList.remove("is-wrong");
+        refs.statusSpan.textContent = "";
+        [...refs.actions.children].forEach((button, index) =>
+          button.setAttribute(
+            "aria-pressed",
+            String(challenge.bins[index].id === i.correctBin),
+          ),
+        );
+      });
+      api.saveDraft(placement);
+      verify.click();
+    },
+  });
   const verify = el("button", { textContent: "Verify sorting" });
   verify.addEventListener("click", () => {
     const unplaced = challenge.items.filter((i) => !placement[i.id]);
@@ -97,6 +123,7 @@ export function renderSort(challenge, done, api) {
       const message = `✗ ${challenge.items.length - wrong.length} of ${challenge.items.length} placed correctly. The marked items need another look; nothing is lost.`;
       status.textContent = message;
       api.announce(message);
+      relief.fail(status);
       return;
     }
     status.textContent = "";
