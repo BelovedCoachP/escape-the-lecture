@@ -63,7 +63,9 @@
   <line x1="95" y1="120" x2="215" y2="200" stroke="#C79A16" stroke-width="5" marker-end="url(#arrowGold)"/>
   <text x="88" y="112" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="17" fill="#8A6A0A">Light</text>
 
-  <!-- Arrow: glucose exiting into the stroma -->
-  <line x1="470" y1="345" x2="600" y2="300" stroke="#3F6B2B" stroke-width="4" marker-end="url(#arrowGreen)"/>
-  <text x="608" y="296" font-family="Georgia, 'Times New Roman', serif" font-size="17" fill="#24401A">Glucose</text>
+  <!-- Arrow: oxygen released in the grana, diffusing out through both
+       membranes. (Glucose is made in the stroma and does not leave, so an
+       arrow carrying it outward would be wrong biology.) -->
+  <line x1="465" y1="318" x2="768" y2="262" stroke="#3F6B2B" stroke-width="4" marker-end="url(#arrowGreen)"/>
+  <text x="792" y="294" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="17" fill="#24401A">Oxygen</text>
 </svg>

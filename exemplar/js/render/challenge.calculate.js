@@ -3,7 +3,7 @@
 // and the input forgives units and stray characters around the number.
 
 import { el, parseNumericAnswer } from "./dom.js";
-import { mercy } from "./mercy.js";
+import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 export function renderCalculate(challenge, done, api) {
   const wrap = el("div", { className: "calculate-body" });
@@ -35,7 +35,6 @@ export function renderCalculate(challenge, done, api) {
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
-    announce: api.announce,
     answerLines: () => [
       // A unit like ":1" reads as part of the number; a word gets a space.
       `${challenge.answer}${challenge.unit ? `${/^[a-z]/i.test(challenge.unit) ? " " : ""}${challenge.unit}` : ""}`,
@@ -62,11 +61,12 @@ export function renderCalculate(challenge, done, api) {
         challenge.wrongText ??
         "That is not the value. Check the working and try again; nothing is lost.";
       status.textContent = `✗ ${message}`;
-      api.announce(message);
-      relief.fail(status);
+      const opened = relief.fail(status, String(value));
+      api.announce(opened ? `${message} ${MERCY_NOTICE}` : message);
       input.select();
       return;
     }
+    relief.resolve();
     status.textContent = "";
     input.readOnly = true;
     feedback.hidden = false;
@@ -78,7 +78,7 @@ export function renderCalculate(challenge, done, api) {
 
   verify.addEventListener("click", attempt);
   input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.repeat) {
       e.preventDefault();
       attempt();
     }

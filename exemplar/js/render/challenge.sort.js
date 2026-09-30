@@ -3,7 +3,7 @@
 // items can be moved again freely. Nothing is judged until Verify.
 
 import { el } from "./dom.js";
-import { mercy } from "./mercy.js";
+import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 export function renderSort(challenge, done, api) {
   const wrap = el("div", { className: "sort-body" });
@@ -80,7 +80,6 @@ export function renderSort(challenge, done, api) {
   // button that was just pressed, plus marks and borders on the items.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
-    announce: api.announce,
     answerLines: () =>
       challenge.items.map((i) => {
         const bin = challenge.bins.find((b) => b.id === i.correctBin);
@@ -122,10 +121,12 @@ export function renderSort(challenge, done, api) {
       });
       const message = `✗ ${challenge.items.length - wrong.length} of ${challenge.items.length} placed correctly. The marked items need another look; nothing is lost.`;
       status.textContent = message;
-      api.announce(message);
-      relief.fail(status);
+      const signature = challenge.items.map((i) => `${i.id}=${placement[i.id]}`).join();
+      const opened = relief.fail(status, signature);
+      api.announce(opened ? `${message} ${MERCY_NOTICE}` : message);
       return;
     }
+    relief.resolve();
     status.textContent = "";
     challenge.items.forEach((i) => {
       const refs = itemEls[i.id];

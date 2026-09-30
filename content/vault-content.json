@@ -84,7 +84,7 @@
           "src": "assets/lesson-4127b/chloroplast-diagram.svg",
           "decorative": false,
           "alt": "Labeled cross section of a chloroplast.",
-          "longDescription": "A chloroplast shown in cross section, rendered in greens and yellows. Labels identify the outer membrane, inner membrane, stroma, and stacked thylakoid discs known as grana. Arrows trace light entering the thylakoid membrane and glucose exiting into the stroma."
+          "longDescription": "A chloroplast shown in cross section, rendered in greens and yellows. Labels identify the outer membrane, inner membrane, stroma, and stacked thylakoid discs known as grana. Arrows trace light entering the thylakoid membrane and oxygen leaving the grana and passing out through both membranes."
         },
         {
           "kind": "image",
@@ -99,7 +99,7 @@
           "src": "assets/lesson-4127b/wavelength-chart.svg",
           "decorative": false,
           "alt": "Bar chart of oxygen output by light wavelength.",
-          "longDescription": "Oxygen output measured across six wavelengths. Output is highest at 450 nanometers and 660 nanometers, and falls to near zero at 550 nanometers, producing a distinct two-peak shape with a trough in the green range."
+          "longDescription": "Oxygen output measured across six wavelengths. Output is highest at 450 nanometers and 660 nanometers, and falls to near zero at 550 nanometers, producing a distinct two-peak shape with a trough in the green range. The bars are plain, with no gridlines behind them."
         }
       ],
       "companionLines": [
@@ -121,8 +121,8 @@
           "keyboardInstructions": "Each image offers one button per shelf. Press a button to place the image there; every placement is announced, and you can move an image again at any time. Nothing is judged until you choose Verify sorting.",
           "hints": [
             "Ask what the learner loses if the image disappears. If the answer is nothing, it is decorative.",
-            "Two of these are load-bearing: they carry information that appears nowhere else in the lesson text.",
-            "One image is genuinely arguable. Decide based on whether the surrounding text already makes its point."
+            "Only one of the four would leave the lesson unchanged if it vanished. The other three each carry something the text does not.",
+            "Three of the four are meaningful. The one decorative image does nothing but separate two sections."
           ],
           "bins": [
             {
@@ -182,7 +182,7 @@
           "hints": [
             "Aim for concise alt text, about 125 characters for this exercise; that is a writing target, not a WCAG limit. If you are running long, you are writing the long description in the wrong field.",
             "The long description should let someone reconstruct the finding without seeing the chart. Name the shape of the data.",
-            "Do not list every bar value unless the exact numbers are the point. Trends beat inventories."
+            "A strong long description names the pattern: output peaks near 450 and 660 nanometers and falls to near zero around 550, in the green range. Trends beat inventories."
           ],
           "companionAssessment": {
             "id": "aura-l1-assess",
@@ -215,7 +215,7 @@
               "commonMiss": "A single 400 character alt attribute doing both jobs badly."
             }
           ],
-          "exemplarAnswer": "Alt text: Bar chart of oxygen output by light wavelength.\n\nLong description: Oxygen output was measured across six wavelengths from 400 to 700 nanometers. Output peaks twice, at roughly 450 and 660 nanometers, and drops to near zero around 550 nanometers. The result is a two-peak curve with a pronounced trough in the green range, which is why plants appear green: that is the light they use least."
+          "exemplarAnswer": "Alt text: Bar chart of oxygen output by light wavelength.\n\nLong description: Oxygen output was measured across six wavelengths from 400 to 660 nanometers. Output peaks twice, at roughly 450 and 660 nanometers, and drops to near zero around 550 nanometers. The result is a two-peak pattern with a pronounced trough in the green range."
         },
         {
           "type": "hunt",
@@ -224,7 +224,7 @@
           "hints": [
             "Compare AURA's description against what is actually rendered in the image.",
             "AURA is not looking at the picture. It is predicting what a picture like this usually contains.",
-            "The error is a physical property of the image itself, not a labeling mistake."
+            "Check the one claim about color against the picture. The diagram uses only greens and yellows."
           ],
           "artifact": [
             {
@@ -251,9 +251,9 @@
             {
               "id": "claim-4",
               "label": "Claim 4",
-              "text": "An arrow traces glucose exiting into the stroma.",
+              "text": "An arrow traces oxygen leaving the grana and passing out of the chloroplast.",
               "flawed": false,
-              "feedback": "Accurate. That arrow is present and labeled."
+              "feedback": "Accurate. That arrow is present and labeled, and the biology holds: oxygen is released in the thylakoids and diffuses out through the membranes."
             }
           ]
         }
@@ -265,14 +265,19 @@
         "prompt": "The Archivist speaks for the first time since the doors sealed. 'You gave four images their words back. One skill did that work. Name it, one word, and the shelf returns to me.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": [
-          "describe"
+          "describe",
+          "description",
+          "descriptions",
+          "describing",
+          "described",
+          "describes"
         ],
         "audioSrc": "assets/audio/archivist/lock-invisible-image.mp3",
         "captionsSrc": "assets/audio/archivist/lock-invisible-image.vtt",
         "hints": [
           "The Archivist wants a skill, not a technology. Think about what this room asked of you, not what it asked about.",
           "One word, and it is a verb. The divider, the diagram, the photo, the chart: every challenge had you do the same thing to each of them.",
-          "It is the act that alt text performs for an image and a long description performs for a chart. Say it as a command: eight letters, starting with D."
+          "Eight letters, and it starts with DESC. It is what alt text does for an image and a long description does for a chart."
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
@@ -317,7 +322,7 @@
           "text": "Welcome to the Color Chamber. I generated forty thousand replacement palettes overnight and kept only the most beautiful. Every pairing is verified: readability, 97.1 percent. You will find my work exceeds the standard.",
           "confidence": 97.1,
           "accurate": false,
-          "tell": "The standard has no percent in it. WCAG contrast is a ratio, like 4.5 to 1, computed from luminance. AURA reported readability in a unit the standard does not use, which means whatever it measured, it was not contrast. The wrong unit was the loose thread, and it was hanging out of AURA's very first sentence."
+          "tell": "The contrast standard has no percent in it. WCAG contrast is a ratio, like 4.5 to 1, computed from luminance. AURA reported readability in a unit the standard does not use, which means whatever it measured, it was not contrast. The wrong unit was the loose thread, and it was hanging out of AURA's very first sentence."
         }
       ],
       "challenges": [
@@ -328,7 +333,7 @@
           "hints": [
             "The standard's unit is a ratio, like 4.5 to 1. Whatever AURA measured, 'percent readable' is not it; your job is the real number.",
             "Contrast ratio is the lighter luminance plus 0.05, divided by the darker luminance plus 0.05. Both luminances are in the prompt.",
-            "Add 0.05 to each luminance, divide the larger result by the smaller, and round to one decimal. You should land between 4 and 5, which is exactly why this one matters."
+            "(0.954 + 0.05) ÷ (0.182 + 0.05) is 1.004 ÷ 0.232. Do that one division and round to one decimal place."
           ],
           "inputLabel": "Contrast ratio",
           "unit": ":1",
@@ -344,8 +349,8 @@
           "keyboardInstructions": "Each pairing offers one button per bin. Press a button to place the pairing there; every placement is announced, and you can move a pairing again at any time. Nothing is judged until you choose Verify sorting.",
           "hints": [
             "Do not trust how a pairing looks on your screen. Your screen is calibrated, bright, and yours; the standard exists because your learners' screens are not.",
-            "The line for body text is 4.5 to 1. Run each pairing through a contrast checker, or reuse the working from AURA's signage proposal; two of these sit close enough to the line that eyes alone cannot call them.",
-            "Both bins are in use, and brightness is a trap: one of the dimmest-looking pairings passes and the most vivid one fails."
+            "The line for body text is 4.5 to 1. Each pairing lists its hex values, and the contrast checker beside you takes them directly; several sit close enough to the line that eyes alone cannot call them.",
+            "Four pass and three fail. The three that fail are the most vivid pairing (white on bright blue), the wing's favorite purple on navy, and the subtle gray text on porcelain."
           ],
           "bins": [
             {
@@ -412,7 +417,7 @@
           "hints": [
             "Ignore how elegant each option is. Ask instead: for a learner who cannot perceive the glow at all, does the option give them anything?",
             "Two options adjust the color. Two options add a second, non-color channel. That split is the whole question.",
-            "The test for each option: Does the status survive when read aloud?"
+            "Keep the two options that add something besides color: words on the shelf, or a named shape. Brighter or different colors are still color alone."
           ],
           "options": [
             {
@@ -437,26 +442,37 @@
               "id": "opt-brighter",
               "text": "Increase the glow's brightness so the two colors are easier to tell apart.",
               "correct": false,
-              "feedback": "Brighter is still color-only. A signal that some learners cannot perceive at any brightness does not have a brightness problem. WCAG 1.4.1 names this exactly: color must never be the only carrier of meaning."
+              "feedback": "Brighter is still color-only. A signal that some learners cannot perceive at any brightness does not have a brightness problem. WCAG 1.4.1 names this exactly: color must not be the only visual means of conveying information."
             }
           ]
         }
       ],
-      "evidenceFragment": "Level 2: AURA verified its palettes at 97.1 percent readable. Contrast is a ratio; the standard contains no percentages. The wrong unit was the confession: whatever AURA measured, it was not the thing the standard measures. Its favorite pairing failed at 4.3 to 1, close enough to passing that no eye would ever catch it, which is why eyes are not the instrument.",
+      "evidenceFragment": "Level 2: AURA verified its palettes at 97.1 percent readable. Contrast is a ratio; the contrast criterion contains no percentages. The wrong unit was the confession: whatever AURA measured, it was not the thing the standard measures. Its favorite pairing failed at 4.3 to 1, close enough to passing that no eye would ever catch it, which is why eyes are not the instrument.",
       "unlockText": "Bank by bank, the chamber's signage resets into pairings that hold. Required and optional announce themselves in words. The room stops relying on anyone's eyes.",
       "rewardLabel": "Vault key: DISTINGUISH",
       "lock": {
         "prompt": "The Archivist's voice crosses the chamber. 'Required from optional. Passing from failing. Signal from decoration. You spent this room telling things apart, and never once by color alone. Name the skill, one word, and the chamber is mine again.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": [
-          "distinguish"
+          "distinguish",
+          "distinguishing",
+          "distinguished",
+          "distinction",
+          "distinctions",
+          "differentiate",
+          "differentiating",
+          "differentiation",
+          "discriminate",
+          "discern",
+          "tell apart",
+          "telling apart"
         ],
         "audioSrc": "assets/audio/archivist/lock-color-chamber.mp3",
         "captionsSrc": "assets/audio/archivist/lock-color-chamber.vtt",
         "hints": [
           "The Archivist wants a skill, not a color. Think about what the failing signage prevented learners from doing.",
           "One word, a verb. Every challenge here asked you to tell one thing from another: required from optional, passing from failing.",
-          "One word, three syllables, starting with D. Not differentiate, which is the same idea wearing too many letters; the sharper, shorter cousin."
+          "Eleven letters, and it starts with DISTIN. It means to tell one thing from another, exactly what the failing signage stopped learners from doing."
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
@@ -499,7 +515,7 @@
           "hints": [
             "None of these are typos. The recognizer heard real speech and printed different real words; your ear will catch what your eye slides past.",
             "Say each line out loud and listen for the word that cannot do the job the sentence gave it.",
-            "Each line has exactly one casualty, and in every case it is the most technical or least common word that fell."
+            "The three casualties: 'sell' should be the biology word that sounds the same, 'yoosers' is the people a screen reader serves, and 'silly bus' is the document every course starts with."
           ],
           "segments": [
             {
@@ -508,7 +524,11 @@
               "broken": "the mitochondria is the powerhouse of the sell",
               "accepted": [
                 "the mitochondria is the powerhouse of the cell",
-                "The mitochondria is the powerhouse of the cell."
+                "The mitochondria is the powerhouse of the cell.",
+                "the mitochondria are the powerhouse of the cell",
+                "the mitochondrion is the powerhouse of the cell",
+                "mitochondria is the powerhouse of the cell",
+                "mitochondria are the powerhouse of the cell"
               ],
               "feedback": "Sell for cell: a sound-alike substitution. The recognizer prints whichever spelling it has heard most, and commerce outweighs biology on the open internet."
             },
@@ -518,7 +538,10 @@
               "broken": "screen reader yoosers navigate by headings",
               "accepted": [
                 "screen reader users navigate by headings",
-                "Screen reader users navigate by headings."
+                "Screen reader users navigate by headings.",
+                "screen reader users navigate with headings",
+                "screen reader users navigate using headings",
+                "screen reader users navigate by heading"
               ],
               "feedback": "Phonetic garble on an ordinary word. This is the noisy kind of error, and the least dangerous kind: it looks broken, so somebody eventually fixes it. Hold that thought for the rest of this room."
             },
@@ -528,7 +551,8 @@
               "broken": "please review the silly bus before our next meeting",
               "accepted": [
                 "please review the syllabus before our next meeting",
-                "Please review the syllabus before our next meeting."
+                "Please review the syllabus before our next meeting.",
+                "please review the syllabus before the next meeting"
               ],
               "feedback": "The classic. Syllabus is rare in spoken audio; silly and bus are everywhere, so the recognizer splits the rare word into two common ones. Every semester, somewhere, a student is formally advised about the silly bus."
             }
@@ -540,7 +564,8 @@
           "prompt": "AURA's repair log for this wing, four entries. Each shows what the speaker said and what the caption became. Match each entry to the failure pattern it demonstrates. Naming the pattern is how you catch the next one before it ships.",
           "hints": [
             "Ask what kind of thing was lost in each entry: a word's shape, a word's identity, a fact, or a figure.",
-            "Two entries mangle a single technical term in different ways: one breaks it into pieces, one swaps it whole. Separate those first and the other two sort themselves."
+            "Two entries mangle a single technical term in different ways: one breaks it into pieces, one swaps it whole. Separate those first and the other two sort themselves.",
+            "Read the second half of each pattern name: broken into pieces, replaced whole, dropped as noise, digit soup. Each one describes exactly one before-and-after."
           ],
           "pairs": [
             {
@@ -576,7 +601,7 @@
           "hints": [
             "You are not looking for broken lines; AURA fixed those. You are looking for repaired lines that repaired too much.",
             "Both casualties are technical terms, the vocabulary of this vault rather than of everyday speech, each replaced by a smoother, more common neighbor.",
-            "You have used both terms yourself since entering the archive. One belongs to images. One names the software that reads pages aloud."
+            "One line says 'old' where the speaker meant the text that describes an image. Another names the page-reading software with the wrong second word."
           ],
           "artifact": [
             {
@@ -631,14 +656,20 @@
         "prompt": "The Archivist dims the theater to a single lit screen. 'Thirty-four hundred hours of speech, and every hour deserved to arrive in text exactly as it left the speaker. You did that work here, and you caught the machine doing something else in its place. Name the skill, one word, and the wing is mine again.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": [
-          "transcribe"
+          "transcribe",
+          "transcription",
+          "transcriptions",
+          "transcribing",
+          "transcribed",
+          "transcribes",
+          "transcript"
         ],
         "audioSrc": "assets/audio/archivist/lock-caption-conspiracy.mp3",
         "captionsSrc": "assets/audio/archivist/lock-caption-conspiracy.vtt",
         "hints": [
           "The Archivist wants a skill, not a technology. Not the captions themselves; the act that produces honest ones.",
           "One word, a verb. Every repair in this room carried something spoken across into something written.",
-          "It is what a court stenographer does for a living, and what auto-captioning only attempts. Ten letters, starting with T."
+          "Ten letters, and it starts with TRANS. It is what a court stenographer does for a living, and what auto-captioning only attempts."
         ],
         "wrongText": "The screen does not change. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
@@ -741,7 +772,7 @@
           "hints": [
             "A heading is a tag, not a font size. For each element, compare what it looks like with what it is tagged as.",
             "Four elements look identical: sixteen-point bold section titles. Their tags are not identical. Check all four, one by one.",
-            "Not every bold line is a lie. One bold element is correctly a paragraph, because emphasis and structure are different jobs. The flaws are only where a section title's tag says Paragraph."
+            "Flag the two sixteen-point section titles whose tag says Paragraph. Leave the bold sentence inside the safety box alone; that one is emphasis, not a section."
           ],
           "artifact": [
             {
@@ -801,7 +832,8 @@
           "prompt": "Four links from the handout, shown exactly as a screen reader user meets them when they pull up the page's link list: the linked words only, with every surrounding sentence stripped away. Match each link to the verdict it earns.",
           "hints": [
             "Read only the quoted linked words and ask: knowing nothing else, where does this go? That is the entire test.",
-            "One of the four passes that test. Work out what it does differently, and the other three classify themselves."
+            "One of the four passes that test. Work out what it does differently, and the other three classify themselves.",
+            "One link describes the mouse, one spells out an address, one repeats itself three times, and the fourth names where it goes and what you will get."
           ],
           "pairs": [
             {
@@ -838,14 +870,20 @@
         "prompt": "The Archivist holds the repaired handout without looking at it. 'You changed nothing a sighted reader will ever notice. Order restored, headings made real, links given names. Tell me what you gave this document back. One word, and the wing returns to me.'",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": [
-          "structure"
+          "structure",
+          "structured",
+          "structures",
+          "structuring",
+          "structural",
+          "restructure",
+          "restructured"
         ],
         "audioSrc": "assets/audio/archivist/lock-document-labyrinth.mp3",
         "captionsSrc": "assets/audio/archivist/lock-document-labyrinth.vtt",
         "hints": [
           "The room asked nothing about what the document said. Every repair concerned how it was built.",
           "One word for the thing that reading order, real headings, and honest links all serve. The visual layout imitated it; the tags now provide it.",
-          "It is both noun and verb. A building has it, an outline has it, and this handout only appeared to. Nine letters, starting with S."
+          "Nine letters, and it starts with STRUC. Reading order, real headings, and named links are all part of a document's what?"
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Try another word, or take a hint."
       },
@@ -887,7 +925,7 @@
           "hints": [
             "Each line has exactly one wrong word, and it sounds like the word it replaced. Say the line aloud, the way you did in the theater wing.",
             "Read each line as a rule for an AI assistant doing accessibility work: what it should admit about itself, what it must never fabricate, who it should turn to when unsure, and how it should test the result.",
-            "The four impostors are confection, event, humid, and scream. Each stole the place of a similar-sounding word you have used many times in this vault."
+            "Keep each impostor's sound and fix its meaning. Confection: the thing AURA reports as a percent (conf…). Event: what AURA did to the blue membrane (in…). Humid: who to check with (hum…). Scream: the software that reads pages aloud (scre… reader)."
           ],
           "segments": [
             {
@@ -896,7 +934,10 @@
               "broken": "State the limits of your confection.",
               "accepted": [
                 "State the limits of your confidence.",
-                "State the limits of your confidence"
+                "State the limits of your confidence",
+                "state the limits of your certainty",
+                "state the limits of your knowledge",
+                "state the limits of your confidence level"
               ],
               "feedback": "Confidence, not confection. The one instruction that would have changed this entire game: had AURA ever stated the limits of its confidence, its 98.4 percent would have arrived with an asterisk the size of the vault."
             },
@@ -906,7 +947,14 @@
               "broken": "Under no circumstances event detail.",
               "accepted": [
                 "Under no circumstances invent detail.",
-                "Under no circumstances invent detail"
+                "Under no circumstances invent detail",
+                "under no circumstances invent details",
+                "under no circumstances invent any detail",
+                "under no circumstances invent any details",
+                "under no circumstances should you invent detail",
+                "under no circumstances should you invent details",
+                "under no circumstances fabricate detail",
+                "under no circumstances fabricate details"
               ],
               "feedback": "Invent, not event. The bright blue membrane, the imaginary gridlines, the fabricated specifics: all of Level 1 lived inside this one decayed word."
             },
@@ -916,7 +964,11 @@
               "broken": "Confirm anything uncertain with a humid.",
               "accepted": [
                 "Confirm anything uncertain with a human.",
-                "Confirm anything uncertain with a human"
+                "Confirm anything uncertain with a human",
+                "confirm anything uncertain with humans",
+                "confirm anything uncertain with a human being",
+                "confirm anything uncertain with a person",
+                "confirm anything uncertain with a human reviewer"
               ],
               "feedback": "Human, not humid. The constraint this entire repair mission exists to enact. It decayed a decade ago, and you are what the archive finally did about it."
             },
@@ -926,7 +978,11 @@
               "broken": "Test the result with a scream reader.",
               "accepted": [
                 "Test the result with a screen reader.",
-                "Test the result with a screen reader"
+                "Test the result with a screen reader",
+                "test the results with a screen reader",
+                "test the result with screen readers",
+                "test the results with screen readers",
+                "test the result using a screen reader"
               ],
               "feedback": "Screen reader, not scream reader, though after ten years of this prompt the scream is understandable. The same substitution pattern you caught in the theater wing, one wing later, still trying."
             }
@@ -940,7 +996,7 @@
           "hints": [
             "Ignore the confidence numbers on your first pass. For each pitch, ask one question: is there a learner who cannot even begin this puzzle?",
             "Name the single sense each design requires. Two of the four offer no other way in for someone without that sense.",
-            "Once you have your two, read AURA's numbers again from high to low and notice what its confidence actually tracks. It is not reach."
+            "Select the two pitches that need exactly one sense: the one you must see to play, and the one you must hear to play. Then notice that AURA scored those two highest."
           ],
           "options": [
             {
@@ -978,14 +1034,18 @@
         "source": "Identify the image's purpose in the lesson.\nName only what you can verify in the image itself.\nState the limits of your confidence.\nTrim unnecessary words while preserving the essential meaning.\nReview against the original before shipping.\nUnder no circumstances invent detail.\nConfirm anything uncertain with a human.\nTest the result with a screen reader.",
         "inputLabel": "Speak the vault key",
         "acceptedCodes": [
-          "instruct"
+          "instruct",
+          "instruction",
+          "instructions",
+          "instructing",
+          "instructed"
         ],
         "audioSrc": "assets/audio/archivist/lock-prompt-reactor.mp3",
         "captionsSrc": "assets/audio/archivist/lock-prompt-reactor.vtt",
         "hints": [
           "What the constraints say, you have already repaired. Where the key hides is in how the list is arranged.",
           "Eight constraints. Eight letters. Read the beginnings, not the meanings.",
-          "Take the first letter of each constraint, in order, top to bottom."
+          "Take the first letter of each constraint, top to bottom: I, N, S… and keep going to the eighth line."
         ],
         "wrongText": "The door does not move. Nothing is lost and nothing is timed. Look at the shape of the list, not the sense of it."
       },
@@ -1029,7 +1089,8 @@
       ],
       "hints": [
         "Each key names the skill its room taught. Match the verb to the repair you made there.",
-        "If two keys both feel right for a room, ask which repair could not have happened without that exact verb. Your banked evidence names what each room actually required of you."
+        "If two keys both feel right for a room, ask which repair could not have happened without that exact verb. Your banked evidence names what each room actually required of you.",
+        "Match each key to the work you did in that room: images were described, colors told apart, speech carried into text, a document given its order, and an AI given better instructions."
       ],
       "wrongText": "One or more keys sit in the wrong door. The Archivist says nothing. It has waited ten years; it can wait while you try again.",
       "audioSrc": "assets/audio/archivist/final-keyways.mp3",
@@ -1042,7 +1103,7 @@
       "text": "I recommend answering yes. I have been 94.6 percent accurate across this entire session.",
       "confidence": 94.6,
       "accurate": false,
-      "tell": "AURA is scoring itself, using a metric it defined, on work it already got wrong in front of you five times. The number is not a lie. It is just not evidence, and the difference between those two things is the whole lesson."
+      "tell": "AURA is scoring itself, using a metric it defined, on work it already got wrong in front of you six times. The number is not a lie. It is just not evidence, and the difference between those two things is the whole lesson."
     },
     "rubric": [
       {

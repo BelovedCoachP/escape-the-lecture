@@ -3,7 +3,7 @@
 // the answer). Nothing is judged until the player verifies.
 
 import { el } from "./dom.js";
-import { mercy } from "./mercy.js";
+import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 export function renderMatch(challenge, done, api) {
   const wrap = el("div", { className: "match-body" });
@@ -42,7 +42,6 @@ export function renderMatch(challenge, done, api) {
 
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
-    announce: api.announce,
     answerLines: () => challenge.pairs.map((p) => `${p.left} → ${p.right}`),
     onApply: () => {
       rows.forEach((r) => {
@@ -72,10 +71,11 @@ export function renderMatch(challenge, done, api) {
     if (correct < rows.length) {
       const message = `✗ ${correct} of ${rows.length} matched correctly. The marked items need another look; nothing is lost.`;
       status.textContent = message;
-      api.announce(message);
-      relief.fail(status);
+      const opened = relief.fail(status, rows.map((r) => r.select.value).join("\n"));
+      api.announce(opened ? `${message} ${MERCY_NOTICE}` : message);
       return;
     }
+    relief.resolve();
     status.textContent = "";
     rows.forEach((r) => {
       r.select.disabled = true;

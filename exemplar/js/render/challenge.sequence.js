@@ -6,7 +6,7 @@
 // pointer users (and a second keyboard path) the same power.
 
 import { el } from "./dom.js";
-import { mercy } from "./mercy.js";
+import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 export function renderSequence(challenge, done, api) {
   const wrap = el("div", { className: "sequence-body" });
@@ -31,6 +31,8 @@ export function renderSequence(challenge, done, api) {
   if (items.map((i) => i.id).join() === challenge.correctOrder.join()) {
     items = items.reverse();
   }
+  // Verifying the untouched starting order is not an attempt.
+  const startOrder = items.map((i) => i.id).join();
 
   if (Array.isArray(api.draft.order) && api.draft.order.length === items.length &&
       new Set(api.draft.order).size === items.length && api.draft.order.every(id => items.some(item => item.id === id))) {
@@ -125,12 +127,16 @@ export function renderSequence(challenge, done, api) {
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
-    announce: api.announce,
+    startSignature: startOrder,
     answerLines: () =>
       challenge.correctOrder.map(
         (id, i) => `${i + 1}. ${challenge.items.find((item) => item.id === id).text}`,
       ),
     onApply: () => {
+      rows.forEach((r) => {
+        r.grab.setAttribute("aria-pressed", "false");
+        r.stateSpan.textContent = "";
+      });
       challenge.correctOrder.forEach((id) => {
         const row = rows.find((r) => r.item.id === id);
         if (row) list.append(row.li);
@@ -152,10 +158,11 @@ export function renderSequence(challenge, done, api) {
     if (inPlace < challenge.correctOrder.length) {
       const message = `The order is not right yet. ${inPlace} of ${challenge.correctOrder.length} elements sit in their correct positions. Nothing is lost; keep working.`;
       status.textContent = `✗ ${message}`;
-      api.announce(message);
-      relief.fail(status);
+      const opened = relief.fail(status, currentOrder.join());
+      api.announce(opened ? `${message} ${MERCY_NOTICE}` : message);
       return;
     }
+    relief.resolve();
     status.textContent = "";
     rows.forEach((r) => {
       r.grab.disabled = true;

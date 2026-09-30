@@ -3,8 +3,8 @@
 // path needs no special instructions. Matching is case-insensitive and
 // whitespace-forgiving; attempts are unlimited and nothing is timed.
 
-import { el, normalize } from "./dom.js";
-import { mercy } from "./mercy.js";
+import { el, normalize, answerMatches } from "./dom.js";
+import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 export function renderRepair(challenge, done, api) {
   const wrap = el("div", { className: "repair-body" });
@@ -51,12 +51,17 @@ export function renderRepair(challenge, done, api) {
   });
 
   const status = el("p", { className: "attempt-feedback" });
+  const isRepaired = (s) => answerMatches(s.segment.accepted, s.input.value);
+  const signature = () => segments.map((s) => normalize(s.input.value)).join("\n");
   const relief = mercy({
-    announce: api.announce,
+    // Submitting the corrupted lines untouched is not an attempt.
+    startSignature: challenge.segments.map((s) => normalize(s.broken)).join("\n"),
     answerLines: () =>
       challenge.segments.map((s, i) => `Line ${i + 1}: ${s.accepted[0]}`),
     onApply: () => {
+      // Lines the player already repaired keep the player's own wording.
       segments.forEach((s) => {
+        if (isRepaired(s)) return;
         s.input.value = s.segment.accepted[0];
         api.draft[s.segment.id] = s.input.value;
       });
@@ -68,19 +73,18 @@ export function renderRepair(challenge, done, api) {
   verify.addEventListener("click", () => {
     let repaired = 0;
     segments.forEach((s) => {
-      const ok = s.segment.accepted.some(
-        (a) => normalize(a) === normalize(s.input.value),
-      );
+      const ok = isRepaired(s);
       s.status.textContent = ok ? " ✓ repaired" : " ✗ still broken";
       if (ok) repaired += 1;
     });
     if (repaired < segments.length) {
       const message = `✗ ${repaired} of ${segments.length} lines repaired. The broken lines are marked; keep going, nothing is lost.`;
       status.textContent = message;
-      api.announce(message);
-      relief.fail(status);
+      const opened = relief.fail(status, signature());
+      api.announce(opened ? `${message} ${MERCY_NOTICE}` : message);
       return;
     }
+    relief.resolve();
     status.textContent = "";
     segments.forEach((s) => {
       s.input.readOnly = true;

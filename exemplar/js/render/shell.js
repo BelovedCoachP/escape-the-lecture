@@ -14,7 +14,7 @@ import {
   saveRun,
 } from "../state.js";
 import { announce, moveFocusTo, prefersReducedMotion } from "../a11y.js";
-import { el } from "./dom.js";
+import { el, normalize, answerMatches } from "./dom.js";
 import { renderContrastChecker } from "./tool.contrast.js";
 import { voiceControl, stopVoices } from "./voice.js";
 import { renderChoice } from "./challenge.choice.js";
@@ -26,7 +26,7 @@ import { renderResponse, renderTellCard } from "./challenge.response.js";
 import { renderMatch } from "./challenge.match.js";
 import { renderCalculate } from "./challenge.calculate.js";
 import { renderExtract } from "./challenge.extract.js";
-import { mercy } from "./mercy.js";
+import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 const TYPE_LABELS = {
   choice: "Selection challenge",
@@ -580,7 +580,6 @@ function renderLockCard(level, ctx, viewEl) {
   const feedback = el("p", { className: "lock-feedback" });
   const turn = el("button", { textContent: "Turn the key" });
   const relief = mercy({
-    announce,
     answerLines: () => [lock.acceptedCodes[0]],
     onApply: () => {
       input.value = lock.acceptedCodes[0];
@@ -590,21 +589,22 @@ function renderLockCard(level, ctx, viewEl) {
 
   const attempt = () => {
     if (run.locksOpened[level.id]) return;
-    const guess = input.value.trim().toLowerCase().replace(/\s+/g, " ");
-    const accepted = lock.acceptedCodes.some(
-      (c) => c.trim().toLowerCase().replace(/\s+/g, " ") === guess,
-    );
-    if (!accepted && input.value.trim() !== "") {
-      relief.fail(feedback);
+    if (input.value.trim() === "") {
+      const message = "Type the vault key first.";
+      feedback.textContent = message;
+      announce(message);
+      return;
     }
-    if (!accepted) {
+    if (!answerMatches(lock.acceptedCodes, input.value)) {
       const message =
         lock.wrongText ?? "The door does not move. Nothing is lost; try again.";
       feedback.textContent = message;
-      announce(message);
+      const opened = relief.fail(feedback, normalize(input.value));
+      announce(opened ? `${message} ${MERCY_NOTICE}` : message);
       input.select();
       return;
     }
+    relief.resolve();
     lockVoice?.stop();
     openLock(run, level);
     saveRun(run, ctx.content.meta.id);
@@ -635,7 +635,7 @@ function renderLockCard(level, ctx, viewEl) {
 
   turn.addEventListener("click", attempt);
   input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.repeat) {
       e.preventDefault();
       attempt();
     }
@@ -848,7 +848,7 @@ export function renderFinale(ctx, opts = {}) {
       return;
     }
     if (chosen.stance.trap) {
-      const message = `The Archivist does not take it. 'That is ${companionName}'s answer. It has been wrong in front of you five times tonight, and it will not be the one standing in front of your colleagues on Monday. I asked for yours.' Nothing is lost. Choose again.`;
+      const message = `The Archivist does not take it. 'That is ${companionName}'s answer. It has been wrong in front of you six times in this vault, and it will not be the one standing in front of your colleagues on Monday. I asked for yours.' Nothing is lost. Choose again.`;
       feedback.textContent = message;
       announce(message);
       return;
@@ -931,7 +931,6 @@ function renderMetaLock(metaLock, ctx) {
   const feedback = el("p", { className: "lock-feedback" });
   const open = el("button", { textContent: "Open the vault" });
   const relief = mercy({
-    announce,
     answerLines: () =>
       metaLock.slots.map((slot) => `${slot.label} → ${slot.keyLabel}`),
     onApply: () => {
@@ -956,10 +955,12 @@ function renderMetaLock(metaLock, ctx) {
       const message =
         metaLock.wrongText ?? "One or more keys sit in the wrong door.";
       feedback.textContent = message;
-      announce(message);
-      relief.fail(feedback);
+      const signature = selects.map(({ select }) => select.value).join("\n");
+      const opened = relief.fail(feedback, signature);
+      announce(opened ? `${message} ${MERCY_NOTICE}` : message);
       return;
     }
+    relief.resolve();
     ctx.run.vaultOpened = true;
     saveRun(ctx.run, ctx.content.meta.id);
     announce("Every key turns at once. The final door opens.");

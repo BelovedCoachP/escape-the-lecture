@@ -2,8 +2,8 @@
 // form an answer. Purely textual, accessible by nature, and usually the
 // step that produces a code for the room's lock.
 
-import { el, normalize } from "./dom.js";
-import { mercy } from "./mercy.js";
+import { el, normalize, answerMatches } from "./dom.js";
+import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 export function renderExtract(challenge, done, api) {
   const wrap = el("div", { className: "extract-body" });
@@ -41,7 +41,6 @@ export function renderExtract(challenge, done, api) {
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
-    announce: api.announce,
     answerLines: () => [challenge.acceptedAnswers[0]],
     onApply: () => {
       input.value = challenge.acceptedAnswers[0];
@@ -58,19 +57,18 @@ export function renderExtract(challenge, done, api) {
       api.announce("Enter your answer first.");
       return;
     }
-    const ok = challenge.acceptedAnswers.some(
-      (a) => normalize(a) === normalize(input.value),
-    );
+    const ok = answerMatches(challenge.acceptedAnswers, input.value);
     if (!ok) {
       const message =
         challenge.wrongText ??
         "That is not it. Read the source again; nothing is lost.";
       status.textContent = `✗ ${message}`;
-      api.announce(message);
-      relief.fail(status);
+      const opened = relief.fail(status, normalize(input.value));
+      api.announce(opened ? `${message} ${MERCY_NOTICE}` : message);
       input.select();
       return;
     }
+    relief.resolve();
     status.textContent = "";
     input.readOnly = true;
     feedback.hidden = false;
@@ -82,7 +80,7 @@ export function renderExtract(challenge, done, api) {
 
   verify.addEventListener("click", attempt);
   input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.repeat) {
       e.preventDefault();
       attempt();
     }
