@@ -127,6 +127,7 @@ export function renderSequence(challenge, done, api) {
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
+    ...api.mercyStore,
     startSignature: startOrder,
     answerLines: () =>
       challenge.correctOrder.map(
@@ -181,6 +182,7 @@ export function renderSequence(challenge, done, api) {
   });
 
   wrap.append(list, status, el("p", {}, verify));
+  relief.mount(status);
   return wrap;
 }
 

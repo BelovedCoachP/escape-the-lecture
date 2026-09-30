@@ -6,6 +6,9 @@
 // Only a changed answer counts. Callers pass a signature of what was
 // submitted; resubmitting the same answer, or the untouched starting state,
 // is not a new attempt. Incomplete submissions never reach fail() at all.
+//
+// The count persists with the run (via `saved` and `onSave`), so a reload
+// or a trip back through the spine never takes earned relief away.
 
 import { el } from "./dom.js";
 import { moveFocusTo } from "../a11y.js";
@@ -15,12 +18,46 @@ const ATTEMPTS_BEFORE_MERCY = 3;
 export const MERCY_NOTICE =
   "The Archivist steps in: the answer and an Apply button are now on screen, just above.";
 
-export function mercy({ answerLines, onApply, applyLabel, startSignature }) {
-  let fails = 0;
-  let lastSignature = startSignature;
+export function mercy({ answerLines, onApply, applyLabel, startSignature, saved, onSave }) {
+  let fails = saved?.fails ?? 0;
+  let lastSignature = saved ? saved.last : startSignature;
   let card = null;
   let resolved = false;
   let applying = false;
+
+  const open = (anchor) => {
+    card = el("div", { className: "mercy-card" });
+    card.append(
+      el("p", { className: "mercy-eyebrow", textContent: "The Archivist steps in" }),
+      el("p", {
+        className: "archivist-voice",
+        textContent:
+          "‘Three honest attempts is enough. The point was never to stay stuck; here is the answer.’",
+      }),
+    );
+    const list = el("ul", { className: "mercy-answers" });
+    answerLines().forEach((line) => list.append(el("li", { textContent: line })));
+    card.append(list);
+
+    if (onApply) {
+      const apply = el("button", {
+        className: "secondary",
+        textContent: applyLabel ?? "Apply the answer for me",
+      });
+      apply.addEventListener("click", () => {
+        if (resolved) return;
+        applying = true;
+        try {
+          onApply();
+        } finally {
+          applying = false;
+        }
+      });
+      card.append(el("p", { className: "mercy-actions" }, apply));
+    }
+
+    anchor.before(card);
+  };
 
   return {
     // Call on every genuinely wrong attempt, with a signature of the answer.
@@ -34,41 +71,17 @@ export function mercy({ answerLines, onApply, applyLabel, startSignature }) {
         lastSignature = signature;
       }
       fails += 1;
+      onSave?.({ fails, last: lastSignature });
       if (fails < ATTEMPTS_BEFORE_MERCY) return false;
-
-      card = el("div", { className: "mercy-card" });
-      card.append(
-        el("p", { className: "mercy-eyebrow", textContent: "The Archivist steps in" }),
-        el("p", {
-          className: "archivist-voice",
-          textContent:
-            "‘Three honest attempts is enough. The point was never to stay stuck; here is the answer.’",
-        }),
-      );
-      const list = el("ul", { className: "mercy-answers" });
-      answerLines().forEach((line) => list.append(el("li", { textContent: line })));
-      card.append(list);
-
-      if (onApply) {
-        const apply = el("button", {
-          className: "secondary",
-          textContent: applyLabel ?? "Apply the answer for me",
-        });
-        apply.addEventListener("click", () => {
-          if (resolved) return;
-          applying = true;
-          try {
-            onApply();
-          } finally {
-            applying = false;
-          }
-        });
-        card.append(el("p", { className: "mercy-actions" }, apply));
-      }
-
-      anchor.before(card);
+      open(anchor);
       card.scrollIntoView({ block: "nearest" });
       return true;
+    },
+
+    // Call once the view is built: relief already earned in an earlier
+    // visit is shown again, quietly, where it was.
+    mount(anchor) {
+      if (!resolved && !card && fails >= ATTEMPTS_BEFORE_MERCY) open(anchor);
     },
 
     // Call from every success path. If the player solved it themselves the
@@ -77,6 +90,7 @@ export function mercy({ answerLines, onApply, applyLabel, startSignature }) {
     resolve() {
       if (resolved) return;
       resolved = true;
+      onSave?.(null);
       if (!card) return;
       if (!applying) {
         card.remove();

@@ -17,6 +17,7 @@ export function createRun() {
     vaultOpened: false, // the finale meta-lock
     interludesSeen: {}, // levelId -> true once the rest beat has played
     hintUsage: {}, // challengeId -> count (never penalized; tracked for Session B)
+    mercy: {}, // challengeId | "lock:<levelId>" | "meta" -> { fails, last }
     finaleSubmitted: false,
     finaleChoice: null, // label of the stance the player stood behind
   };
@@ -67,7 +68,12 @@ export function isLevelReachable(run, content, level) {
 // Full reset of one room: challenges, lock, its key, its evidence, and its
 // interlude, so replaying the room replays all of it.
 export function resetLevel(run, level) {
-  for (const challenge of level.challenges) delete run.drafts?.[challenge.id];
+  for (const challenge of level.challenges) {
+    delete run.drafts?.[challenge.id];
+    delete run.mercy?.[challenge.id];
+  }
+  delete run.mercy?.[`lock:${level.id}`];
+  delete run.mercy?.meta;
   run.vaultOpened = false;
   run.finaleSubmitted = false;
   run.finaleChoice = null;
@@ -142,6 +148,11 @@ export function loadSavedRun(contentId) {
     if (!Array.isArray(saved.visitedLevels) || !saved.visitedLevels.every(id => typeof id === "string")) saved.visitedLevels = [];
     if (!record(saved.drafts)) saved.drafts = {};
     for (const [id, draft] of Object.entries(saved.drafts)) if (!record(draft)) delete saved.drafts[id];
+    if (!record(saved.mercy)) saved.mercy = {};
+    for (const [id, entry] of Object.entries(saved.mercy)) {
+      if (!record(entry) || !Number.isInteger(entry.fails) || entry.fails < 0 ||
+          (entry.last !== undefined && typeof entry.last !== "string")) delete saved.mercy[id];
+    }
     return saved;
   } catch {
     return null;

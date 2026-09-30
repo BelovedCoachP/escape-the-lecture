@@ -421,6 +421,7 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
     },
     complete: () => finishChallenge(challenge, level, ctx, viewEl),
     companionName: ctx.content.narrative.companion?.name ?? "Companion",
+    mercyStore: mercyStore(ctx, challenge.id),
   };
 
   let body;
@@ -460,6 +461,20 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
   const hintRail = renderHintRail(challenge.hints);
   if (hintRail) card.append(hintRail);
   return card;
+}
+
+// Where a puzzle's mercy count lives in the run, so it survives reloads.
+function mercyStore(ctx, key) {
+  const { run } = ctx;
+  return {
+    saved: run.mercy?.[key],
+    onSave: (state) => {
+      run.mercy ??= {};
+      if (state) run.mercy[key] = state;
+      else delete run.mercy[key];
+      saveRun(run, ctx.content.meta.id);
+    },
+  };
 }
 
 // Safety net for any future challenge type the renderer does not know yet.
@@ -580,6 +595,7 @@ function renderLockCard(level, ctx, viewEl) {
   const feedback = el("p", { className: "lock-feedback" });
   const turn = el("button", { textContent: "Turn the key" });
   const relief = mercy({
+    ...mercyStore(ctx, `lock:${level.id}`),
     answerLines: () => [lock.acceptedCodes[0]],
     onApply: () => {
       input.value = lock.acceptedCodes[0];
@@ -642,6 +658,7 @@ function renderLockCard(level, ctx, viewEl) {
   });
 
   workCol.append(label, input, feedback, el("p", {}, turn));
+  relief.mount(feedback);
   card.append(workCol);
   const hintRail = renderHintRail(lock.hints);
   if (hintRail) card.append(hintRail);
@@ -931,6 +948,7 @@ function renderMetaLock(metaLock, ctx) {
   const feedback = el("p", { className: "lock-feedback" });
   const open = el("button", { textContent: "Open the vault" });
   const relief = mercy({
+    ...mercyStore(ctx, "meta"),
     answerLines: () =>
       metaLock.slots.map((slot) => `${slot.label} → ${slot.keyLabel}`),
     onApply: () => {
@@ -970,6 +988,7 @@ function renderMetaLock(metaLock, ctx) {
   });
 
   card.append(feedback, el("p", {}, open));
+  relief.mount(feedback);
   return card;
 }
 

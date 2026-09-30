@@ -70,6 +70,25 @@ test('sequence solutions and final keyways reference exactly the playable items'
  assert.deepEqual(content.finale.metaLock.slots.map(x=>x.keyLabel).sort(),content.levels.map(x=>x.rewardLabel).sort());
 });
 
+test('mercy counts clear with a room reset and malformed saved counts are discarded',()=>{
+ const level=content.levels[0];
+ const run=createRun();
+ run.mercy[level.challenges[0].id]={fails:2,last:'x'};
+ run.mercy[`lock:${level.id}`]={fails:3};
+ run.mercy.meta={fails:1};
+ run.mercy['l4-c1-reading-order']={fails:1};
+ resetLevel(run,level);
+ assert.deepEqual(Object.keys(run.mercy),['l4-c1-reading-order']);
+ const store=new Map();
+ globalThis.localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};
+ const saved=createRun();saved.mercy={good:{fails:2,last:'a'},bad:{fails:'2'},worse:'x'};
+ saveRun(saved,content.meta.id);
+ assert.deepEqual(loadSavedRun(content.meta.id).mercy,{good:{fails:2,last:'a'}});
+ const legacy=createRun();delete legacy.mercy;saveRun(legacy,content.meta.id);
+ assert.deepEqual(loadSavedRun(content.meta.id).mercy,{});
+ delete globalThis.localStorage;
+});
+
 test('contrast answers use the full ratio and reject ambiguous input',async()=>{
  const {parseNumericAnswer}=await import('../exemplar/js/render/dom.js');
  assert.equal(parseNumericAnswer('4.3:1'),4.3);

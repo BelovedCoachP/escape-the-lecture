@@ -329,10 +329,10 @@
         {
           "type": "calculate",
           "id": "l2-c1-run-the-ratio",
-          "prompt": "AURA has chosen Brand Purple #9B4DEA panels with Porcelain #F8FAFC text for every sign in this wing, and rates the pairing 97.1 percent readable. The standard does not measure 'percent readable.' It measures a contrast ratio. The porcelain's relative luminance is 0.954; the purple's is 0.182. Run the ratio AURA did not, to one decimal place.",
+          "prompt": "AURA has chosen Brand Purple #9B4DEA panels with Porcelain #F8FAFC text for every sign in this wing, and rates the pairing 97.1 percent readable. The standard does not measure 'percent readable.' It measures a contrast ratio. The porcelain's relative luminance is 0.954; the purple's is 0.182. Contrast ratio is (lighter luminance + 0.05) ÷ (darker luminance + 0.05); the contrast checker beside you works too. Run the ratio AURA did not, to one decimal place.",
           "hints": [
             "The standard's unit is a ratio, like 4.5 to 1. Whatever AURA measured, 'percent readable' is not it; your job is the real number.",
-            "Contrast ratio is the lighter luminance plus 0.05, divided by the darker luminance plus 0.05. Both luminances are in the prompt.",
+            "Add 0.05 to each luminance before dividing; skipping that step is the most common slip. Then divide the lighter result by the darker.",
             "(0.954 + 0.05) ÷ (0.182 + 0.05) is 1.004 ÷ 0.232. Do that one division and round to one decimal place."
           ],
           "inputLabel": "Contrast ratio",
@@ -699,7 +699,7 @@
           "src": "assets/lab-06/lab-06-handout.svg",
           "decorative": false,
           "alt": "Lab 6 handout as students see it: a tidy one-page lab sheet with bold section headings, a safety box, and blue links.",
-          "longDescription": "A clean white handout page titled Lab 6: Osmosis and Diffusion. An introductory paragraph sits under the title. The left column lists materials; a bordered safety box floats at the top right. Below them run a numbered procedure, an empty results table, and a clean-up section, each under an identical bold heading. Blue underlined links appear in the body and footer. Nothing about the page looks damaged. The damage is in what this image cannot show: the order the elements are read in, and which of the bold lines are actually tagged as headings."
+          "longDescription": "A clean white handout page titled Lab 6: Osmosis and Diffusion. An introductory paragraph sits under the title. The left column lists materials; a bordered safety box floats at the top right, pointing back to the gloves on the materials list. Below them run a numbered procedure, an empty results table, and a clean-up section, each under an identical bold heading. Blue underlined links appear in the body and footer. Nothing about the page looks damaged. The damage is in what this image cannot show: the order the elements are read in, and which of the bold lines are actually tagged as headings."
         }
       ],
       "companionLines": [
@@ -720,7 +720,7 @@
           "prompt": "The export reads Lab 6 in the order the elements were drawn on the page, not the order they mean. Rebuild the sequence a screen reader should receive. Every element carries clues to its own position; the visual layout is not one of them.",
           "hints": [
             "Ignore where each element sat on the page. Order them by when a listener actually doing the lab needs each one to arrive.",
-            "Several elements name their own position: the introduction promises something below, the safety box names what it must precede, and the clean-up names what it must follow.",
+            "Several elements name their own position: the introduction promises a list below, the safety box points back at that list and names the step it must come before, and the clean-up names what it must follow.",
             "The arc of any lab: learn where you are, learn why, gather, protect yourself, act, record, reset. Slot each element into that arc."
           ],
           "items": [
@@ -750,7 +750,7 @@
             },
             {
               "id": "s-safety",
-              "text": "Safety box: 'You will handle iodine at step 2. Gloves on before the first step.'"
+              "text": "Safety box: 'Gloves on before the first step. Use the gloves from the materials list above. You will handle iodine at step 2.'"
             }
           ],
           "correctOrder": [
@@ -763,7 +763,7 @@
             "s-cleanup"
           ],
           "keyboardInstructions": "Tab to an element, then press Enter or Space to grab it. Use the Up and Down arrow keys to move it, then press Enter or Space to drop it. You can also use each element's Up and Down buttons. Your position is announced after every move.",
-          "explanation": "Title first, because a listener needs to know where they are before anything else. The introduction orients, and it promises a list below, so the materials come next and honor that promise. The safety box names the moment it protects, before the first step, so it must arrive before the procedure it guards; on the visual page it floats in a corner and trusts your eye to find it in time, which is exactly the trust a linear reading cannot afford. The procedure points at the results table below it, and the clean-up begins once your results table is complete. Read in this order, the document runs itself. Read in drawing order, the gloves arrive after the iodine."
+          "explanation": "Title first, because a listener needs to know where they are before anything else. The introduction orients, and it promises a list below, so the materials come next and honor that promise. The safety box points back at the materials list above it and names the moment it protects, before the first step, so it arrives after the materials and before the procedure it guards; on the visual page it floats in a corner and trusts your eye to find it in time, which is exactly the trust a linear reading cannot afford. The procedure points at the results table below it, and the clean-up begins once your results table is complete. Read in this order, the document runs itself. Read in drawing order, the gloves arrive after the iodine."
         },
         {
           "type": "hunt",

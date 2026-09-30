@@ -41,6 +41,7 @@ export function renderExtract(challenge, done, api) {
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
+    ...api.mercyStore,
     answerLines: () => [challenge.acceptedAnswers[0]],
     onApply: () => {
       input.value = challenge.acceptedAnswers[0];
@@ -87,5 +88,6 @@ export function renderExtract(challenge, done, api) {
   });
 
   wrap.append(label, input, status, feedback, el("p", {}, verify));
+  relief.mount(status);
   return wrap;
 }

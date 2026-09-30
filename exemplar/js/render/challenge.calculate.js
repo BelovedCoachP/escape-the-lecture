@@ -35,6 +35,7 @@ export function renderCalculate(challenge, done, api) {
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
+    ...api.mercyStore,
     answerLines: () => [
       // A unit like ":1" reads as part of the number; a word gets a space.
       `${challenge.answer}${challenge.unit ? `${/^[a-z]/i.test(challenge.unit) ? " " : ""}${challenge.unit}` : ""}`,
@@ -88,5 +89,6 @@ export function renderCalculate(challenge, done, api) {
   row.append(input);
   if (unitNote) row.append(unitNote);
   wrap.append(label, row, status, feedback, el("p", {}, verify));
+  relief.mount(status);
   return wrap;
 }

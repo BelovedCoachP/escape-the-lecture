@@ -80,6 +80,7 @@ export function renderSort(challenge, done, api) {
   // button that was just pressed, plus marks and borders on the items.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
+    ...api.mercyStore,
     answerLines: () =>
       challenge.items.map((i) => {
         const bin = challenge.bins.find((b) => b.id === i.correctBin);
@@ -141,6 +142,7 @@ export function renderSort(challenge, done, api) {
   });
 
   wrap.append(tray, binsWrap, status, el("p", {}, verify));
+  relief.mount(status);
   return wrap;
 }
 

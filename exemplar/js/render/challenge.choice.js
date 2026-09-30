@@ -48,6 +48,7 @@ export function renderChoice(challenge, done, api) {
 
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
+    ...api.mercyStore,
     answerLines: () =>
       challenge.options.filter((o) => o.correct).map((o) => o.text),
     onApply: () => {
@@ -103,6 +104,7 @@ export function renderChoice(challenge, done, api) {
   });
 
   wrap.append(fs, status, el("p", {}, submit));
+  relief.mount(status);
   return wrap;
 }
 

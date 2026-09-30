@@ -42,6 +42,7 @@ export function renderMatch(challenge, done, api) {
 
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
+    ...api.mercyStore,
     answerLines: () => challenge.pairs.map((p) => `${p.left} → ${p.right}`),
     onApply: () => {
       rows.forEach((r) => {
@@ -88,6 +89,7 @@ export function renderMatch(challenge, done, api) {
   });
 
   wrap.append(status, el("p", {}, verify));
+  relief.mount(status);
   return wrap;
 }
 

@@ -1,7 +1,7 @@
 // Hunt primitive: the inverted hidden-object mechanic. The artifact is real
 // readable structure, so a screen reader user and a sighted user inspect the
-// same object. Parts are toggle buttons (aria-pressed); flag what cannot be
-// true, then confirm. The flagged state always carries text, never color
+// same object. Parts are toggle buttons (aria-pressed); flag what is flawed,
+// then confirm. The flagged state always carries text, never color
 // alone.
 
 import { el } from "./dom.js";
@@ -19,7 +19,7 @@ export function renderHunt(challenge, done, api) {
     el("p", {
       className: "placeholder-note",
       textContent:
-        "Select a part to flag it as impossible; select it again to remove the flag. Every flag change is announced. Confirm when you are ready.",
+        "Select a part to flag it as flawed; select it again to remove the flag. Every flag change is announced. Confirm when you are ready.",
     }),
   );
 
@@ -47,6 +47,7 @@ export function renderHunt(challenge, done, api) {
       api.draft[part.id] = !pressed;
       api.saveDraft(api.draft);
       flagState.textContent = pressed ? "" : " — flagged";
+      feedback.hidden = true;
       const count = parts.filter(
         (p) => p.btn.getAttribute("aria-pressed") === "true",
       ).length;
@@ -63,6 +64,7 @@ export function renderHunt(challenge, done, api) {
   // Wrong attempts show on screen, not just in the live region.
   const status = el("p", { className: "attempt-feedback" });
   const relief = mercy({
+    ...api.mercyStore,
     answerLines: () =>
       challenge.artifact
         .filter((p) => p.flawed)
@@ -89,8 +91,21 @@ export function renderHunt(challenge, done, api) {
       (p) => (p.btn.getAttribute("aria-pressed") === "true") === p.part.flawed,
     );
     if (!solved) {
-      const message =
-        "Your flags do not match the flaws. Either something true is flagged, or something impossible is not. Adjust and confirm again; nothing is lost.";
+      // Teach from the miss: an accurate part the player flagged shows its
+      // own explanation. A flaw still unflagged stays unrevealed; that is
+      // the part of the puzzle that remains.
+      let judged = 0;
+      parts.forEach((p) => {
+        const isFlagged = p.btn.getAttribute("aria-pressed") === "true";
+        if (isFlagged === p.part.flawed) judged += 1;
+        const wronglyFlagged = isFlagged && !p.part.flawed;
+        p.flagState.textContent = isFlagged
+          ? wronglyFlagged ? " — flagged, ✗ this one checks out" : " — flagged"
+          : "";
+        p.feedback.hidden = !wronglyFlagged;
+        if (wronglyFlagged) p.feedback.textContent = p.part.feedback;
+      });
+      const message = `${judged} of ${parts.length} parts judged correctly. Any accurate part you flagged is marked; a flaw may still be unflagged. Adjust and confirm again; nothing is lost.`;
       status.textContent = `✗ ${message}`;
       const opened = relief.fail(status, flagged.map((p) => p.part.id).join());
       api.announce(opened ? `${message} ${MERCY_NOTICE}` : message);
@@ -100,7 +115,7 @@ export function renderHunt(challenge, done, api) {
     status.textContent = "";
     parts.forEach((p) => {
       p.btn.disabled = true;
-      p.flagState.textContent = p.part.flawed ? " — ✗ impossible detail" : " — ✓ verified";
+      p.flagState.textContent = p.part.flawed ? " — ✗ flaw caught" : " — ✓ verified";
       p.feedback.hidden = false;
       p.feedback.textContent = p.part.feedback;
     });
@@ -110,6 +125,7 @@ export function renderHunt(challenge, done, api) {
   });
 
   wrap.append(artifact, status, el("p", {}, confirm));
+  relief.mount(status);
   return wrap;
 }
 
@@ -120,7 +136,7 @@ function solvedSummary(challenge) {
     div.append(
       el("p", {
         className: "option-feedback",
-        textContent: `${p.flawed ? "✗ impossible" : "✓ verified"} ${p.label ? p.label + ": " : ""}${p.text}`,
+        textContent: `${p.flawed ? "✗ flaw caught" : "✓ verified"} ${p.label ? p.label + ": " : ""}${p.text}`,
       }),
     );
   });

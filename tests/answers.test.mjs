@@ -81,6 +81,24 @@ test('mercy counts only changed answers, never the untouched start',()=>{
  assert.equal(relief.fail(anchor,'d'),false,'the card opens once');
 });
 
+test('mercy count persists: saved relief reappears on mount, and resolve clears it',()=>{
+ let stored;
+ const first=setup({startSignature:'start',onSave:s=>{stored=s;}});
+ first.relief.fail(first.anchor,'a');first.relief.fail(first.anchor,'b');
+ assert.deepEqual(stored,{fails:2,last:'b'});
+ // A reload rebuilds the view from the saved state.
+ const second=setup({startSignature:'start',saved:stored,onSave:s=>{stored=s;}});
+ second.relief.mount(second.anchor);
+ assert.equal(second.parent.querySelector('.mercy-card'),null,'two tries is not yet three');
+ assert.equal(second.relief.fail(second.anchor,'b'),false,'the last answer before the reload still counts as a repeat');
+ assert.equal(second.relief.fail(second.anchor,'c'),true);
+ const third=setup({saved:stored,onSave:s=>{stored=s;}});
+ third.relief.mount(third.anchor);
+ assert.ok(third.parent.querySelector('.mercy-card'),'earned relief survives a reload');
+ third.relief.resolve();
+ assert.equal(stored,null);
+});
+
 test('a self-solve removes the card; Apply keeps the answer and focuses a confirmation',()=>{
  const self=setup();
  for(const s of ['a','b','c'])self.relief.fail(self.anchor,s);

@@ -54,6 +54,7 @@ export function renderRepair(challenge, done, api) {
   const isRepaired = (s) => answerMatches(s.segment.accepted, s.input.value);
   const signature = () => segments.map((s) => normalize(s.input.value)).join("\n");
   const relief = mercy({
+    ...api.mercyStore,
     // Submitting the corrupted lines untouched is not an attempt.
     startSignature: challenge.segments.map((s) => normalize(s.broken)).join("\n"),
     answerLines: () =>
@@ -97,6 +98,7 @@ export function renderRepair(challenge, done, api) {
   });
 
   wrap.append(status, el("p", {}, verify));
+  relief.mount(status);
   return wrap;
 }
 

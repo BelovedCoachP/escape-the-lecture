@@ -35,11 +35,12 @@
     </g>
 
     <!-- Safety box, floating top right: the reading-order trap -->
-    <rect x="450" y="222" width="310" height="112" fill="#FEF3C7" stroke="#B45309" stroke-width="2"/>
+    <rect x="450" y="222" width="310" height="132" fill="#FEF3C7" stroke="#B45309" stroke-width="2"/>
     <text x="470" y="258" font-size="14" font-weight="bold">Gloves on before the first step.</text>
     <g font-size="13">
-      <text x="470" y="285">You will handle iodine at step 2.</text>
-      <text x="470" y="307">Iodine stains skin and clothing.</text>
+      <text x="470" y="285">Use the gloves from the materials list above.</text>
+      <text x="470" y="307">You will handle iodine at step 2.</text>
+      <text x="470" y="329">Iodine stains skin and clothing.</text>
     </g>
 
     <!-- Procedure (Heading 2 in the tag tree) -->
