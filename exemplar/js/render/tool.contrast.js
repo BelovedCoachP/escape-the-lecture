@@ -5,6 +5,7 @@
 // for players who want a second opinion from the real-world tool.
 
 import { el } from "./dom.js";
+import { announce } from "../a11y.js";
 
 const HEX_RE = /^#?([0-9a-f]{6}|[0-9a-f]{3})$/i;
 
@@ -62,7 +63,10 @@ export function renderContrastChecker() {
     attrs: { "aria-hidden": "true" },
     textContent: "Sample text",
   });
-  const result = el("p", { className: "tool-result", attrs: { "aria-live": "polite" } });
+  // The visible result updates on every keystroke. It is deliberately not a
+  // live region: a screen reader would re-read it for each character typed.
+  // The result is announced once, when the player finishes a field.
+  const result = el("p", { className: "tool-result" });
   const webaim = el("a", {
     className: "tool-link",
     textContent: "Check the same pair on WebAIM's contrast checker (opens in a new tab)",
@@ -92,6 +96,12 @@ export function renderContrastChecker() {
 
   fgInput.addEventListener("input", update);
   bgInput.addEventListener("input", update);
+  // "change" fires when a field is committed (Tab, Enter, or leaving it).
+  const speak = () => {
+    if (fgInput.value.trim() !== "" && bgInput.value.trim() !== "") announce(result.textContent);
+  };
+  fgInput.addEventListener("change", speak);
+  bgInput.addEventListener("change", speak);
   update();
 
   card.append(row, swatch, result, el("p", {}, webaim));

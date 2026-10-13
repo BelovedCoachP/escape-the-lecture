@@ -74,6 +74,7 @@ export function resetLevel(run, level) {
   }
   delete run.mercy?.[`lock:${level.id}`];
   delete run.mercy?.meta;
+  delete run.metaLockVoiced;
   run.vaultOpened = false;
   run.finaleSubmitted = false;
   run.finaleChoice = null;

@@ -507,7 +507,7 @@ function finishChallenge(challenge, level, ctx, viewEl) {
     bankEvidence(run, level.id, level.evidenceFragment);
     if (level.lock) {
       const controls = viewEl.querySelector(".room-controls");
-      const lockCard = renderLockCard(level, ctx, viewEl);
+      const lockCard = renderLockCard(level, ctx, viewEl, { speak: true });
       if (controls) viewEl.insertBefore(lockCard, controls);
       else viewEl.append(lockCard);
       renderSpine(ctx);
@@ -531,7 +531,7 @@ function finishChallenge(challenge, level, ctx, viewEl) {
   saveRun(run, ctx.content.meta.id);
 }
 
-function renderLockCard(level, ctx, viewEl) {
+function renderLockCard(level, ctx, viewEl, opts = {}) {
   const { run } = ctx;
   const lock = level.lock;
   const card = el("section", { className: "card lock-card" });
@@ -576,10 +576,11 @@ function renderLockCard(level, ctx, viewEl) {
   if (lock.audioSrc) {
     const voice = lockVoice = voiceControl(lock.audioSrc, archivist?.name ?? "the Archivist");
     workCol.append(voice.node);
-    // The lock only ever appears as the direct result of the player's last
-    // solve, so speaking the line now is that gesture completing, not
-    // autoplay; the full text is on screen above and Stop is one press away.
-    voice.play();
+    // Speak only when the lock appears as the direct result of the player's
+    // last solve: that is the gesture completing, not autoplay. Re-entering
+    // the room later shows the lock silently, with Hear one press away, so
+    // the voice never talks over the room-title announcement.
+    if (opts.speak) voice.play();
   }
 
   const inputId = `lock-${level.id}`;
@@ -907,9 +908,14 @@ function renderMetaLock(metaLock, ctx) {
   if (metaLock.audioSrc) {
     const voice = voiceControl(metaLock.audioSrc, archivist?.name ?? "the Archivist");
     card.append(voice.node);
-    // Match the wing locks. Blocked autoplay retains the manual Hear control;
-    // the complete transcript remains visible. Scene changes stop this voice.
-    voice.play();
+    // Match the wing locks: speak on first arrival at the last door, then
+    // stay quiet on reloads and return visits. Blocked autoplay retains the
+    // manual Hear control; the complete transcript remains visible.
+    if (!run.metaLockVoiced) {
+      run.metaLockVoiced = true;
+      saveRun(run, ctx.content.meta.id);
+      voice.play();
+    }
   }
 
   (metaLock.hints ?? []).forEach((hint, i) => {

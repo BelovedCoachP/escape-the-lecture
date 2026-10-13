@@ -19,8 +19,8 @@
 
     <!-- Introduction -->
     <g font-size="14">
-      <text x="60" y="146">In this lab you will watch osmosis happen across a membrane and measure how</text>
-      <text x="60" y="168">quickly dye diffuses at three temperatures. You will work in pairs and hand in</text>
+      <text x="60" y="146">In this lab you will watch iodine diffuse across a membrane and time how</text>
+      <text x="60" y="168">quickly it changes the starch sealed inside. You will work in pairs and hand in</text>
       <text x="60" y="190">one results sheet. Gather the materials listed below before you begin.</text>
     </g>
 
@@ -32,6 +32,7 @@
       <text x="72" y="326">&#8226; Two 250 mL beakers</text>
       <text x="72" y="350">&#8226; Nitrile gloves</text>
       <text x="72" y="374">&#8226; Stopwatch</text>
+      <text x="72" y="398">&#8226; Starch solution</text>
     </g>
 
     <!-- Safety box, floating top right: the reading-order trap -->
