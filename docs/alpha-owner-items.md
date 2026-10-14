@@ -1,32 +1,44 @@
-# Escape the Lecture: Page's alpha preparation list
+# Escape the Lecture alpha preparation list
 
-Updated September 20, 2026. Page has chosen an alpha release without a faculty pilot. A pilot is not a release requirement. This list separates new assets from presentation checks; no coding work is assigned to Page.
+Updated October 14, 2026. Alpha release with no faculty pilot, as Page directed. The game and builder are published, the presentation page is released, and the presenter materials PDF is submitted. What remains is rehearsal and equipment checks on the presentation laptop.
 
-## 1. Final lock narration received and integrated locally
+Session: Tuesday, October 27, 2026, 1:30-2:20 PM ET, City Terrace 8, Hyatt Regency Jacksonville Riverfront. Page's other session, Purpose Before Prompting with Lorri Barnett, is 11:00-11:50 AM ET in Hart.
 
-The supplied recording is for **The Final Vault / Five keyways**, before the recommendation puzzle. The five individual wing locks are already voiced. The opened-vault exchange already has Archivist and AURA recordings; it does not need to be recreated.
+## Complete
 
-Page supplied the final narration on September 20. The verified spoken script is:
+- Final Archivist audio supplied, transcribed with permission, captioned, integrated, and published. The wing locks and epilogue already have voices. No further recording is required.
+- Selected workshop deck: https://gamma.app/docs/d0wj9v9uw7hxdma. This is the original deck with the repaired cover; the duplicate is not the selected presentation. Its cover shows the new session time.
+- Exact 50-minute facilitator schedule, script, Wing 1 demonstration answers, copyable prompts, and text-only outage activity are complete, with clock times for 1:30-2:20 PM ET. The seven-minute demo allocation is a plan, not a measured rehearsal result.
+- Participant Quick Start: https://docs.google.com/document/d/19hFfowOg2DT31jgFA0T7hZ5S7sVZEo1WIEpumv0JOSU (view-only for anyone with the link since October 13).
+- AI Drafting Support and Redesign Pledge: https://docs.google.com/document/d/16Z11fZ2b1BfaPam5NqZMY9SFubREDH9HEVQeBKzJ2nM (view-only for anyone with the link since October 13).
+- Prepared science-demo-ready.json exists and previously passed both project schemas. The facilitator guide includes a direct-edit route when AI is slow or unavailable.
+- Research citations and their scope limits are in the deck/source appendix and facilitator guide.
+- Presentation page released on October 13, with a Workshop materials section on the site linking the game, slides, and both participant Docs. The site says the full game is open before the conference.
+- Presenter materials PDF (one page, one link to the site, room and contact email) submitted to the conference system.
+- Game review fixes from September 30 to October 14 are published: the mercy rule, forgiving answer matching, near-giveaway tier-three hints, content accuracy fixes, the quieter lock voice and contrast tool, and saved final keyways.
 
-> The last door carries five keyways, one for each shelf you restored. Place each key where it belongs. Then I have one final question for you.
+## Page still needs to do
 
-Source: C:/Users/paged/Downloads/final key for escape room.mp3. Original recording preserved byte for byte (SHA-256 FB21E9C6B4E1570A48FF3AFD1D75B2200A33EE9FC274B09D6B7BDC387EF8E536).
+1. Rehearse the Wing 1 demo and the full 50-minute session on the actual presentation laptop. Time a solo example-to-edited-play-link build in under 20 minutes; do not treat the planned schedule as a completed rehearsal.
+2. Check projector text size, adapters, audio output, captions against the recording, native video controls, browser zoom at 200 percent, and system reduced motion.
+3. Test the complete copied play link on a second device, including a phone. The builder no longer offers QR codes; attendees add the link to their LMS.
+4. Export the selected Gamma deck for offline use. Any export made before October 13 shows the old session time. Download the facilitator HTML, both participant Docs as PDFs, and the prepared Science JSON to the laptop. Open them offline and rehearse the text-only mini-room.
+5. Review the deck and handouts for final wording and course fit. The original ten-room review established operation, not expert validation of every subject.
+6. Next week: add the presentations to the site as downloadable files.
 
-Completed September 20: Page supplied the MP3; Groq transcription, explicitly approved by Page, matched the script above. Duration: 12.434 seconds. Original bytes copied to exemplar/assets/audio/archivist/final-keyways.mp3 with matching final-keyways.vtt. The final keyway prompt now matches the recording, and playback uses the existing Hear/Stop and scene-change cleanup. No further recording is needed. These game changes are local until the separate GitHub Pages publication is approved.
+## Coverage decisions
 
-## 2. Finish the presentation materials
-
-The current project log still lists these as unfinished; no final versions were found in the conference project folder. If drafts exist elsewhere, reuse them rather than rebuilding.
-
-- **Workshop deck and a 50-minute run-of-show.** Keep the showcase demonstration to one wing; leave the full game as a take-home experience. Include time for choosing an example, editing, validating, sharing, and a short reflection.
-- **One participant quick-start sheet.** Include the live builder link, Choose an example → Load into builder → Edit → Validate → Share, the JSON backup step, and the reminder that drafts stay in the current browser/device. Long edited rooms may need a link instead of a QR code.
-- **AI drafting support and redesign pledge.** Use the existing template contract/prompt seed as the starting point. Give attendees a usable prompt and a short checklist for checking the resulting learning task and answers. Include the promised research/citation support; verify citations before distributing.
-- **Offline fallback materials.** Keep an exported deck, participant instructions, and example-room JSON files on the presentation laptop. A downloaded JSON file alone is not an offline player. For an internet outage, use a printed or slide-based version of one puzzle and let attendees draft their changes for publication later.
-
-## 3. Rehearse on the actual equipment
-
-These are checks, not new assets: time a solo build-and-share run; run the full session once; test projector text size, video/audio, browser zoom, and a published link/QR on a phone. Actual screen-reader speech and device coverage remain separate from the agent's browser accessibility-tree checks.
+Page decided on October 14 to skip the spoken screen-reader pass for this alpha because of time. Keyboard and accessibility-tree checks were done; they are not a speech pass or WCAG certification, and no conformance claim is made. Spot checks in browsers other than Chrome remain optional.
 
 ## Optional
 
-An archive-hall ambience track can be supplied later as **archive-hall.mp3**. It is not needed for gameplay or the alpha release. No new AURA avatar, lip-sync video, vault-opening animation, or ten-room example set is required.
+Page is making an archive-hall ambience track. The game hides the sound control until the file is present at exemplar/assets/audio/archive-hall.mp3, so the alpha does not depend on it.
+
+## Locations
+
+Workshop site: https://escape-the-lecture-builder.lovable.app
+Workshop Drive folder: https://drive.google.com/drive/folders/1ID0tzd-HMd0Zpry9oAFJ04tmkSvQqHBs
+Facilitator materials: https://drive.google.com/drive/folders/1PR0OjabYqBcazG0SJohg2xEczMDcfAOf
+Local facilitator guide: C:/Users/paged/.claude/outputs/qm-connect-2026/facilitator-run-of-show.html
+Presenter materials PDF: C:/Users/paged/.claude/outputs/qm-connect-2026/presenter-materials/Escape-the-Lecture-Workshop-Materials.pdf
+Prepared JSON: C:/Users/paged/.claude/outputs/qm-connect-2026/science-demo-ready.json
