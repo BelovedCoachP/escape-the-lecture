@@ -4,6 +4,9 @@
 
 const STORAGE_KEY = "escape-the-lecture:run:v1";
 
+// Drafts are keyed by challenge id; the final keyways use this key.
+export const META_DRAFT = "meta-lock";
+
 export function createRun() {
   return {
     view: "intro", // "intro" | "level" | "finale"
@@ -74,6 +77,7 @@ export function resetLevel(run, level) {
   }
   delete run.mercy?.[`lock:${level.id}`];
   delete run.mercy?.meta;
+  delete run.drafts?.[META_DRAFT];
   delete run.metaLockVoiced;
   run.vaultOpened = false;
   run.finaleSubmitted = false;

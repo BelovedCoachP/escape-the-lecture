@@ -77,8 +77,10 @@ test('mercy counts clear with a room reset and malformed saved counts are discar
  run.mercy[`lock:${level.id}`]={fails:3};
  run.mercy.meta={fails:1};
  run.mercy['l4-c1-reading-order']={fails:1};
+ run.drafts['meta-lock']={'The Invisible Image':'Vault key: DESCRIBE'};
  resetLevel(run,level);
  assert.deepEqual(Object.keys(run.mercy),['l4-c1-reading-order']);
+ assert.equal(run.drafts['meta-lock'],undefined,'a room reset clears placed keys at the final door');
  const store=new Map();
  globalThis.localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};
  const saved=createRun();saved.mercy={good:{fails:2,last:'a'},bad:{fails:'2'},worse:'x'};

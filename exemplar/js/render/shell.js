@@ -12,6 +12,7 @@ import {
   getProgress,
   isLevelReachable,
   saveRun,
+  META_DRAFT,
 } from "../state.js";
 import { announce, moveFocusTo, prefersReducedMotion } from "../a11y.js";
 import { el, normalize, answerMatches } from "./dom.js";
@@ -927,6 +928,10 @@ function renderMetaLock(metaLock, ctx) {
     card.append(d);
   });
 
+  // Placed keys are a draft like any other answer: a reload or a trip
+  // through the spine keeps them. Keyed by slot label, so the per-visit
+  // shuffle of option order never matters.
+  const draft = (run.drafts[META_DRAFT] ??= {});
   const selects = [];
   metaLock.slots.forEach((slot, i) => {
     const selectId = `keyway-${i}`;
@@ -945,6 +950,14 @@ function renderMetaLock(metaLock, ctx) {
     }
     shuffled.forEach((key) => {
       select.append(el("option", { value: key.label, textContent: key.label }));
+    });
+    if (run.keys.some((key) => key.label === draft[slot.label])) {
+      select.value = draft[slot.label];
+    }
+    select.addEventListener("change", () => {
+      if (select.value) draft[slot.label] = select.value;
+      else delete draft[slot.label];
+      saveRun(run, ctx.content.meta.id);
     });
     selects.push({ select, slot });
     wrap.append(select);
@@ -985,6 +998,7 @@ function renderMetaLock(metaLock, ctx) {
       return;
     }
     relief.resolve();
+    delete ctx.run.drafts[META_DRAFT];
     ctx.run.vaultOpened = true;
     saveRun(ctx.run, ctx.content.meta.id);
     announce("Every key turns at once. The final door opens.");
