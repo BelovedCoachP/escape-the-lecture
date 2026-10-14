@@ -32,7 +32,7 @@ Page decided on October 14 to skip the spoken screen-reader pass for this alpha 
 
 ## Optional
 
-Page is making an archive-hall ambience track. The game hides the sound control until the file is present at exemplar/assets/audio/archive-hall.mp3, so the alpha does not depend on it.
+Page supplied the archive-hall ambience track (The Midnight Library) on October 14. It is published in Wing 1, normalized to about -30 LUFS so it sits under the voice lines.
 
 ## Locations
 
