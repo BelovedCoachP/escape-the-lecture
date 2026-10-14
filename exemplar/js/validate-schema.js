@@ -37,7 +37,7 @@ var require_ucs2length = __commonJS({
 // scripts/.validator-src.mjs
 var validate = validate20;
 var validator_src_default = validate20;
-var schema31 = { "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://learnaiid.com/schemas/escape-room/v1.json", "title": "Escape the Lecture: Escape Room Content Schema v1", "description": "Single content contract for both renderers. The Exemplar (The AI Archivist and the Lost Learning Vault) and the faculty Template consume identical data. Accessibility fields are structurally required, not advisory: a room that omits them will not validate, and therefore will not publish.", "type": "object", "required": ["schemaVersion", "meta", "narrative", "levels", "finale", "a11y"], "additionalProperties": false, "properties": { "schemaVersion": { "enum": ["1.0", "1.1"] }, "meta": { "type": "object", "required": ["id", "title", "author", "renderer"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{3,60}$" }, "title": { "type": "string", "minLength": 1, "maxLength": 90 }, "subtitle": { "type": "string", "maxLength": 140 }, "author": { "type": "string", "minLength": 1 }, "course": { "type": "string", "description": "Course or context this room supports." }, "objective": { "type": "string", "description": "The single learning objective this room is aligned to. Required by the template form; this is the field that keeps faculty honest.", "maxLength": 400 }, "renderer": { "enum": ["exemplar", "template"], "description": "Which skin consumes this content. The spine is identical either way." }, "brandFooter": { "type": "string", "description": "Attribution line. In the Exemplar this is the only place LearnAIID appears." } } }, "narrative": { "type": "object", "required": ["premise", "roleTitle", "successCondition"], "additionalProperties": false, "properties": { "premise": { "type": "string", "minLength": 1 }, "roleTitle": { "type": "string", "description": "What the player is called. Exemplar: Accessibility Intelligence Agent." }, "successCondition": { "type": "string", "description": "Replaces the countdown. State the condition under which the vault opens. Never a clock. WCAG 2.2.1 is satisfied by having no time limit at all." }, "openingMedia": { "$ref": "#/$defs/video" }, "companion": { "$ref": "#/$defs/companion" }, "archivist": { "type": "object", "description": "v1.1. The straight man gets a face. Rendered wherever the Archivist speaks, starting with the locks.", "required": ["name"], "additionalProperties": false, "properties": { "name": { "type": "string", "minLength": 1 }, "portrait": { "$ref": "#/$defs/image" } } } } }, "levels": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/level" } }, "finale": { "type": "object", "required": ["title", "prompt", "rubric", "closingText"], "additionalProperties": false, "properties": { "title": { "type": "string" }, "setup": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "replayEvidence": { "type": "boolean", "default": true, "description": "Solo play requires this. The renderer replays every evidenceFragment the player banked before asking for the recommendation, standing in for the team deliberation the original team design assumed." }, "metaLock": { "$ref": "#/$defs/metaLock" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "acceptedPositions": { "type": "array", "description": "There is no single correct answer. These are defensible stances the player can compare their own against.", "items": { "type": "object", "required": ["label", "summary"], "properties": { "label": { "type": "string" }, "summary": { "type": "string" } } } }, "closingText": { "type": "string" }, "closingMedia": { "$ref": "#/$defs/video" }, "epilogue": { "type": "object", "description": "v1.1. The final scene. After the door-opening cinematic the player steps inside the opened vault; these beats play there, in order. AURA's beat is her one uncertain moment and the renderer treats it accordingly: no confidence badge, cyan fallen toward navy, one flicker.", "required": ["title", "beats"], "additionalProperties": false, "properties": { "title": { "type": "string", "minLength": 1 }, "beats": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "object", "required": ["speaker", "text"], "additionalProperties": false, "properties": { "speaker": { "enum": ["archivist", "aura", "narrator"] }, "text": { "type": "string", "minLength": 1 }, "audioSrc": { "type": "string" }, "captionsSrc": { "type": "string" } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions, even at the very end." } }] } } } } } }, "a11y": { "type": "object", "description": "Compliance assertions the renderer must honor. These are const, not boolean, so a non-compliant configuration cannot be expressed in valid content.", "required": ["audioAutoplay", "colorOnlySignals", "keyboardAlternatives", "reducedMotion", "timeLimit"], "additionalProperties": false, "properties": { "audioAutoplay": { "const": false, "description": "WCAG 1.4.2. Audio that starts on its own competes with a screen reader and cannot be expressed in valid content." }, "colorOnlySignals": { "const": false, "description": "WCAG 1.4.1. Every state change carries a text or shape signal alongside color." }, "keyboardAlternatives": { "const": true, "description": "WCAG 2.1.1. Applies hardest to the sequence challenge, which must be operable without dragging." }, "reducedMotion": { "const": "respected", "description": "prefers-reduced-motion disables ambient motion and transitions." }, "timeLimit": { "const": "none", "description": "WCAG 2.2.1 is satisfied by absence. Faculty may add a timer downstream at their own risk." }, "targetLevel": { "const": "WCAG 2.1 AA" } } } }, "$defs": { "lock": { "type": "object", "description": "v1.1. The level's exit. Appears when every challenge in the level is solved; the player derives the code from the room's work and enters it to restore the shelf. Audience is adults: hints narrow the search space and never contain the answer. The no-dead-end guarantee comes from unlimited attempts, no timer, and codes that are honestly derivable from the room's work.", "required": ["prompt", "acceptedCodes", "hints"], "additionalProperties": false, "properties": { "prompt": { "type": "string", "minLength": 1, "description": "The Archivist's challenge. The straight man speaks at the door." }, "source": { "type": "string", "description": "v1.1. Material displayed with the lock that the code is derived from, e.g. the list an acrostic reads out of. Rendered with line breaks preserved." }, "inputLabel": { "type": "string", "description": "Label on the code field. Defaults to 'Vault key'." }, "acceptedCodes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "description": "Accepted answers. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous variants here." }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "wrongText": { "type": "string", "description": "Shown on an incorrect attempt. Never punitive: nothing is lost, nothing is timed." }, "successText": { "type": "string", "description": "Optional extra beat on success; unlockText still plays." }, "audioSrc": { "type": "string", "description": "v1.1. The Archivist speaking this lock's prompt. Plays when the lock appears (the reveal is always the player's own gesture) with a visible stop control; the prompt text is always on screen." }, "captionsSrc": { "type": "string", "description": "Sibling VTT for the voiced prompt." } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions, locks included." } }] }, "metaLock": { "type": "object", "description": "v1.1. The multi-stage collection meta-puzzle at the Final Vault: every key banked across the rooms must be placed in its keyway before the last door moves. This is what makes the ending earned rather than announced.", "required": ["prompt", "slots", "hints"], "additionalProperties": false, "properties": { "prompt": { "type": "string", "minLength": 1 }, "slots": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["label", "keyLabel"], "additionalProperties": false, "properties": { "label": { "type": "string", "minLength": 1, "description": "Keyway name the player sees. Exemplar: the room title." }, "keyLabel": { "type": "string", "minLength": 1, "description": "The rewardLabel of the key that belongs here." } } } }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "wrongText": { "type": "string" }, "audioSrc": { "type": "string", "minLength": 1 }, "captionsSrc": { "type": "string", "minLength": 1 } }, "dependentRequired": { "audioSrc": ["captionsSrc"] } }, "companion": { "type": "object", "description": "The unreliable AI narrator. Exemplar: AURA. The template exposes a simplified version so faculty rooms can carry the same mechanic.", "required": ["name", "textAlwaysVisible"], "additionalProperties": false, "properties": { "name": { "type": "string" }, "portrait": { "$ref": "#/$defs/image" }, "idleVideoSrc": { "type": "string", "description": "v1.1. Optional silent looping video that replaces the static portrait as the companion's living presence. Ambient motion, so the renderer only uses it when the player has not asked for reduced motion; the portrait image and its alt text remain the accessible representation." }, "voiced": { "type": "boolean", "default": false }, "textAlwaysVisible": { "const": true, "description": "Speech is never audio-only. The transcript is on screen at all times, not behind a toggle." } } }, "companionLine": { "type": "object", "description": "One utterance from the companion. The confidence figure is the running joke and the thesis: confidence is not correctness.", "required": ["id", "text", "accurate"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "confidence": { "type": "number", "minimum": 0, "maximum": 100, "description": "Displayed to the player. Deliberately precise and deliberately unearned." }, "accurate": { "type": "boolean", "description": "Authoring truth, not player-facing. The renderer uses it to decide when to surface the tell." }, "tell": { "type": "string", "description": "What gives the error away once the player knows to look. Revealed after the challenge resolves, never before." }, "audioSrc": { "type": "string" }, "captionsSrc": { "type": "string" } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions." } }, { "if": { "properties": { "accurate": { "const": false } }, "required": ["accurate"] }, "then": { "required": ["tell"], "description": "If the companion is wrong, the content must say how the player could have caught it. Otherwise the mechanic is just noise." } }] }, "level": { "type": "object", "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" }, "order": { "type": "integer", "minimum": 1 }, "title": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" }, "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." }, "skillTaught": { "type": "array", "items": { "type": "string" }, "description": "Named so the room can be audited against its own claims." }, "ambientAudio": { "$ref": "#/$defs/audio" }, "tools": { "type": "array", "description": "v1.1. Field tools the renderer mounts in this room. contrast-checker embeds a live WCAG ratio calculator with a prefilled WebAIM link.", "items": { "enum": ["contrast-checker"] } }, "media": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" }] } }, "companionLines": { "type": "array", "items": { "$ref": "#/$defs/companionLine" } }, "challenges": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/challenge" } }, "evidenceFragment": { "type": "string", "minLength": 1, "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring." }, "unlockText": { "type": "string", "minLength": 1 }, "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." }, "lock": { "$ref": "#/$defs/lock" }, "interlude": { "type": "object", "description": "Optional rest beat shown after a level resolves, before the next brief. Reduces puzzle fatigue (a UDL point) and advances the narrative.", "required": ["text"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "speaker": { "enum": ["archivist", "aura", "narrator"] }, "text": { "type": "string", "minLength": 1 }, "shelfEvent": { "type": "string", "description": "The visual reward: what relights in the hall." }, "auraLine": { "type": "string", "description": "AURA's undercut, surfaced as a separate styled aside." } } } } }, "challenge": { "oneOf": [{ "$ref": "#/$defs/choiceChallenge" }, { "$ref": "#/$defs/sequenceChallenge" }, { "$ref": "#/$defs/responseChallenge" }, { "$ref": "#/$defs/sortChallenge" }, { "$ref": "#/$defs/huntChallenge" }, { "$ref": "#/$defs/repairChallenge" }, { "$ref": "#/$defs/matchChallenge" }, { "$ref": "#/$defs/calculateChallenge" }, { "$ref": "#/$defs/extractChallenge" }] }, "matchChallenge": { "type": "object", "description": "v1.1, Exemplar. Connect column A to column B. Each left item exposes a native select of right-side options, so the keyboard path needs no invention. Nothing is judged until the player verifies.", "required": ["type", "id", "prompt", "pairs", "hints"], "additionalProperties": false, "properties": { "type": { "const": "match" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "pairs": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "type": "object", "required": ["id", "left", "right", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "left": { "type": "string", "minLength": 1 }, "right": { "type": "string", "minLength": 1, "description": "The correct partner. The renderer offers all rights, sorted, as the options." }, "feedback": { "type": "string", "minLength": 1, "description": "Why this pairing is right. Revealed on resolve." } } } } } }, "calculateChallenge": { "type": "object", "description": "v1.1, Exemplar. Enter a computed value with tolerance. Covers arithmetic target, missing-value, and unit-conversion mechanics. The player does the math the companion did not.", "required": ["type", "id", "prompt", "answer", "feedback", "hints"], "additionalProperties": false, "properties": { "type": { "const": "calculate" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "inputLabel": { "type": "string" }, "unit": { "type": "string", "description": "Display-only unit shown beside the field, e.g. ':1'." }, "answer": { "type": "number" }, "tolerance": { "type": "number", "default": 0, "minimum": 0 }, "feedback": { "type": "string", "minLength": 1, "description": "What the number means. Revealed on solve." }, "wrongText": { "type": "string" } } }, "extractChallenge": { "type": "object", "description": "v1.1, Exemplar. Derive letters or words from displayed source material to form an answer, usually feeding a lock. Purely textual, accessible by nature.", "required": ["type", "id", "prompt", "acceptedAnswers", "feedback", "hints"], "additionalProperties": false, "properties": { "type": { "const": "extract" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "source": { "type": "string", "description": "The material the answer hides in, displayed with the challenge." }, "inputLabel": { "type": "string" }, "acceptedAnswers": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }, "feedback": { "type": "string", "minLength": 1 }, "wrongText": { "type": "string" } } }, "sortChallenge": { "type": "object", "description": "v1.1, Exemplar. Items sorted into named bins. Covers the classification and placement mechanics. Fully keyboard operable: every item exposes a control per bin, every placement is announced, and nothing is judged until the player verifies.", "required": ["type", "id", "prompt", "bins", "items", "keyboardInstructions", "hints"], "additionalProperties": false, "properties": { "type": { "const": "sort" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "keyboardInstructions": { "type": "string", "minLength": 1, "description": "Required, same rule as sequence: the spatial metaphor must be operable without a pointer, and the instructions are authored, not generated." }, "bins": { "type": "array", "minItems": 2, "maxItems": 4, "items": { "type": "object", "required": ["id", "label"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "label": { "type": "string", "minLength": 1 }, "description": { "type": "string", "description": "What landing in this bin means." } } } }, "items": { "type": "array", "minItems": 2, "maxItems": 12, "items": { "type": "object", "required": ["id", "text", "correctBin", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "correctBin": { "type": "string", "description": "The id of the bin this item belongs in." }, "feedback": { "type": "string", "minLength": 1, "description": "Revealed when the sort resolves. Required on every item." } } } } } }, "huntChallenge": { "type": "object", "description": "v1.1, Exemplar. The inverted hidden-object mechanic: flaws hide structurally, not visually. The artifact renders as real readable parts; the player flags the parts that cannot be true. Sighted players and screen reader players inspect the same object and solve the same puzzle.", "required": ["type", "id", "prompt", "artifact", "hints"], "additionalProperties": false, "properties": { "type": { "const": "hunt" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "artifact": { "type": "array", "minItems": 2, "maxItems": 12, "items": { "type": "object", "required": ["id", "text", "flawed", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "label": { "type": "string", "description": "Part name announced with the text, e.g. 'Claim 2'." }, "text": { "type": "string", "minLength": 1 }, "flawed": { "type": "boolean", "description": "Authoring truth: is this part a flaw the player should flag?" }, "feedback": { "type": "string", "minLength": 1, "description": "Why this part is or is not a flaw. Revealed on resolve." } } } } } }, "repairChallenge": { "type": "object", "description": "v1.1, Exemplar. Corrupted text repaired in place against known-good answers. Gradeable, unlike response. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous accepted variants.", "required": ["type", "id", "prompt", "segments", "hints"], "additionalProperties": false, "properties": { "type": { "const": "repair" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "segments": { "type": "array", "minItems": 1, "maxItems": 10, "items": { "type": "object", "required": ["id", "broken", "accepted", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "context": { "type": "string", "description": "Read-only framing shown above the editable line." }, "broken": { "type": "string", "minLength": 1, "description": "The corrupted text the player starts from." }, "accepted": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }, "feedback": { "type": "string", "minLength": 1, "description": "What was wrong and why. Revealed on resolve." } } } } } }, "challengeBase": { "type": "object", "properties": { "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "string" }, "description": "Escalating tiers, always available, never penalized. This is the competence-support mechanic from SDT, and it is why hints are required rather than optional. A hint narrows the search space; it never contains the answer. The audience is adults and the puzzles should challenge them." } } }, "choiceChallenge": { "type": "object", "required": ["type", "id", "prompt", "options", "hints"], "additionalProperties": false, "properties": { "type": { "const": "choice" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "selectMultiple": { "type": "boolean", "default": false }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "options": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "type": "object", "required": ["id", "text", "correct", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "correct": { "type": "boolean" }, "feedback": { "type": "string", "minLength": 1, "description": "Required on every option, including correct ones. A wrong answer with no explanation is a dead end, not a puzzle." } } } } } }, "sequenceChallenge": { "type": "object", "required": ["type", "id", "prompt", "items", "correctOrder", "hints", "keyboardInstructions"], "additionalProperties": false, "properties": { "type": { "const": "sequence" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "items": { "type": "array", "minItems": 3, "maxItems": 10, "items": { "type": "object", "required": ["id", "text"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 } } } }, "correctOrder": { "type": "array", "minItems": 3, "items": { "type": "string" } }, "keyboardInstructions": { "type": "string", "minLength": 1, "description": "Required. Drag and drop is the visual affordance, never the only one. Every sequence must be reorderable with keys alone, and the instructions for doing so must be authored, not generated." }, "explanation": { "type": "string", "description": "Why this order and not another. Shown on resolution." } } }, "responseChallenge": { "type": "object", "description": "Free text. Deliberately not autograded. The companion assesses first, confidently and often wrongly, then the expert rubric appears beside it and the player scores their own work against both. This is the thesis as a mechanic, and it is the reason the template needs no API key.", "required": ["type", "id", "prompt", "rubric", "exemplarAnswer", "hints"], "additionalProperties": false, "properties": { "type": { "const": "response" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer", "default": 600 }, "fields": { "type": "array", "minItems": 1, "maxItems": 4, "description": "v1.1. Labeled entry fields for prompts that ask for more than one artifact (alt text plus long description). When present, the renderer shows one labeled box per field; placeholder and maxLength above apply only to the single-box form.", "items": { "type": "object", "required": ["label"], "additionalProperties": false, "properties": { "label": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer" } } } }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "exemplarAnswer": { "type": "string", "minLength": 1, "description": "The expert answer, revealed after submission. Not a key. A comparison." } } }, "rubric": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["criterion", "lookFor"], "additionalProperties": false, "properties": { "criterion": { "type": "string", "minLength": 1 }, "lookFor": { "type": "string", "minLength": 1 }, "commonMiss": { "type": "string" } } } }, "image": { "type": "object", "required": ["kind", "src", "decorative"], "additionalProperties": false, "properties": { "kind": { "const": "image" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "decorative": { "type": "boolean" }, "alt": { "type": "string" }, "longDescription": { "type": "string", "description": "Required for charts, diagrams, and anything carrying data. Alt text names it; this explains it." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "decorative": { "const": false } }, "required": ["decorative"] }, "then": { "required": ["alt"], "properties": { "alt": { "minLength": 1 } } } }, { "if": { "properties": { "decorative": { "const": true } }, "required": ["decorative"] }, "then": { "properties": { "alt": { "const": "" } } } }] }, "video": { "type": "object", "description": "Captions and a transcript are required siblings of src. There is no valid way to author a video without them.", "required": ["kind", "src", "captionsSrc", "transcript"], "additionalProperties": false, "properties": { "kind": { "const": "video" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "poster": { "type": "string" }, "captionsSrc": { "type": "string", "minLength": 1 }, "transcript": { "type": "string", "minLength": 1 }, "audioDescriptionSrc": { "type": "string" }, "describedTranscript": { "type": "string", "description": "Required when the video carries meaning visually and no separate described track is supplied." }, "carriesVisualMeaning": { "type": "boolean", "default": true } }, "allOf": [{ "if": { "properties": { "carriesVisualMeaning": { "const": true } }, "required": ["carriesVisualMeaning"] }, "then": { "anyOf": [{ "required": ["audioDescriptionSrc"] }, { "required": ["describedTranscript"] }] } }] }, "audio": { "type": "object", "required": ["kind", "src", "role", "autoplay"], "additionalProperties": false, "properties": { "kind": { "const": "audio" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "role": { "enum": ["ambient", "cue", "speech"] }, "autoplay": { "const": false }, "loop": { "type": "boolean", "default": false }, "title": { "type": "string", "description": "Player-facing label on the control." }, "visualCue": { "type": "string", "description": "Required for role=cue. The text or shape shown alongside the sound so it is never the only signal." }, "transcript": { "type": "string", "description": "Required for role=speech." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "role": { "const": "cue" } }, "required": ["role"] }, "then": { "required": ["visualCue"], "properties": { "visualCue": { "minLength": 1 } } } }, { "if": { "properties": { "role": { "const": "speech" } }, "required": ["role"] }, "then": { "required": ["transcript"], "properties": { "transcript": { "minLength": 1 } } } }] } } };
+var schema31 = { "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://learnaiid.com/schemas/escape-room/v1.json", "title": "Escape the Lecture: Escape Room Content Schema v1", "description": "Single content contract for both renderers. The Exemplar (The AI Archivist and the Lost Learning Vault) and the faculty Template consume identical data. Accessibility fields are structurally required, not advisory: a room that omits them will not validate, and therefore will not publish.", "type": "object", "required": ["schemaVersion", "meta", "narrative", "levels", "finale", "a11y"], "additionalProperties": false, "properties": { "schemaVersion": { "enum": ["1.0", "1.1"] }, "meta": { "type": "object", "required": ["id", "title", "author", "renderer"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{3,60}$" }, "title": { "type": "string", "minLength": 1, "maxLength": 90 }, "subtitle": { "type": "string", "maxLength": 140 }, "author": { "type": "string", "minLength": 1 }, "course": { "type": "string", "description": "Course or context this room supports." }, "objective": { "type": "string", "description": "The single learning objective this room is aligned to. Required by the template form; this is the field that keeps faculty honest.", "maxLength": 400 }, "renderer": { "enum": ["exemplar", "template"], "description": "Which skin consumes this content. The spine is identical either way." }, "brandFooter": { "type": "string", "description": "Attribution line. In the Exemplar this is the only place LearnAIID appears." } } }, "narrative": { "type": "object", "required": ["premise", "roleTitle", "successCondition"], "additionalProperties": false, "properties": { "premise": { "type": "string", "minLength": 1 }, "roleTitle": { "type": "string", "description": "What the player is called. Exemplar: Accessibility Intelligence Agent." }, "successCondition": { "type": "string", "description": "Replaces the countdown. State the condition under which the vault opens. Never a clock. WCAG 2.2.1 is satisfied by having no time limit at all." }, "openingMedia": { "$ref": "#/$defs/video" }, "companion": { "$ref": "#/$defs/companion" }, "archivist": { "type": "object", "description": "v1.1. The straight man gets a face. Rendered wherever the Archivist speaks, starting with the locks.", "required": ["name"], "additionalProperties": false, "properties": { "name": { "type": "string", "minLength": 1 }, "portrait": { "$ref": "#/$defs/image" } } }, "ambience": { "$ref": "#/$defs/ambience" } } }, "levels": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/level" } }, "finale": { "type": "object", "required": ["title", "prompt", "rubric", "closingText"], "additionalProperties": false, "properties": { "title": { "type": "string" }, "setup": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "replayEvidence": { "type": "boolean", "default": true, "description": "Solo play requires this. The renderer replays every evidenceFragment the player banked before asking for the recommendation, standing in for the team deliberation the original team design assumed." }, "metaLock": { "$ref": "#/$defs/metaLock" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "acceptedPositions": { "type": "array", "description": "There is no single correct answer. These are defensible stances the player can compare their own against.", "items": { "type": "object", "required": ["label", "summary"], "properties": { "label": { "type": "string" }, "summary": { "type": "string" } } } }, "closingText": { "type": "string" }, "closingMedia": { "$ref": "#/$defs/video" }, "epilogue": { "type": "object", "description": "v1.1. The final scene. After the door-opening cinematic the player steps inside the opened vault; these beats play there, in order. AURA's beat is her one uncertain moment and the renderer treats it accordingly: no confidence badge, cyan fallen toward navy, one flicker.", "required": ["title", "beats"], "additionalProperties": false, "properties": { "title": { "type": "string", "minLength": 1 }, "beats": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "object", "required": ["speaker", "text"], "additionalProperties": false, "properties": { "speaker": { "enum": ["archivist", "aura", "narrator"] }, "text": { "type": "string", "minLength": 1 }, "audioSrc": { "type": "string" }, "captionsSrc": { "type": "string" } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions, even at the very end." } }] } } } } } }, "a11y": { "type": "object", "description": "Compliance assertions the renderer must honor. These are const, not boolean, so a non-compliant configuration cannot be expressed in valid content.", "required": ["audioAutoplay", "colorOnlySignals", "keyboardAlternatives", "reducedMotion", "timeLimit"], "additionalProperties": false, "properties": { "audioAutoplay": { "enum": [false, "ambient-with-stop-control"], "description": 'WCAG 1.4.2. Speech and cue audio never start on their own. Only narrative.ambience may, and only with a persistent, remembered stop control and ducking under speech; content that does so must declare "ambient-with-stop-control" here.' }, "colorOnlySignals": { "const": false, "description": "WCAG 1.4.1. Every state change carries a text or shape signal alongside color." }, "keyboardAlternatives": { "const": true, "description": "WCAG 2.1.1. Applies hardest to the sequence challenge, which must be operable without dragging." }, "reducedMotion": { "const": "respected", "description": "prefers-reduced-motion disables ambient motion and transitions." }, "timeLimit": { "const": "none", "description": "WCAG 2.2.1 is satisfied by absence. Faculty may add a timer downstream at their own risk." }, "targetLevel": { "const": "WCAG 2.1 AA" } } } }, "allOf": [{ "description": "An ambience that starts on its own must be declared in the accessibility assertions.", "if": { "required": ["narrative"], "properties": { "narrative": { "required": ["ambience"], "properties": { "ambience": { "required": ["autoplay"], "properties": { "autoplay": { "const": true } } } } } } }, "then": { "required": ["a11y"], "properties": { "a11y": { "properties": { "audioAutoplay": { "const": "ambient-with-stop-control" } } } } } }], "$defs": { "ambience": { "type": "object", "description": "v1.1, added October 2026. One ambience track for the whole game. It may start on its own only because the renderer always shows a control that stops it, remembers that choice across rooms and visits, and lowers the ambience whenever speech or video plays.", "required": ["kind", "src", "autoplay"], "additionalProperties": false, "properties": { "kind": { "const": "audio" }, "src": { "type": "string", "minLength": 1 }, "title": { "type": "string", "description": "Player-facing label on the control." }, "loop": { "type": "boolean", "default": true }, "autoplay": { "type": "boolean" } } }, "lock": { "type": "object", "description": "v1.1. The level's exit. Appears when every challenge in the level is solved; the player derives the code from the room's work and enters it to restore the shelf. Audience is adults: hints narrow the search space and never contain the answer. The no-dead-end guarantee comes from unlimited attempts, no timer, and codes that are honestly derivable from the room's work.", "required": ["prompt", "acceptedCodes", "hints"], "additionalProperties": false, "properties": { "prompt": { "type": "string", "minLength": 1, "description": "The Archivist's challenge. The straight man speaks at the door." }, "source": { "type": "string", "description": "v1.1. Material displayed with the lock that the code is derived from, e.g. the list an acrostic reads out of. Rendered with line breaks preserved." }, "inputLabel": { "type": "string", "description": "Label on the code field. Defaults to 'Vault key'." }, "acceptedCodes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "description": "Accepted answers. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous variants here." }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "wrongText": { "type": "string", "description": "Shown on an incorrect attempt. Never punitive: nothing is lost, nothing is timed." }, "successText": { "type": "string", "description": "Optional extra beat on success; unlockText still plays." }, "audioSrc": { "type": "string", "description": "v1.1. The Archivist speaking this lock's prompt. Plays when the lock appears (the reveal is always the player's own gesture) with a visible stop control; the prompt text is always on screen." }, "captionsSrc": { "type": "string", "description": "Sibling VTT for the voiced prompt." } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions, locks included." } }] }, "metaLock": { "type": "object", "description": "v1.1. The multi-stage collection meta-puzzle at the Final Vault: every key banked across the rooms must be placed in its keyway before the last door moves. This is what makes the ending earned rather than announced.", "required": ["prompt", "slots", "hints"], "additionalProperties": false, "properties": { "prompt": { "type": "string", "minLength": 1 }, "slots": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["label", "keyLabel"], "additionalProperties": false, "properties": { "label": { "type": "string", "minLength": 1, "description": "Keyway name the player sees. Exemplar: the room title." }, "keyLabel": { "type": "string", "minLength": 1, "description": "The rewardLabel of the key that belongs here." } } } }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "wrongText": { "type": "string" }, "audioSrc": { "type": "string", "minLength": 1 }, "captionsSrc": { "type": "string", "minLength": 1 } }, "dependentRequired": { "audioSrc": ["captionsSrc"] } }, "companion": { "type": "object", "description": "The unreliable AI narrator. Exemplar: AURA. The template exposes a simplified version so faculty rooms can carry the same mechanic.", "required": ["name", "textAlwaysVisible"], "additionalProperties": false, "properties": { "name": { "type": "string" }, "portrait": { "$ref": "#/$defs/image" }, "idleVideoSrc": { "type": "string", "description": "v1.1. Optional silent looping video that replaces the static portrait as the companion's living presence. Ambient motion, so the renderer only uses it when the player has not asked for reduced motion; the portrait image and its alt text remain the accessible representation." }, "voiced": { "type": "boolean", "default": false }, "textAlwaysVisible": { "const": true, "description": "Speech is never audio-only. The transcript is on screen at all times, not behind a toggle." } } }, "companionLine": { "type": "object", "description": "One utterance from the companion. The confidence figure is the running joke and the thesis: confidence is not correctness.", "required": ["id", "text", "accurate"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "confidence": { "type": "number", "minimum": 0, "maximum": 100, "description": "Displayed to the player. Deliberately precise and deliberately unearned." }, "accurate": { "type": "boolean", "description": "Authoring truth, not player-facing. The renderer uses it to decide when to surface the tell." }, "tell": { "type": "string", "description": "What gives the error away once the player knows to look. Revealed after the challenge resolves, never before." }, "audioSrc": { "type": "string" }, "captionsSrc": { "type": "string" } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions." } }, { "if": { "properties": { "accurate": { "const": false } }, "required": ["accurate"] }, "then": { "required": ["tell"], "description": "If the companion is wrong, the content must say how the player could have caught it. Otherwise the mechanic is just noise." } }] }, "level": { "type": "object", "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" }, "order": { "type": "integer", "minimum": 1 }, "title": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" }, "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." }, "skillTaught": { "type": "array", "items": { "type": "string" }, "description": "Named so the room can be audited against its own claims." }, "ambientAudio": { "$ref": "#/$defs/audio" }, "tools": { "type": "array", "description": "v1.1. Field tools the renderer mounts in this room. contrast-checker embeds a live WCAG ratio calculator with a prefilled WebAIM link.", "items": { "enum": ["contrast-checker"] } }, "media": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" }] } }, "companionLines": { "type": "array", "items": { "$ref": "#/$defs/companionLine" } }, "challenges": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/challenge" } }, "evidenceFragment": { "type": "string", "minLength": 1, "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring." }, "unlockText": { "type": "string", "minLength": 1 }, "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." }, "lock": { "$ref": "#/$defs/lock" }, "interlude": { "type": "object", "description": "Optional rest beat shown after a level resolves, before the next brief. Reduces puzzle fatigue (a UDL point) and advances the narrative.", "required": ["text"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "speaker": { "enum": ["archivist", "aura", "narrator"] }, "text": { "type": "string", "minLength": 1 }, "shelfEvent": { "type": "string", "description": "The visual reward: what relights in the hall." }, "auraLine": { "type": "string", "description": "AURA's undercut, surfaced as a separate styled aside." } } } } }, "challenge": { "oneOf": [{ "$ref": "#/$defs/choiceChallenge" }, { "$ref": "#/$defs/sequenceChallenge" }, { "$ref": "#/$defs/responseChallenge" }, { "$ref": "#/$defs/sortChallenge" }, { "$ref": "#/$defs/huntChallenge" }, { "$ref": "#/$defs/repairChallenge" }, { "$ref": "#/$defs/matchChallenge" }, { "$ref": "#/$defs/calculateChallenge" }, { "$ref": "#/$defs/extractChallenge" }] }, "matchChallenge": { "type": "object", "description": "v1.1, Exemplar. Connect column A to column B. Each left item exposes a native select of right-side options, so the keyboard path needs no invention. Nothing is judged until the player verifies.", "required": ["type", "id", "prompt", "pairs", "hints"], "additionalProperties": false, "properties": { "type": { "const": "match" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "pairs": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "type": "object", "required": ["id", "left", "right", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "left": { "type": "string", "minLength": 1 }, "right": { "type": "string", "minLength": 1, "description": "The correct partner. The renderer offers all rights, sorted, as the options." }, "feedback": { "type": "string", "minLength": 1, "description": "Why this pairing is right. Revealed on resolve." } } } } } }, "calculateChallenge": { "type": "object", "description": "v1.1, Exemplar. Enter a computed value with tolerance. Covers arithmetic target, missing-value, and unit-conversion mechanics. The player does the math the companion did not.", "required": ["type", "id", "prompt", "answer", "feedback", "hints"], "additionalProperties": false, "properties": { "type": { "const": "calculate" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "inputLabel": { "type": "string" }, "unit": { "type": "string", "description": "Display-only unit shown beside the field, e.g. ':1'." }, "answer": { "type": "number" }, "tolerance": { "type": "number", "default": 0, "minimum": 0 }, "feedback": { "type": "string", "minLength": 1, "description": "What the number means. Revealed on solve." }, "wrongText": { "type": "string" } } }, "extractChallenge": { "type": "object", "description": "v1.1, Exemplar. Derive letters or words from displayed source material to form an answer, usually feeding a lock. Purely textual, accessible by nature.", "required": ["type", "id", "prompt", "acceptedAnswers", "feedback", "hints"], "additionalProperties": false, "properties": { "type": { "const": "extract" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "source": { "type": "string", "description": "The material the answer hides in, displayed with the challenge." }, "inputLabel": { "type": "string" }, "acceptedAnswers": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }, "feedback": { "type": "string", "minLength": 1 }, "wrongText": { "type": "string" } } }, "sortChallenge": { "type": "object", "description": "v1.1, Exemplar. Items sorted into named bins. Covers the classification and placement mechanics. Fully keyboard operable: every item exposes a control per bin, every placement is announced, and nothing is judged until the player verifies.", "required": ["type", "id", "prompt", "bins", "items", "keyboardInstructions", "hints"], "additionalProperties": false, "properties": { "type": { "const": "sort" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "keyboardInstructions": { "type": "string", "minLength": 1, "description": "Required, same rule as sequence: the spatial metaphor must be operable without a pointer, and the instructions are authored, not generated." }, "bins": { "type": "array", "minItems": 2, "maxItems": 4, "items": { "type": "object", "required": ["id", "label"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "label": { "type": "string", "minLength": 1 }, "description": { "type": "string", "description": "What landing in this bin means." } } } }, "items": { "type": "array", "minItems": 2, "maxItems": 12, "items": { "type": "object", "required": ["id", "text", "correctBin", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "correctBin": { "type": "string", "description": "The id of the bin this item belongs in." }, "feedback": { "type": "string", "minLength": 1, "description": "Revealed when the sort resolves. Required on every item." } } } } } }, "huntChallenge": { "type": "object", "description": "v1.1, Exemplar. The inverted hidden-object mechanic: flaws hide structurally, not visually. The artifact renders as real readable parts; the player flags the parts that cannot be true. Sighted players and screen reader players inspect the same object and solve the same puzzle.", "required": ["type", "id", "prompt", "artifact", "hints"], "additionalProperties": false, "properties": { "type": { "const": "hunt" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "artifact": { "type": "array", "minItems": 2, "maxItems": 12, "items": { "type": "object", "required": ["id", "text", "flawed", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "label": { "type": "string", "description": "Part name announced with the text, e.g. 'Claim 2'." }, "text": { "type": "string", "minLength": 1 }, "flawed": { "type": "boolean", "description": "Authoring truth: is this part a flaw the player should flag?" }, "feedback": { "type": "string", "minLength": 1, "description": "Why this part is or is not a flaw. Revealed on resolve." } } } } } }, "repairChallenge": { "type": "object", "description": "v1.1, Exemplar. Corrupted text repaired in place against known-good answers. Gradeable, unlike response. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous accepted variants.", "required": ["type", "id", "prompt", "segments", "hints"], "additionalProperties": false, "properties": { "type": { "const": "repair" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "segments": { "type": "array", "minItems": 1, "maxItems": 10, "items": { "type": "object", "required": ["id", "broken", "accepted", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "context": { "type": "string", "description": "Read-only framing shown above the editable line." }, "broken": { "type": "string", "minLength": 1, "description": "The corrupted text the player starts from." }, "accepted": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }, "feedback": { "type": "string", "minLength": 1, "description": "What was wrong and why. Revealed on resolve." } } } } } }, "challengeBase": { "type": "object", "properties": { "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "string" }, "description": "Escalating tiers, always available, never penalized. This is the competence-support mechanic from SDT, and it is why hints are required rather than optional. A hint narrows the search space; it never contains the answer. The audience is adults and the puzzles should challenge them." } } }, "choiceChallenge": { "type": "object", "required": ["type", "id", "prompt", "options", "hints"], "additionalProperties": false, "properties": { "type": { "const": "choice" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "selectMultiple": { "type": "boolean", "default": false }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "options": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "type": "object", "required": ["id", "text", "correct", "feedback"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 }, "correct": { "type": "boolean" }, "feedback": { "type": "string", "minLength": 1, "description": "Required on every option, including correct ones. A wrong answer with no explanation is a dead end, not a puzzle." } } } } } }, "sequenceChallenge": { "type": "object", "required": ["type", "id", "prompt", "items", "correctOrder", "hints", "keyboardInstructions"], "additionalProperties": false, "properties": { "type": { "const": "sequence" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "items": { "type": "array", "minItems": 3, "maxItems": 10, "items": { "type": "object", "required": ["id", "text"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "text": { "type": "string", "minLength": 1 } } } }, "correctOrder": { "type": "array", "minItems": 3, "items": { "type": "string" } }, "keyboardInstructions": { "type": "string", "minLength": 1, "description": "Required. Drag and drop is the visual affordance, never the only one. Every sequence must be reorderable with keys alone, and the instructions for doing so must be authored, not generated." }, "explanation": { "type": "string", "description": "Why this order and not another. Shown on resolution." } } }, "responseChallenge": { "type": "object", "description": "Free text. Deliberately not autograded. The companion assesses first, confidently and often wrongly, then the expert rubric appears beside it and the player scores their own work against both. This is the thesis as a mechanic, and it is the reason the template needs no API key.", "required": ["type", "id", "prompt", "rubric", "exemplarAnswer", "hints"], "additionalProperties": false, "properties": { "type": { "const": "response" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer", "default": 600 }, "fields": { "type": "array", "minItems": 1, "maxItems": 4, "description": "v1.1. Labeled entry fields for prompts that ask for more than one artifact (alt text plus long description). When present, the renderer shows one labeled box per field; placeholder and maxLength above apply only to the single-box form.", "items": { "type": "object", "required": ["label"], "additionalProperties": false, "properties": { "label": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer" } } } }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "exemplarAnswer": { "type": "string", "minLength": 1, "description": "The expert answer, revealed after submission. Not a key. A comparison." } } }, "rubric": { "type": "array", "minItems": 2, "items": { "type": "object", "required": ["criterion", "lookFor"], "additionalProperties": false, "properties": { "criterion": { "type": "string", "minLength": 1 }, "lookFor": { "type": "string", "minLength": 1 }, "commonMiss": { "type": "string" } } } }, "image": { "type": "object", "required": ["kind", "src", "decorative"], "additionalProperties": false, "properties": { "kind": { "const": "image" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "decorative": { "type": "boolean" }, "alt": { "type": "string" }, "longDescription": { "type": "string", "description": "Required for charts, diagrams, and anything carrying data. Alt text names it; this explains it." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "decorative": { "const": false } }, "required": ["decorative"] }, "then": { "required": ["alt"], "properties": { "alt": { "minLength": 1 } } } }, { "if": { "properties": { "decorative": { "const": true } }, "required": ["decorative"] }, "then": { "properties": { "alt": { "const": "" } } } }] }, "video": { "type": "object", "description": "Captions and a transcript are required siblings of src. There is no valid way to author a video without them.", "required": ["kind", "src", "captionsSrc", "transcript"], "additionalProperties": false, "properties": { "kind": { "const": "video" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "poster": { "type": "string" }, "captionsSrc": { "type": "string", "minLength": 1 }, "transcript": { "type": "string", "minLength": 1 }, "audioDescriptionSrc": { "type": "string" }, "describedTranscript": { "type": "string", "description": "Required when the video carries meaning visually and no separate described track is supplied." }, "carriesVisualMeaning": { "type": "boolean", "default": true } }, "allOf": [{ "if": { "properties": { "carriesVisualMeaning": { "const": true } }, "required": ["carriesVisualMeaning"] }, "then": { "anyOf": [{ "required": ["audioDescriptionSrc"] }, { "required": ["describedTranscript"] }] } }] }, "audio": { "type": "object", "required": ["kind", "src", "role", "autoplay"], "additionalProperties": false, "properties": { "kind": { "const": "audio" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "role": { "enum": ["ambient", "cue", "speech"] }, "autoplay": { "const": false }, "loop": { "type": "boolean", "default": false }, "title": { "type": "string", "description": "Player-facing label on the control." }, "visualCue": { "type": "string", "description": "Required for role=cue. The text or shape shown alongside the sound so it is never the only signal." }, "transcript": { "type": "string", "description": "Required for role=speech." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "role": { "const": "cue" } }, "required": ["role"] }, "then": { "required": ["visualCue"], "properties": { "visualCue": { "minLength": 1 } } } }, { "if": { "properties": { "role": { "const": "speech" } }, "required": ["role"] }, "then": { "required": ["transcript"], "properties": { "transcript": { "minLength": 1 } } } }] } } };
 var schema32 = { "type": "object", "description": "Captions and a transcript are required siblings of src. There is no valid way to author a video without them.", "required": ["kind", "src", "captionsSrc", "transcript"], "additionalProperties": false, "properties": { "kind": { "const": "video" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "poster": { "type": "string" }, "captionsSrc": { "type": "string", "minLength": 1 }, "transcript": { "type": "string", "minLength": 1 }, "audioDescriptionSrc": { "type": "string" }, "describedTranscript": { "type": "string", "description": "Required when the video carries meaning visually and no separate described track is supplied." }, "carriesVisualMeaning": { "type": "boolean", "default": true } }, "allOf": [{ "if": { "properties": { "carriesVisualMeaning": { "const": true } }, "required": ["carriesVisualMeaning"] }, "then": { "anyOf": [{ "required": ["audioDescriptionSrc"] }, { "required": ["describedTranscript"] }] } }] };
 var pattern4 = new RegExp("^[a-z0-9-]{3,60}$", "u");
 var func1 = require_ucs2length().default;
@@ -434,8 +434,8 @@ function validate21(data, { instancePath = "", parentData, parentDataProperty, r
   return errors === 0;
 }
 validate21.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-var schema36 = { "type": "object", "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" }, "order": { "type": "integer", "minimum": 1 }, "title": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" }, "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." }, "skillTaught": { "type": "array", "items": { "type": "string" }, "description": "Named so the room can be audited against its own claims." }, "ambientAudio": { "$ref": "#/$defs/audio" }, "tools": { "type": "array", "description": "v1.1. Field tools the renderer mounts in this room. contrast-checker embeds a live WCAG ratio calculator with a prefilled WebAIM link.", "items": { "enum": ["contrast-checker"] } }, "media": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" }] } }, "companionLines": { "type": "array", "items": { "$ref": "#/$defs/companionLine" } }, "challenges": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/challenge" } }, "evidenceFragment": { "type": "string", "minLength": 1, "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring." }, "unlockText": { "type": "string", "minLength": 1 }, "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." }, "lock": { "$ref": "#/$defs/lock" }, "interlude": { "type": "object", "description": "Optional rest beat shown after a level resolves, before the next brief. Reduces puzzle fatigue (a UDL point) and advances the narrative.", "required": ["text"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "speaker": { "enum": ["archivist", "aura", "narrator"] }, "text": { "type": "string", "minLength": 1 }, "shelfEvent": { "type": "string", "description": "The visual reward: what relights in the hall." }, "auraLine": { "type": "string", "description": "AURA's undercut, surfaced as a separate styled aside." } } } } };
-var schema37 = { "type": "object", "required": ["kind", "src", "role", "autoplay"], "additionalProperties": false, "properties": { "kind": { "const": "audio" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "role": { "enum": ["ambient", "cue", "speech"] }, "autoplay": { "const": false }, "loop": { "type": "boolean", "default": false }, "title": { "type": "string", "description": "Player-facing label on the control." }, "visualCue": { "type": "string", "description": "Required for role=cue. The text or shape shown alongside the sound so it is never the only signal." }, "transcript": { "type": "string", "description": "Required for role=speech." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "role": { "const": "cue" } }, "required": ["role"] }, "then": { "required": ["visualCue"], "properties": { "visualCue": { "minLength": 1 } } } }, { "if": { "properties": { "role": { "const": "speech" } }, "required": ["role"] }, "then": { "required": ["transcript"], "properties": { "transcript": { "minLength": 1 } } } }] };
+var schema37 = { "type": "object", "required": ["id", "order", "title", "brief", "challenges", "evidenceFragment", "unlockText"], "additionalProperties": false, "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]{2,40}$" }, "order": { "type": "integer", "minimum": 1 }, "title": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" }, "brief": { "type": "string", "minLength": 1, "description": "What the player is looking at and what is wrong with it." }, "skillTaught": { "type": "array", "items": { "type": "string" }, "description": "Named so the room can be audited against its own claims." }, "ambientAudio": { "$ref": "#/$defs/audio" }, "tools": { "type": "array", "description": "v1.1. Field tools the renderer mounts in this room. contrast-checker embeds a live WCAG ratio calculator with a prefilled WebAIM link.", "items": { "enum": ["contrast-checker"] } }, "media": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/image" }, { "$ref": "#/$defs/video" }] } }, "companionLines": { "type": "array", "items": { "$ref": "#/$defs/companionLine" } }, "challenges": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/challenge" } }, "evidenceFragment": { "type": "string", "minLength": 1, "description": "Banked on completion and replayed at the finale. This is what makes solo play work: the player accumulates an argument instead of a keyring." }, "unlockText": { "type": "string", "minLength": 1 }, "rewardLabel": { "type": "string", "description": "Exemplar: vault key name. Template: defaults to a generic unlock." }, "lock": { "$ref": "#/$defs/lock" }, "interlude": { "type": "object", "description": "Optional rest beat shown after a level resolves, before the next brief. Reduces puzzle fatigue (a UDL point) and advances the narrative.", "required": ["text"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "speaker": { "enum": ["archivist", "aura", "narrator"] }, "text": { "type": "string", "minLength": 1 }, "shelfEvent": { "type": "string", "description": "The visual reward: what relights in the hall." }, "auraLine": { "type": "string", "description": "AURA's undercut, surfaced as a separate styled aside." } } } } };
+var schema38 = { "type": "object", "required": ["kind", "src", "role", "autoplay"], "additionalProperties": false, "properties": { "kind": { "const": "audio" }, "id": { "type": "string" }, "src": { "type": "string", "minLength": 1 }, "role": { "enum": ["ambient", "cue", "speech"] }, "autoplay": { "const": false }, "loop": { "type": "boolean", "default": false }, "title": { "type": "string", "description": "Player-facing label on the control." }, "visualCue": { "type": "string", "description": "Required for role=cue. The text or shape shown alongside the sound so it is never the only signal." }, "transcript": { "type": "string", "description": "Required for role=speech." }, "credit": { "type": "string" } }, "allOf": [{ "if": { "properties": { "role": { "const": "cue" } }, "required": ["role"] }, "then": { "required": ["visualCue"], "properties": { "visualCue": { "minLength": 1 } } } }, { "if": { "properties": { "role": { "const": "speech" } }, "required": ["role"] }, "then": { "required": ["transcript"], "properties": { "transcript": { "minLength": 1 } } } }] };
 var pattern5 = new RegExp("^[a-z0-9-]{2,40}$", "u");
 function validate25(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   let vErrors = null;
@@ -1132,7 +1132,7 @@ function validate27(data, { instancePath = "", parentData, parentDataProperty, r
   return errors === 0;
 }
 validate27.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-var schema46 = { "type": "object", "description": "Free text. Deliberately not autograded. The companion assesses first, confidently and often wrongly, then the expert rubric appears beside it and the player scores their own work against both. This is the thesis as a mechanic, and it is the reason the template needs no API key.", "required": ["type", "id", "prompt", "rubric", "exemplarAnswer", "hints"], "additionalProperties": false, "properties": { "type": { "const": "response" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer", "default": 600 }, "fields": { "type": "array", "minItems": 1, "maxItems": 4, "description": "v1.1. Labeled entry fields for prompts that ask for more than one artifact (alt text plus long description). When present, the renderer shows one labeled box per field; placeholder and maxLength above apply only to the single-box form.", "items": { "type": "object", "required": ["label"], "additionalProperties": false, "properties": { "label": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer" } } } }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "exemplarAnswer": { "type": "string", "minLength": 1, "description": "The expert answer, revealed after submission. Not a key. A comparison." } } };
+var schema47 = { "type": "object", "description": "Free text. Deliberately not autograded. The companion assesses first, confidently and often wrongly, then the expert rubric appears beside it and the player scores their own work against both. This is the thesis as a mechanic, and it is the reason the template needs no API key.", "required": ["type", "id", "prompt", "rubric", "exemplarAnswer", "hints"], "additionalProperties": false, "properties": { "type": { "const": "response" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer", "default": 600 }, "fields": { "type": "array", "minItems": 1, "maxItems": 4, "description": "v1.1. Labeled entry fields for prompts that ask for more than one artifact (alt text plus long description). When present, the renderer shows one labeled box per field; placeholder and maxLength above apply only to the single-box form.", "items": { "type": "object", "required": ["label"], "additionalProperties": false, "properties": { "label": { "type": "string", "minLength": 1 }, "placeholder": { "type": "string" }, "maxLength": { "type": "integer" } } } }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "companionAssessment": { "$ref": "#/$defs/companionLine" }, "rubric": { "$ref": "#/$defs/rubric" }, "exemplarAnswer": { "type": "string", "minLength": 1, "description": "The expert answer, revealed after submission. Not a key. A comparison." } } };
 function validate29(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   let vErrors = null;
   let errors = 0;
@@ -1199,7 +1199,7 @@ function validate29(data, { instancePath = "", parentData, parentDataProperty, r
       errors++;
     }
     for (const key0 in data) {
-      if (!func7.call(schema46.properties, key0)) {
+      if (!func7.call(schema47.properties, key0)) {
         const err6 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
         if (vErrors === null) {
           vErrors = [err6];
@@ -3378,7 +3378,7 @@ function validate37(data, { instancePath = "", parentData, parentDataProperty, r
   return errors === 0;
 }
 validate37.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-var schema58 = { "type": "object", "description": "v1.1, Exemplar. Enter a computed value with tolerance. Covers arithmetic target, missing-value, and unit-conversion mechanics. The player does the math the companion did not.", "required": ["type", "id", "prompt", "answer", "feedback", "hints"], "additionalProperties": false, "properties": { "type": { "const": "calculate" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "inputLabel": { "type": "string" }, "unit": { "type": "string", "description": "Display-only unit shown beside the field, e.g. ':1'." }, "answer": { "type": "number" }, "tolerance": { "type": "number", "default": 0, "minimum": 0 }, "feedback": { "type": "string", "minLength": 1, "description": "What the number means. Revealed on solve." }, "wrongText": { "type": "string" } } };
+var schema59 = { "type": "object", "description": "v1.1, Exemplar. Enter a computed value with tolerance. Covers arithmetic target, missing-value, and unit-conversion mechanics. The player does the math the companion did not.", "required": ["type", "id", "prompt", "answer", "feedback", "hints"], "additionalProperties": false, "properties": { "type": { "const": "calculate" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "inputLabel": { "type": "string" }, "unit": { "type": "string", "description": "Display-only unit shown beside the field, e.g. ':1'." }, "answer": { "type": "number" }, "tolerance": { "type": "number", "default": 0, "minimum": 0 }, "feedback": { "type": "string", "minLength": 1, "description": "What the number means. Revealed on solve." }, "wrongText": { "type": "string" } } };
 function validate39(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   let vErrors = null;
   let errors = 0;
@@ -3445,7 +3445,7 @@ function validate39(data, { instancePath = "", parentData, parentDataProperty, r
       errors++;
     }
     for (const key0 in data) {
-      if (!func7.call(schema58.properties, key0)) {
+      if (!func7.call(schema59.properties, key0)) {
         const err6 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
         if (vErrors === null) {
           vErrors = [err6];
@@ -3643,7 +3643,7 @@ function validate39(data, { instancePath = "", parentData, parentDataProperty, r
   return errors === 0;
 }
 validate39.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-var schema60 = { "type": "object", "description": "v1.1, Exemplar. Derive letters or words from displayed source material to form an answer, usually feeding a lock. Purely textual, accessible by nature.", "required": ["type", "id", "prompt", "acceptedAnswers", "feedback", "hints"], "additionalProperties": false, "properties": { "type": { "const": "extract" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "source": { "type": "string", "description": "The material the answer hides in, displayed with the challenge." }, "inputLabel": { "type": "string" }, "acceptedAnswers": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }, "feedback": { "type": "string", "minLength": 1 }, "wrongText": { "type": "string" } } };
+var schema61 = { "type": "object", "description": "v1.1, Exemplar. Derive letters or words from displayed source material to form an answer, usually feeding a lock. Purely textual, accessible by nature.", "required": ["type", "id", "prompt", "acceptedAnswers", "feedback", "hints"], "additionalProperties": false, "properties": { "type": { "const": "extract" }, "id": { "type": "string" }, "prompt": { "type": "string", "minLength": 1 }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "source": { "type": "string", "description": "The material the answer hides in, displayed with the challenge." }, "inputLabel": { "type": "string" }, "acceptedAnswers": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }, "feedback": { "type": "string", "minLength": 1 }, "wrongText": { "type": "string" } } };
 function validate41(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   let vErrors = null;
   let errors = 0;
@@ -3710,7 +3710,7 @@ function validate41(data, { instancePath = "", parentData, parentDataProperty, r
       errors++;
     }
     for (const key0 in data) {
-      if (!func7.call(schema60.properties, key0)) {
+      if (!func7.call(schema61.properties, key0)) {
         const err6 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
         if (vErrors === null) {
           vErrors = [err6];
@@ -4111,7 +4111,7 @@ function validate24(data, { instancePath = "", parentData, parentDataProperty, r
   return errors === 0;
 }
 validate24.evaluated = { "dynamicProps": true, "dynamicItems": false };
-var schema62 = { "type": "object", "description": "v1.1. The level's exit. Appears when every challenge in the level is solved; the player derives the code from the room's work and enters it to restore the shelf. Audience is adults: hints narrow the search space and never contain the answer. The no-dead-end guarantee comes from unlimited attempts, no timer, and codes that are honestly derivable from the room's work.", "required": ["prompt", "acceptedCodes", "hints"], "additionalProperties": false, "properties": { "prompt": { "type": "string", "minLength": 1, "description": "The Archivist's challenge. The straight man speaks at the door." }, "source": { "type": "string", "description": "v1.1. Material displayed with the lock that the code is derived from, e.g. the list an acrostic reads out of. Rendered with line breaks preserved." }, "inputLabel": { "type": "string", "description": "Label on the code field. Defaults to 'Vault key'." }, "acceptedCodes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "description": "Accepted answers. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous variants here." }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "wrongText": { "type": "string", "description": "Shown on an incorrect attempt. Never punitive: nothing is lost, nothing is timed." }, "successText": { "type": "string", "description": "Optional extra beat on success; unlockText still plays." }, "audioSrc": { "type": "string", "description": "v1.1. The Archivist speaking this lock's prompt. Plays when the lock appears (the reveal is always the player's own gesture) with a visible stop control; the prompt text is always on screen." }, "captionsSrc": { "type": "string", "description": "Sibling VTT for the voiced prompt." } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions, locks included." } }] };
+var schema63 = { "type": "object", "description": "v1.1. The level's exit. Appears when every challenge in the level is solved; the player derives the code from the room's work and enters it to restore the shelf. Audience is adults: hints narrow the search space and never contain the answer. The no-dead-end guarantee comes from unlimited attempts, no timer, and codes that are honestly derivable from the room's work.", "required": ["prompt", "acceptedCodes", "hints"], "additionalProperties": false, "properties": { "prompt": { "type": "string", "minLength": 1, "description": "The Archivist's challenge. The straight man speaks at the door." }, "source": { "type": "string", "description": "v1.1. Material displayed with the lock that the code is derived from, e.g. the list an acrostic reads out of. Rendered with line breaks preserved." }, "inputLabel": { "type": "string", "description": "Label on the code field. Defaults to 'Vault key'." }, "acceptedCodes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "description": "Accepted answers. Matching is case-insensitive and whitespace-forgiving in the renderer; author generous variants here." }, "hints": { "$ref": "#/$defs/challengeBase/properties/hints" }, "wrongText": { "type": "string", "description": "Shown on an incorrect attempt. Never punitive: nothing is lost, nothing is timed." }, "successText": { "type": "string", "description": "Optional extra beat on success; unlockText still plays." }, "audioSrc": { "type": "string", "description": "v1.1. The Archivist speaking this lock's prompt. Plays when the lock appears (the reveal is always the player's own gesture) with a visible stop control; the prompt text is always on screen." }, "captionsSrc": { "type": "string", "description": "Sibling VTT for the voiced prompt." } }, "allOf": [{ "if": { "required": ["audioSrc"] }, "then": { "required": ["captionsSrc"], "description": "Voiced lines carry captions. No exceptions, locks included." } }] };
 function validate44(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   let vErrors = null;
   let errors = 0;
@@ -4200,7 +4200,7 @@ function validate44(data, { instancePath = "", parentData, parentDataProperty, r
       errors++;
     }
     for (const key0 in data) {
-      if (!func7.call(schema62.properties, key0)) {
+      if (!func7.call(schema63.properties, key0)) {
         const err6 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
         if (vErrors === null) {
           vErrors = [err6];
@@ -4474,7 +4474,7 @@ function validate23(data, { instancePath = "", parentData, parentDataProperty, r
       errors++;
     }
     for (const key0 in data) {
-      if (!func7.call(schema36.properties, key0)) {
+      if (!func7.call(schema37.properties, key0)) {
         const err7 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
         if (vErrors === null) {
           vErrors = [err7];
@@ -4817,7 +4817,7 @@ function validate23(data, { instancePath = "", parentData, parentDataProperty, r
           errors++;
         }
         for (const key1 in data7) {
-          if (!func7.call(schema37.properties, key1)) {
+          if (!func7.call(schema38.properties, key1)) {
             const err33 = { instancePath: instancePath + "/ambientAudio", schemaPath: "#/$defs/audio/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
             if (vErrors === null) {
               vErrors = [err33];
@@ -4874,7 +4874,7 @@ function validate23(data, { instancePath = "", parentData, parentDataProperty, r
         if (data7.role !== void 0) {
           let data15 = data7.role;
           if (!(data15 === "ambient" || data15 === "cue" || data15 === "speech")) {
-            const err38 = { instancePath: instancePath + "/ambientAudio/role", schemaPath: "#/$defs/audio/properties/role/enum", keyword: "enum", params: { allowedValues: schema37.properties.role.enum }, message: "must be equal to one of the allowed values" };
+            const err38 = { instancePath: instancePath + "/ambientAudio/role", schemaPath: "#/$defs/audio/properties/role/enum", keyword: "enum", params: { allowedValues: schema38.properties.role.enum }, message: "must be equal to one of the allowed values" };
             if (vErrors === null) {
               vErrors = [err38];
             } else {
@@ -4965,7 +4965,7 @@ function validate23(data, { instancePath = "", parentData, parentDataProperty, r
         const len1 = data22.length;
         for (let i1 = 0; i1 < len1; i1++) {
           if (!(data22[i1] === "contrast-checker")) {
-            const err46 = { instancePath: instancePath + "/tools/" + i1, schemaPath: "#/properties/tools/items/enum", keyword: "enum", params: { allowedValues: schema36.properties.tools.items.enum }, message: "must be equal to one of the allowed values" };
+            const err46 = { instancePath: instancePath + "/tools/" + i1, schemaPath: "#/properties/tools/items/enum", keyword: "enum", params: { allowedValues: schema37.properties.tools.items.enum }, message: "must be equal to one of the allowed values" };
             if (vErrors === null) {
               vErrors = [err46];
             } else {
@@ -6041,7 +6041,7 @@ function validate23(data, { instancePath = "", parentData, parentDataProperty, r
         if (data63.speaker !== void 0) {
           let data65 = data63.speaker;
           if (!(data65 === "archivist" || data65 === "aura" || data65 === "narrator")) {
-            const err130 = { instancePath: instancePath + "/interlude/speaker", schemaPath: "#/properties/interlude/properties/speaker/enum", keyword: "enum", params: { allowedValues: schema36.properties.interlude.properties.speaker.enum }, message: "must be equal to one of the allowed values" };
+            const err130 = { instancePath: instancePath + "/interlude/speaker", schemaPath: "#/properties/interlude/properties/speaker/enum", keyword: "enum", params: { allowedValues: schema37.properties.interlude.properties.speaker.enum }, message: "must be equal to one of the allowed values" };
             if (vErrors === null) {
               vErrors = [err130];
             } else {
@@ -6435,201 +6435,240 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
   if (evaluated0.dynamicItems) {
     evaluated0.items = void 0;
   }
+  const _errs2 = errors;
+  let valid1 = true;
+  const _errs3 = errors;
   if (data && typeof data == "object" && !Array.isArray(data)) {
-    if (data.schemaVersion === void 0) {
-      const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "schemaVersion" }, message: "must have required property 'schemaVersion'" };
+    let missing0;
+    if (data.narrative === void 0 && (missing0 = "narrative")) {
+      const err0 = {};
       if (vErrors === null) {
         vErrors = [err0];
       } else {
         vErrors.push(err0);
       }
       errors++;
+    } else {
+      if (data.narrative !== void 0) {
+        let data0 = data.narrative;
+        if (data0 && typeof data0 == "object" && !Array.isArray(data0)) {
+          let missing1;
+          if (data0.ambience === void 0 && (missing1 = "ambience")) {
+            const err1 = {};
+            if (vErrors === null) {
+              vErrors = [err1];
+            } else {
+              vErrors.push(err1);
+            }
+            errors++;
+          } else {
+            if (data0.ambience !== void 0) {
+              let data1 = data0.ambience;
+              if (data1 && typeof data1 == "object" && !Array.isArray(data1)) {
+                let missing2;
+                if (data1.autoplay === void 0 && (missing2 = "autoplay")) {
+                  const err2 = {};
+                  if (vErrors === null) {
+                    vErrors = [err2];
+                  } else {
+                    vErrors.push(err2);
+                  }
+                  errors++;
+                } else {
+                  if (data1.autoplay !== void 0) {
+                    if (true !== data1.autoplay) {
+                      const err3 = {};
+                      if (vErrors === null) {
+                        vErrors = [err3];
+                      } else {
+                        vErrors.push(err3);
+                      }
+                      errors++;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  var _valid0 = _errs3 === errors;
+  errors = _errs2;
+  if (vErrors !== null) {
+    if (_errs2) {
+      vErrors.length = _errs2;
+    } else {
+      vErrors = null;
+    }
+  }
+  if (_valid0) {
+    const _errs7 = errors;
+    if (data && typeof data == "object" && !Array.isArray(data)) {
+      if (data.a11y === void 0) {
+        const err4 = { instancePath, schemaPath: "#/allOf/0/then/required", keyword: "required", params: { missingProperty: "a11y" }, message: "must have required property 'a11y'" };
+        if (vErrors === null) {
+          vErrors = [err4];
+        } else {
+          vErrors.push(err4);
+        }
+        errors++;
+      }
+      if (data.a11y !== void 0) {
+        let data3 = data.a11y;
+        if (data3 && typeof data3 == "object" && !Array.isArray(data3)) {
+          if (data3.audioAutoplay !== void 0) {
+            if ("ambient-with-stop-control" !== data3.audioAutoplay) {
+              const err5 = { instancePath: instancePath + "/a11y/audioAutoplay", schemaPath: "#/allOf/0/then/properties/a11y/properties/audioAutoplay/const", keyword: "const", params: { allowedValue: "ambient-with-stop-control" }, message: "must be equal to constant" };
+              if (vErrors === null) {
+                vErrors = [err5];
+              } else {
+                vErrors.push(err5);
+              }
+              errors++;
+            }
+          }
+        }
+      }
+    }
+    var _valid0 = _errs7 === errors;
+    valid1 = _valid0;
+    if (valid1) {
+      var props0 = {};
+      props0.a11y = true;
+      props0.narrative = true;
+    }
+  }
+  if (!valid1) {
+    const err6 = { instancePath, schemaPath: "#/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+    if (vErrors === null) {
+      vErrors = [err6];
+    } else {
+      vErrors.push(err6);
+    }
+    errors++;
+  }
+  if (data && typeof data == "object" && !Array.isArray(data)) {
+    if (data.schemaVersion === void 0) {
+      const err7 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "schemaVersion" }, message: "must have required property 'schemaVersion'" };
+      if (vErrors === null) {
+        vErrors = [err7];
+      } else {
+        vErrors.push(err7);
+      }
+      errors++;
     }
     if (data.meta === void 0) {
-      const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "meta" }, message: "must have required property 'meta'" };
+      const err8 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "meta" }, message: "must have required property 'meta'" };
       if (vErrors === null) {
-        vErrors = [err1];
+        vErrors = [err8];
       } else {
-        vErrors.push(err1);
+        vErrors.push(err8);
       }
       errors++;
     }
     if (data.narrative === void 0) {
-      const err2 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "narrative" }, message: "must have required property 'narrative'" };
+      const err9 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "narrative" }, message: "must have required property 'narrative'" };
       if (vErrors === null) {
-        vErrors = [err2];
+        vErrors = [err9];
       } else {
-        vErrors.push(err2);
+        vErrors.push(err9);
       }
       errors++;
     }
     if (data.levels === void 0) {
-      const err3 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "levels" }, message: "must have required property 'levels'" };
+      const err10 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "levels" }, message: "must have required property 'levels'" };
       if (vErrors === null) {
-        vErrors = [err3];
+        vErrors = [err10];
       } else {
-        vErrors.push(err3);
+        vErrors.push(err10);
       }
       errors++;
     }
     if (data.finale === void 0) {
-      const err4 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "finale" }, message: "must have required property 'finale'" };
+      const err11 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "finale" }, message: "must have required property 'finale'" };
       if (vErrors === null) {
-        vErrors = [err4];
+        vErrors = [err11];
       } else {
-        vErrors.push(err4);
+        vErrors.push(err11);
       }
       errors++;
     }
     if (data.a11y === void 0) {
-      const err5 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "a11y" }, message: "must have required property 'a11y'" };
+      const err12 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "a11y" }, message: "must have required property 'a11y'" };
       if (vErrors === null) {
-        vErrors = [err5];
+        vErrors = [err12];
       } else {
-        vErrors.push(err5);
+        vErrors.push(err12);
       }
       errors++;
     }
     for (const key0 in data) {
       if (!(key0 === "schemaVersion" || key0 === "meta" || key0 === "narrative" || key0 === "levels" || key0 === "finale" || key0 === "a11y")) {
-        const err6 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
+        const err13 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
         if (vErrors === null) {
-          vErrors = [err6];
+          vErrors = [err13];
         } else {
-          vErrors.push(err6);
+          vErrors.push(err13);
         }
         errors++;
       }
     }
     if (data.schemaVersion !== void 0) {
-      let data0 = data.schemaVersion;
-      if (!(data0 === "1.0" || data0 === "1.1")) {
-        const err7 = { instancePath: instancePath + "/schemaVersion", schemaPath: "#/properties/schemaVersion/enum", keyword: "enum", params: { allowedValues: schema31.properties.schemaVersion.enum }, message: "must be equal to one of the allowed values" };
+      let data5 = data.schemaVersion;
+      if (!(data5 === "1.0" || data5 === "1.1")) {
+        const err14 = { instancePath: instancePath + "/schemaVersion", schemaPath: "#/properties/schemaVersion/enum", keyword: "enum", params: { allowedValues: schema31.properties.schemaVersion.enum }, message: "must be equal to one of the allowed values" };
         if (vErrors === null) {
-          vErrors = [err7];
+          vErrors = [err14];
         } else {
-          vErrors.push(err7);
+          vErrors.push(err14);
         }
         errors++;
       }
     }
     if (data.meta !== void 0) {
-      let data1 = data.meta;
-      if (data1 && typeof data1 == "object" && !Array.isArray(data1)) {
-        if (data1.id === void 0) {
-          const err8 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/required", keyword: "required", params: { missingProperty: "id" }, message: "must have required property 'id'" };
+      let data6 = data.meta;
+      if (data6 && typeof data6 == "object" && !Array.isArray(data6)) {
+        if (data6.id === void 0) {
+          const err15 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/required", keyword: "required", params: { missingProperty: "id" }, message: "must have required property 'id'" };
           if (vErrors === null) {
-            vErrors = [err8];
+            vErrors = [err15];
           } else {
-            vErrors.push(err8);
+            vErrors.push(err15);
           }
           errors++;
         }
-        if (data1.title === void 0) {
-          const err9 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/required", keyword: "required", params: { missingProperty: "title" }, message: "must have required property 'title'" };
+        if (data6.title === void 0) {
+          const err16 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/required", keyword: "required", params: { missingProperty: "title" }, message: "must have required property 'title'" };
           if (vErrors === null) {
-            vErrors = [err9];
+            vErrors = [err16];
           } else {
-            vErrors.push(err9);
+            vErrors.push(err16);
           }
           errors++;
         }
-        if (data1.author === void 0) {
-          const err10 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/required", keyword: "required", params: { missingProperty: "author" }, message: "must have required property 'author'" };
+        if (data6.author === void 0) {
+          const err17 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/required", keyword: "required", params: { missingProperty: "author" }, message: "must have required property 'author'" };
           if (vErrors === null) {
-            vErrors = [err10];
+            vErrors = [err17];
           } else {
-            vErrors.push(err10);
+            vErrors.push(err17);
           }
           errors++;
         }
-        if (data1.renderer === void 0) {
-          const err11 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/required", keyword: "required", params: { missingProperty: "renderer" }, message: "must have required property 'renderer'" };
+        if (data6.renderer === void 0) {
+          const err18 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/required", keyword: "required", params: { missingProperty: "renderer" }, message: "must have required property 'renderer'" };
           if (vErrors === null) {
-            vErrors = [err11];
+            vErrors = [err18];
           } else {
-            vErrors.push(err11);
+            vErrors.push(err18);
           }
           errors++;
         }
-        for (const key1 in data1) {
+        for (const key1 in data6) {
           if (!(key1 === "id" || key1 === "title" || key1 === "subtitle" || key1 === "author" || key1 === "course" || key1 === "objective" || key1 === "renderer" || key1 === "brandFooter")) {
-            const err12 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
-            if (vErrors === null) {
-              vErrors = [err12];
-            } else {
-              vErrors.push(err12);
-            }
-            errors++;
-          }
-        }
-        if (data1.id !== void 0) {
-          let data2 = data1.id;
-          if (typeof data2 === "string") {
-            if (!pattern4.test(data2)) {
-              const err13 = { instancePath: instancePath + "/meta/id", schemaPath: "#/properties/meta/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-z0-9-]{3,60}$" }, message: 'must match pattern "^[a-z0-9-]{3,60}$"' };
-              if (vErrors === null) {
-                vErrors = [err13];
-              } else {
-                vErrors.push(err13);
-              }
-              errors++;
-            }
-          } else {
-            const err14 = { instancePath: instancePath + "/meta/id", schemaPath: "#/properties/meta/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err14];
-            } else {
-              vErrors.push(err14);
-            }
-            errors++;
-          }
-        }
-        if (data1.title !== void 0) {
-          let data3 = data1.title;
-          if (typeof data3 === "string") {
-            if (func1(data3) > 90) {
-              const err15 = { instancePath: instancePath + "/meta/title", schemaPath: "#/properties/meta/properties/title/maxLength", keyword: "maxLength", params: { limit: 90 }, message: "must NOT have more than 90 characters" };
-              if (vErrors === null) {
-                vErrors = [err15];
-              } else {
-                vErrors.push(err15);
-              }
-              errors++;
-            }
-            if (func1(data3) < 1) {
-              const err16 = { instancePath: instancePath + "/meta/title", schemaPath: "#/properties/meta/properties/title/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-              if (vErrors === null) {
-                vErrors = [err16];
-              } else {
-                vErrors.push(err16);
-              }
-              errors++;
-            }
-          } else {
-            const err17 = { instancePath: instancePath + "/meta/title", schemaPath: "#/properties/meta/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err17];
-            } else {
-              vErrors.push(err17);
-            }
-            errors++;
-          }
-        }
-        if (data1.subtitle !== void 0) {
-          let data4 = data1.subtitle;
-          if (typeof data4 === "string") {
-            if (func1(data4) > 140) {
-              const err18 = { instancePath: instancePath + "/meta/subtitle", schemaPath: "#/properties/meta/properties/subtitle/maxLength", keyword: "maxLength", params: { limit: 140 }, message: "must NOT have more than 140 characters" };
-              if (vErrors === null) {
-                vErrors = [err18];
-              } else {
-                vErrors.push(err18);
-              }
-              errors++;
-            }
-          } else {
-            const err19 = { instancePath: instancePath + "/meta/subtitle", schemaPath: "#/properties/meta/properties/subtitle/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            const err19 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
             if (vErrors === null) {
               vErrors = [err19];
             } else {
@@ -6638,11 +6677,11 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data1.author !== void 0) {
-          let data5 = data1.author;
-          if (typeof data5 === "string") {
-            if (func1(data5) < 1) {
-              const err20 = { instancePath: instancePath + "/meta/author", schemaPath: "#/properties/meta/properties/author/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+        if (data6.id !== void 0) {
+          let data7 = data6.id;
+          if (typeof data7 === "string") {
+            if (!pattern4.test(data7)) {
+              const err20 = { instancePath: instancePath + "/meta/id", schemaPath: "#/properties/meta/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-z0-9-]{3,60}$" }, message: 'must match pattern "^[a-z0-9-]{3,60}$"' };
               if (vErrors === null) {
                 vErrors = [err20];
               } else {
@@ -6651,7 +6690,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               errors++;
             }
           } else {
-            const err21 = { instancePath: instancePath + "/meta/author", schemaPath: "#/properties/meta/properties/author/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            const err21 = { instancePath: instancePath + "/meta/id", schemaPath: "#/properties/meta/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
             if (vErrors === null) {
               vErrors = [err21];
             } else {
@@ -6660,22 +6699,20 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data1.course !== void 0) {
-          if (typeof data1.course !== "string") {
-            const err22 = { instancePath: instancePath + "/meta/course", schemaPath: "#/properties/meta/properties/course/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err22];
-            } else {
-              vErrors.push(err22);
+        if (data6.title !== void 0) {
+          let data8 = data6.title;
+          if (typeof data8 === "string") {
+            if (func1(data8) > 90) {
+              const err22 = { instancePath: instancePath + "/meta/title", schemaPath: "#/properties/meta/properties/title/maxLength", keyword: "maxLength", params: { limit: 90 }, message: "must NOT have more than 90 characters" };
+              if (vErrors === null) {
+                vErrors = [err22];
+              } else {
+                vErrors.push(err22);
+              }
+              errors++;
             }
-            errors++;
-          }
-        }
-        if (data1.objective !== void 0) {
-          let data7 = data1.objective;
-          if (typeof data7 === "string") {
-            if (func1(data7) > 400) {
-              const err23 = { instancePath: instancePath + "/meta/objective", schemaPath: "#/properties/meta/properties/objective/maxLength", keyword: "maxLength", params: { limit: 400 }, message: "must NOT have more than 400 characters" };
+            if (func1(data8) < 1) {
+              const err23 = { instancePath: instancePath + "/meta/title", schemaPath: "#/properties/meta/properties/title/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
               if (vErrors === null) {
                 vErrors = [err23];
               } else {
@@ -6684,7 +6721,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               errors++;
             }
           } else {
-            const err24 = { instancePath: instancePath + "/meta/objective", schemaPath: "#/properties/meta/properties/objective/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            const err24 = { instancePath: instancePath + "/meta/title", schemaPath: "#/properties/meta/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
             if (vErrors === null) {
               vErrors = [err24];
             } else {
@@ -6693,21 +6730,20 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data1.renderer !== void 0) {
-          let data8 = data1.renderer;
-          if (!(data8 === "exemplar" || data8 === "template")) {
-            const err25 = { instancePath: instancePath + "/meta/renderer", schemaPath: "#/properties/meta/properties/renderer/enum", keyword: "enum", params: { allowedValues: schema31.properties.meta.properties.renderer.enum }, message: "must be equal to one of the allowed values" };
-            if (vErrors === null) {
-              vErrors = [err25];
-            } else {
-              vErrors.push(err25);
+        if (data6.subtitle !== void 0) {
+          let data9 = data6.subtitle;
+          if (typeof data9 === "string") {
+            if (func1(data9) > 140) {
+              const err25 = { instancePath: instancePath + "/meta/subtitle", schemaPath: "#/properties/meta/properties/subtitle/maxLength", keyword: "maxLength", params: { limit: 140 }, message: "must NOT have more than 140 characters" };
+              if (vErrors === null) {
+                vErrors = [err25];
+              } else {
+                vErrors.push(err25);
+              }
+              errors++;
             }
-            errors++;
-          }
-        }
-        if (data1.brandFooter !== void 0) {
-          if (typeof data1.brandFooter !== "string") {
-            const err26 = { instancePath: instancePath + "/meta/brandFooter", schemaPath: "#/properties/meta/properties/brandFooter/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+          } else {
+            const err26 = { instancePath: instancePath + "/meta/subtitle", schemaPath: "#/properties/meta/properties/subtitle/type", keyword: "type", params: { type: "string" }, message: "must be string" };
             if (vErrors === null) {
               vErrors = [err26];
             } else {
@@ -6716,49 +6752,53 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-      } else {
-        const err27 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err27];
-        } else {
-          vErrors.push(err27);
-        }
-        errors++;
-      }
-    }
-    if (data.narrative !== void 0) {
-      let data10 = data.narrative;
-      if (data10 && typeof data10 == "object" && !Array.isArray(data10)) {
-        if (data10.premise === void 0) {
-          const err28 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/required", keyword: "required", params: { missingProperty: "premise" }, message: "must have required property 'premise'" };
-          if (vErrors === null) {
-            vErrors = [err28];
+        if (data6.author !== void 0) {
+          let data10 = data6.author;
+          if (typeof data10 === "string") {
+            if (func1(data10) < 1) {
+              const err27 = { instancePath: instancePath + "/meta/author", schemaPath: "#/properties/meta/properties/author/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+              if (vErrors === null) {
+                vErrors = [err27];
+              } else {
+                vErrors.push(err27);
+              }
+              errors++;
+            }
           } else {
-            vErrors.push(err28);
+            const err28 = { instancePath: instancePath + "/meta/author", schemaPath: "#/properties/meta/properties/author/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err28];
+            } else {
+              vErrors.push(err28);
+            }
+            errors++;
           }
-          errors++;
         }
-        if (data10.roleTitle === void 0) {
-          const err29 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/required", keyword: "required", params: { missingProperty: "roleTitle" }, message: "must have required property 'roleTitle'" };
-          if (vErrors === null) {
-            vErrors = [err29];
+        if (data6.course !== void 0) {
+          if (typeof data6.course !== "string") {
+            const err29 = { instancePath: instancePath + "/meta/course", schemaPath: "#/properties/meta/properties/course/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err29];
+            } else {
+              vErrors.push(err29);
+            }
+            errors++;
+          }
+        }
+        if (data6.objective !== void 0) {
+          let data12 = data6.objective;
+          if (typeof data12 === "string") {
+            if (func1(data12) > 400) {
+              const err30 = { instancePath: instancePath + "/meta/objective", schemaPath: "#/properties/meta/properties/objective/maxLength", keyword: "maxLength", params: { limit: 400 }, message: "must NOT have more than 400 characters" };
+              if (vErrors === null) {
+                vErrors = [err30];
+              } else {
+                vErrors.push(err30);
+              }
+              errors++;
+            }
           } else {
-            vErrors.push(err29);
-          }
-          errors++;
-        }
-        if (data10.successCondition === void 0) {
-          const err30 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/required", keyword: "required", params: { missingProperty: "successCondition" }, message: "must have required property 'successCondition'" };
-          if (vErrors === null) {
-            vErrors = [err30];
-          } else {
-            vErrors.push(err30);
-          }
-          errors++;
-        }
-        for (const key2 in data10) {
-          if (!(key2 === "premise" || key2 === "roleTitle" || key2 === "successCondition" || key2 === "openingMedia" || key2 === "companion" || key2 === "archivist")) {
-            const err31 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key2 }, message: "must NOT have additional properties" };
+            const err31 = { instancePath: instancePath + "/meta/objective", schemaPath: "#/properties/meta/properties/objective/type", keyword: "type", params: { type: "string" }, message: "must be string" };
             if (vErrors === null) {
               vErrors = [err31];
             } else {
@@ -6767,20 +6807,21 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data10.premise !== void 0) {
-          let data11 = data10.premise;
-          if (typeof data11 === "string") {
-            if (func1(data11) < 1) {
-              const err32 = { instancePath: instancePath + "/narrative/premise", schemaPath: "#/properties/narrative/properties/premise/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-              if (vErrors === null) {
-                vErrors = [err32];
-              } else {
-                vErrors.push(err32);
-              }
-              errors++;
+        if (data6.renderer !== void 0) {
+          let data13 = data6.renderer;
+          if (!(data13 === "exemplar" || data13 === "template")) {
+            const err32 = { instancePath: instancePath + "/meta/renderer", schemaPath: "#/properties/meta/properties/renderer/enum", keyword: "enum", params: { allowedValues: schema31.properties.meta.properties.renderer.enum }, message: "must be equal to one of the allowed values" };
+            if (vErrors === null) {
+              vErrors = [err32];
+            } else {
+              vErrors.push(err32);
             }
-          } else {
-            const err33 = { instancePath: instancePath + "/narrative/premise", schemaPath: "#/properties/narrative/properties/premise/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            errors++;
+          }
+        }
+        if (data6.brandFooter !== void 0) {
+          if (typeof data6.brandFooter !== "string") {
+            const err33 = { instancePath: instancePath + "/meta/brandFooter", schemaPath: "#/properties/meta/properties/brandFooter/type", keyword: "type", params: { type: "string" }, message: "must be string" };
             if (vErrors === null) {
               vErrors = [err33];
             } else {
@@ -6789,121 +6830,82 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data10.roleTitle !== void 0) {
-          if (typeof data10.roleTitle !== "string") {
-            const err34 = { instancePath: instancePath + "/narrative/roleTitle", schemaPath: "#/properties/narrative/properties/roleTitle/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+      } else {
+        const err34 = { instancePath: instancePath + "/meta", schemaPath: "#/properties/meta/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+        if (vErrors === null) {
+          vErrors = [err34];
+        } else {
+          vErrors.push(err34);
+        }
+        errors++;
+      }
+    }
+    if (data.narrative !== void 0) {
+      let data15 = data.narrative;
+      if (data15 && typeof data15 == "object" && !Array.isArray(data15)) {
+        if (data15.premise === void 0) {
+          const err35 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/required", keyword: "required", params: { missingProperty: "premise" }, message: "must have required property 'premise'" };
+          if (vErrors === null) {
+            vErrors = [err35];
+          } else {
+            vErrors.push(err35);
+          }
+          errors++;
+        }
+        if (data15.roleTitle === void 0) {
+          const err36 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/required", keyword: "required", params: { missingProperty: "roleTitle" }, message: "must have required property 'roleTitle'" };
+          if (vErrors === null) {
+            vErrors = [err36];
+          } else {
+            vErrors.push(err36);
+          }
+          errors++;
+        }
+        if (data15.successCondition === void 0) {
+          const err37 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/required", keyword: "required", params: { missingProperty: "successCondition" }, message: "must have required property 'successCondition'" };
+          if (vErrors === null) {
+            vErrors = [err37];
+          } else {
+            vErrors.push(err37);
+          }
+          errors++;
+        }
+        for (const key2 in data15) {
+          if (!(key2 === "premise" || key2 === "roleTitle" || key2 === "successCondition" || key2 === "openingMedia" || key2 === "companion" || key2 === "archivist" || key2 === "ambience")) {
+            const err38 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key2 }, message: "must NOT have additional properties" };
             if (vErrors === null) {
-              vErrors = [err34];
+              vErrors = [err38];
             } else {
-              vErrors.push(err34);
+              vErrors.push(err38);
             }
             errors++;
           }
         }
-        if (data10.successCondition !== void 0) {
-          if (typeof data10.successCondition !== "string") {
-            const err35 = { instancePath: instancePath + "/narrative/successCondition", schemaPath: "#/properties/narrative/properties/successCondition/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+        if (data15.premise !== void 0) {
+          let data16 = data15.premise;
+          if (typeof data16 === "string") {
+            if (func1(data16) < 1) {
+              const err39 = { instancePath: instancePath + "/narrative/premise", schemaPath: "#/properties/narrative/properties/premise/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+              if (vErrors === null) {
+                vErrors = [err39];
+              } else {
+                vErrors.push(err39);
+              }
+              errors++;
+            }
+          } else {
+            const err40 = { instancePath: instancePath + "/narrative/premise", schemaPath: "#/properties/narrative/properties/premise/type", keyword: "type", params: { type: "string" }, message: "must be string" };
             if (vErrors === null) {
-              vErrors = [err35];
+              vErrors = [err40];
             } else {
-              vErrors.push(err35);
+              vErrors.push(err40);
             }
             errors++;
           }
         }
-        if (data10.openingMedia !== void 0) {
-          let data14 = data10.openingMedia;
-          const _errs34 = errors;
-          let valid5 = true;
-          const _errs35 = errors;
-          if (data14 && typeof data14 == "object" && !Array.isArray(data14)) {
-            let missing0;
-            if (data14.carriesVisualMeaning === void 0 && (missing0 = "carriesVisualMeaning")) {
-              const err36 = {};
-              if (vErrors === null) {
-                vErrors = [err36];
-              } else {
-                vErrors.push(err36);
-              }
-              errors++;
-            } else {
-              if (data14.carriesVisualMeaning !== void 0) {
-                if (true !== data14.carriesVisualMeaning) {
-                  const err37 = {};
-                  if (vErrors === null) {
-                    vErrors = [err37];
-                  } else {
-                    vErrors.push(err37);
-                  }
-                  errors++;
-                }
-              }
-            }
-          }
-          var _valid0 = _errs35 === errors;
-          errors = _errs34;
-          if (vErrors !== null) {
-            if (_errs34) {
-              vErrors.length = _errs34;
-            } else {
-              vErrors = null;
-            }
-          }
-          if (_valid0) {
-            const _errs37 = errors;
-            const _errs38 = errors;
-            let valid7 = false;
-            const _errs39 = errors;
-            if (data14 && typeof data14 == "object" && !Array.isArray(data14)) {
-              if (data14.audioDescriptionSrc === void 0) {
-                const err38 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/0/required", keyword: "required", params: { missingProperty: "audioDescriptionSrc" }, message: "must have required property 'audioDescriptionSrc'" };
-                if (vErrors === null) {
-                  vErrors = [err38];
-                } else {
-                  vErrors.push(err38);
-                }
-                errors++;
-              }
-            }
-            var _valid1 = _errs39 === errors;
-            valid7 = valid7 || _valid1;
-            const _errs40 = errors;
-            if (data14 && typeof data14 == "object" && !Array.isArray(data14)) {
-              if (data14.describedTranscript === void 0) {
-                const err39 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/1/required", keyword: "required", params: { missingProperty: "describedTranscript" }, message: "must have required property 'describedTranscript'" };
-                if (vErrors === null) {
-                  vErrors = [err39];
-                } else {
-                  vErrors.push(err39);
-                }
-                errors++;
-              }
-            }
-            var _valid1 = _errs40 === errors;
-            valid7 = valid7 || _valid1;
-            if (!valid7) {
-              const err40 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf", keyword: "anyOf", params: {}, message: "must match a schema in anyOf" };
-              if (vErrors === null) {
-                vErrors = [err40];
-              } else {
-                vErrors.push(err40);
-              }
-              errors++;
-            } else {
-              errors = _errs38;
-              if (vErrors !== null) {
-                if (_errs38) {
-                  vErrors.length = _errs38;
-                } else {
-                  vErrors = null;
-                }
-              }
-            }
-            var _valid0 = _errs37 === errors;
-            valid5 = _valid0;
-          }
-          if (!valid5) {
-            const err41 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+        if (data15.roleTitle !== void 0) {
+          if (typeof data15.roleTitle !== "string") {
+            const err41 = { instancePath: instancePath + "/narrative/roleTitle", schemaPath: "#/properties/narrative/properties/roleTitle/type", keyword: "type", params: { type: "string" }, message: "must be string" };
             if (vErrors === null) {
               vErrors = [err41];
             } else {
@@ -6911,46 +6913,78 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             }
             errors++;
           }
-          if (data14 && typeof data14 == "object" && !Array.isArray(data14)) {
-            if (data14.kind === void 0) {
-              const err42 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "kind" }, message: "must have required property 'kind'" };
-              if (vErrors === null) {
-                vErrors = [err42];
-              } else {
-                vErrors.push(err42);
-              }
-              errors++;
+        }
+        if (data15.successCondition !== void 0) {
+          if (typeof data15.successCondition !== "string") {
+            const err42 = { instancePath: instancePath + "/narrative/successCondition", schemaPath: "#/properties/narrative/properties/successCondition/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err42];
+            } else {
+              vErrors.push(err42);
             }
-            if (data14.src === void 0) {
-              const err43 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "src" }, message: "must have required property 'src'" };
+            errors++;
+          }
+        }
+        if (data15.openingMedia !== void 0) {
+          let data19 = data15.openingMedia;
+          const _errs43 = errors;
+          let valid12 = true;
+          const _errs44 = errors;
+          if (data19 && typeof data19 == "object" && !Array.isArray(data19)) {
+            let missing3;
+            if (data19.carriesVisualMeaning === void 0 && (missing3 = "carriesVisualMeaning")) {
+              const err43 = {};
               if (vErrors === null) {
                 vErrors = [err43];
               } else {
                 vErrors.push(err43);
               }
               errors++;
-            }
-            if (data14.captionsSrc === void 0) {
-              const err44 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
-              if (vErrors === null) {
-                vErrors = [err44];
-              } else {
-                vErrors.push(err44);
+            } else {
+              if (data19.carriesVisualMeaning !== void 0) {
+                if (true !== data19.carriesVisualMeaning) {
+                  const err44 = {};
+                  if (vErrors === null) {
+                    vErrors = [err44];
+                  } else {
+                    vErrors.push(err44);
+                  }
+                  errors++;
+                }
               }
-              errors++;
             }
-            if (data14.transcript === void 0) {
-              const err45 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "transcript" }, message: "must have required property 'transcript'" };
-              if (vErrors === null) {
-                vErrors = [err45];
-              } else {
-                vErrors.push(err45);
+          }
+          var _valid1 = _errs44 === errors;
+          errors = _errs43;
+          if (vErrors !== null) {
+            if (_errs43) {
+              vErrors.length = _errs43;
+            } else {
+              vErrors = null;
+            }
+          }
+          if (_valid1) {
+            const _errs46 = errors;
+            const _errs47 = errors;
+            let valid14 = false;
+            const _errs48 = errors;
+            if (data19 && typeof data19 == "object" && !Array.isArray(data19)) {
+              if (data19.audioDescriptionSrc === void 0) {
+                const err45 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/0/required", keyword: "required", params: { missingProperty: "audioDescriptionSrc" }, message: "must have required property 'audioDescriptionSrc'" };
+                if (vErrors === null) {
+                  vErrors = [err45];
+                } else {
+                  vErrors.push(err45);
+                }
+                errors++;
               }
-              errors++;
             }
-            for (const key3 in data14) {
-              if (!func7.call(schema32.properties, key3)) {
-                const err46 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key3 }, message: "must NOT have additional properties" };
+            var _valid2 = _errs48 === errors;
+            valid14 = valid14 || _valid2;
+            const _errs49 = errors;
+            if (data19 && typeof data19 == "object" && !Array.isArray(data19)) {
+              if (data19.describedTranscript === void 0) {
+                const err46 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/1/required", keyword: "required", params: { missingProperty: "describedTranscript" }, message: "must have required property 'describedTranscript'" };
                 if (vErrors === null) {
                   vErrors = [err46];
                 } else {
@@ -6959,75 +6993,78 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data14.kind !== void 0) {
-              if ("video" !== data14.kind) {
-                const err47 = { instancePath: instancePath + "/narrative/openingMedia/kind", schemaPath: "#/$defs/video/properties/kind/const", keyword: "const", params: { allowedValue: "video" }, message: "must be equal to constant" };
-                if (vErrors === null) {
-                  vErrors = [err47];
-                } else {
-                  vErrors.push(err47);
-                }
-                errors++;
-              }
-            }
-            if (data14.id !== void 0) {
-              if (typeof data14.id !== "string") {
-                const err48 = { instancePath: instancePath + "/narrative/openingMedia/id", schemaPath: "#/$defs/video/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err48];
-                } else {
-                  vErrors.push(err48);
-                }
-                errors++;
-              }
-            }
-            if (data14.src !== void 0) {
-              let data18 = data14.src;
-              if (typeof data18 === "string") {
-                if (func1(data18) < 1) {
-                  const err49 = { instancePath: instancePath + "/narrative/openingMedia/src", schemaPath: "#/$defs/video/properties/src/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                  if (vErrors === null) {
-                    vErrors = [err49];
-                  } else {
-                    vErrors.push(err49);
-                  }
-                  errors++;
-                }
+            var _valid2 = _errs49 === errors;
+            valid14 = valid14 || _valid2;
+            if (!valid14) {
+              const err47 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf", keyword: "anyOf", params: {}, message: "must match a schema in anyOf" };
+              if (vErrors === null) {
+                vErrors = [err47];
               } else {
-                const err50 = { instancePath: instancePath + "/narrative/openingMedia/src", schemaPath: "#/$defs/video/properties/src/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err50];
+                vErrors.push(err47);
+              }
+              errors++;
+            } else {
+              errors = _errs47;
+              if (vErrors !== null) {
+                if (_errs47) {
+                  vErrors.length = _errs47;
                 } else {
-                  vErrors.push(err50);
+                  vErrors = null;
                 }
-                errors++;
               }
             }
-            if (data14.poster !== void 0) {
-              if (typeof data14.poster !== "string") {
-                const err51 = { instancePath: instancePath + "/narrative/openingMedia/poster", schemaPath: "#/$defs/video/properties/poster/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err51];
-                } else {
-                  vErrors.push(err51);
-                }
-                errors++;
-              }
+            var _valid1 = _errs46 === errors;
+            valid12 = _valid1;
+          }
+          if (!valid12) {
+            const err48 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+            if (vErrors === null) {
+              vErrors = [err48];
+            } else {
+              vErrors.push(err48);
             }
-            if (data14.captionsSrc !== void 0) {
-              let data20 = data14.captionsSrc;
-              if (typeof data20 === "string") {
-                if (func1(data20) < 1) {
-                  const err52 = { instancePath: instancePath + "/narrative/openingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                  if (vErrors === null) {
-                    vErrors = [err52];
-                  } else {
-                    vErrors.push(err52);
-                  }
-                  errors++;
-                }
+            errors++;
+          }
+          if (data19 && typeof data19 == "object" && !Array.isArray(data19)) {
+            if (data19.kind === void 0) {
+              const err49 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "kind" }, message: "must have required property 'kind'" };
+              if (vErrors === null) {
+                vErrors = [err49];
               } else {
-                const err53 = { instancePath: instancePath + "/narrative/openingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                vErrors.push(err49);
+              }
+              errors++;
+            }
+            if (data19.src === void 0) {
+              const err50 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "src" }, message: "must have required property 'src'" };
+              if (vErrors === null) {
+                vErrors = [err50];
+              } else {
+                vErrors.push(err50);
+              }
+              errors++;
+            }
+            if (data19.captionsSrc === void 0) {
+              const err51 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
+              if (vErrors === null) {
+                vErrors = [err51];
+              } else {
+                vErrors.push(err51);
+              }
+              errors++;
+            }
+            if (data19.transcript === void 0) {
+              const err52 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "transcript" }, message: "must have required property 'transcript'" };
+              if (vErrors === null) {
+                vErrors = [err52];
+              } else {
+                vErrors.push(err52);
+              }
+              errors++;
+            }
+            for (const key3 in data19) {
+              if (!func7.call(schema32.properties, key3)) {
+                const err53 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key3 }, message: "must NOT have additional properties" };
                 if (vErrors === null) {
                   vErrors = [err53];
                 } else {
@@ -7036,20 +7073,20 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data14.transcript !== void 0) {
-              let data21 = data14.transcript;
-              if (typeof data21 === "string") {
-                if (func1(data21) < 1) {
-                  const err54 = { instancePath: instancePath + "/narrative/openingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                  if (vErrors === null) {
-                    vErrors = [err54];
-                  } else {
-                    vErrors.push(err54);
-                  }
-                  errors++;
+            if (data19.kind !== void 0) {
+              if ("video" !== data19.kind) {
+                const err54 = { instancePath: instancePath + "/narrative/openingMedia/kind", schemaPath: "#/$defs/video/properties/kind/const", keyword: "const", params: { allowedValue: "video" }, message: "must be equal to constant" };
+                if (vErrors === null) {
+                  vErrors = [err54];
+                } else {
+                  vErrors.push(err54);
                 }
-              } else {
-                const err55 = { instancePath: instancePath + "/narrative/openingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                errors++;
+              }
+            }
+            if (data19.id !== void 0) {
+              if (typeof data19.id !== "string") {
+                const err55 = { instancePath: instancePath + "/narrative/openingMedia/id", schemaPath: "#/$defs/video/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err55];
                 } else {
@@ -7058,20 +7095,20 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data14.audioDescriptionSrc !== void 0) {
-              if (typeof data14.audioDescriptionSrc !== "string") {
-                const err56 = { instancePath: instancePath + "/narrative/openingMedia/audioDescriptionSrc", schemaPath: "#/$defs/video/properties/audioDescriptionSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err56];
-                } else {
-                  vErrors.push(err56);
+            if (data19.src !== void 0) {
+              let data23 = data19.src;
+              if (typeof data23 === "string") {
+                if (func1(data23) < 1) {
+                  const err56 = { instancePath: instancePath + "/narrative/openingMedia/src", schemaPath: "#/$defs/video/properties/src/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (vErrors === null) {
+                    vErrors = [err56];
+                  } else {
+                    vErrors.push(err56);
+                  }
+                  errors++;
                 }
-                errors++;
-              }
-            }
-            if (data14.describedTranscript !== void 0) {
-              if (typeof data14.describedTranscript !== "string") {
-                const err57 = { instancePath: instancePath + "/narrative/openingMedia/describedTranscript", schemaPath: "#/$defs/video/properties/describedTranscript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+              } else {
+                const err57 = { instancePath: instancePath + "/narrative/openingMedia/src", schemaPath: "#/$defs/video/properties/src/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err57];
                 } else {
@@ -7080,9 +7117,9 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data14.carriesVisualMeaning !== void 0) {
-              if (typeof data14.carriesVisualMeaning !== "boolean") {
-                const err58 = { instancePath: instancePath + "/narrative/openingMedia/carriesVisualMeaning", schemaPath: "#/$defs/video/properties/carriesVisualMeaning/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
+            if (data19.poster !== void 0) {
+              if (typeof data19.poster !== "string") {
+                const err58 = { instancePath: instancePath + "/narrative/openingMedia/poster", schemaPath: "#/$defs/video/properties/poster/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err58];
                 } else {
@@ -7091,59 +7128,53 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-          } else {
-            const err59 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err59];
-            } else {
-              vErrors.push(err59);
-            }
-            errors++;
-          }
-        }
-        if (data10.companion !== void 0) {
-          if (!validate21(data10.companion, { instancePath: instancePath + "/narrative/companion", parentData: data10, parentDataProperty: "companion", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate21.errors : vErrors.concat(validate21.errors);
-            errors = vErrors.length;
-          }
-        }
-        if (data10.archivist !== void 0) {
-          let data26 = data10.archivist;
-          if (data26 && typeof data26 == "object" && !Array.isArray(data26)) {
-            if (data26.name === void 0) {
-              const err60 = { instancePath: instancePath + "/narrative/archivist", schemaPath: "#/properties/narrative/properties/archivist/required", keyword: "required", params: { missingProperty: "name" }, message: "must have required property 'name'" };
-              if (vErrors === null) {
-                vErrors = [err60];
-              } else {
-                vErrors.push(err60);
-              }
-              errors++;
-            }
-            for (const key4 in data26) {
-              if (!(key4 === "name" || key4 === "portrait")) {
-                const err61 = { instancePath: instancePath + "/narrative/archivist", schemaPath: "#/properties/narrative/properties/archivist/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key4 }, message: "must NOT have additional properties" };
-                if (vErrors === null) {
-                  vErrors = [err61];
-                } else {
-                  vErrors.push(err61);
-                }
-                errors++;
-              }
-            }
-            if (data26.name !== void 0) {
-              let data27 = data26.name;
-              if (typeof data27 === "string") {
-                if (func1(data27) < 1) {
-                  const err62 = { instancePath: instancePath + "/narrative/archivist/name", schemaPath: "#/properties/narrative/properties/archivist/properties/name/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+            if (data19.captionsSrc !== void 0) {
+              let data25 = data19.captionsSrc;
+              if (typeof data25 === "string") {
+                if (func1(data25) < 1) {
+                  const err59 = { instancePath: instancePath + "/narrative/openingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                   if (vErrors === null) {
-                    vErrors = [err62];
+                    vErrors = [err59];
                   } else {
-                    vErrors.push(err62);
+                    vErrors.push(err59);
                   }
                   errors++;
                 }
               } else {
-                const err63 = { instancePath: instancePath + "/narrative/archivist/name", schemaPath: "#/properties/narrative/properties/archivist/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                const err60 = { instancePath: instancePath + "/narrative/openingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err60];
+                } else {
+                  vErrors.push(err60);
+                }
+                errors++;
+              }
+            }
+            if (data19.transcript !== void 0) {
+              let data26 = data19.transcript;
+              if (typeof data26 === "string") {
+                if (func1(data26) < 1) {
+                  const err61 = { instancePath: instancePath + "/narrative/openingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (vErrors === null) {
+                    vErrors = [err61];
+                  } else {
+                    vErrors.push(err61);
+                  }
+                  errors++;
+                }
+              } else {
+                const err62 = { instancePath: instancePath + "/narrative/openingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err62];
+                } else {
+                  vErrors.push(err62);
+                }
+                errors++;
+              }
+            }
+            if (data19.audioDescriptionSrc !== void 0) {
+              if (typeof data19.audioDescriptionSrc !== "string") {
+                const err63 = { instancePath: instancePath + "/narrative/openingMedia/audioDescriptionSrc", schemaPath: "#/$defs/video/properties/audioDescriptionSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err63];
                 } else {
@@ -7152,81 +7183,59 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data26.portrait !== void 0) {
-              let data28 = data26.portrait;
-              const _errs69 = errors;
-              let valid12 = true;
-              const _errs70 = errors;
-              if (data28 && typeof data28 == "object" && !Array.isArray(data28)) {
-                let missing1;
-                if (data28.decorative === void 0 && (missing1 = "decorative")) {
-                  const err64 = {};
-                  if (vErrors === null) {
-                    vErrors = [err64];
-                  } else {
-                    vErrors.push(err64);
-                  }
-                  errors++;
+            if (data19.describedTranscript !== void 0) {
+              if (typeof data19.describedTranscript !== "string") {
+                const err64 = { instancePath: instancePath + "/narrative/openingMedia/describedTranscript", schemaPath: "#/$defs/video/properties/describedTranscript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err64];
                 } else {
-                  if (data28.decorative !== void 0) {
-                    if (false !== data28.decorative) {
-                      const err65 = {};
-                      if (vErrors === null) {
-                        vErrors = [err65];
-                      } else {
-                        vErrors.push(err65);
-                      }
-                      errors++;
-                    }
-                  }
+                  vErrors.push(err64);
                 }
+                errors++;
               }
-              var _valid2 = _errs70 === errors;
-              errors = _errs69;
-              if (vErrors !== null) {
-                if (_errs69) {
-                  vErrors.length = _errs69;
+            }
+            if (data19.carriesVisualMeaning !== void 0) {
+              if (typeof data19.carriesVisualMeaning !== "boolean") {
+                const err65 = { instancePath: instancePath + "/narrative/openingMedia/carriesVisualMeaning", schemaPath: "#/$defs/video/properties/carriesVisualMeaning/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
+                if (vErrors === null) {
+                  vErrors = [err65];
                 } else {
-                  vErrors = null;
+                  vErrors.push(err65);
                 }
+                errors++;
               }
-              if (_valid2) {
-                const _errs72 = errors;
-                if (data28 && typeof data28 == "object" && !Array.isArray(data28)) {
-                  if (data28.alt === void 0) {
-                    const err66 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/allOf/0/then/required", keyword: "required", params: { missingProperty: "alt" }, message: "must have required property 'alt'" };
-                    if (vErrors === null) {
-                      vErrors = [err66];
-                    } else {
-                      vErrors.push(err66);
-                    }
-                    errors++;
-                  }
-                  if (data28.alt !== void 0) {
-                    let data30 = data28.alt;
-                    if (typeof data30 === "string") {
-                      if (func1(data30) < 1) {
-                        const err67 = { instancePath: instancePath + "/narrative/archivist/portrait/alt", schemaPath: "#/$defs/image/allOf/0/then/properties/alt/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                        if (vErrors === null) {
-                          vErrors = [err67];
-                        } else {
-                          vErrors.push(err67);
-                        }
-                        errors++;
-                      }
-                    }
-                  }
-                }
-                var _valid2 = _errs72 === errors;
-                valid12 = _valid2;
-                if (valid12) {
-                  var props0 = {};
-                  props0.alt = true;
-                  props0.decorative = true;
-                }
+            }
+          } else {
+            const err66 = { instancePath: instancePath + "/narrative/openingMedia", schemaPath: "#/$defs/video/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+            if (vErrors === null) {
+              vErrors = [err66];
+            } else {
+              vErrors.push(err66);
+            }
+            errors++;
+          }
+        }
+        if (data15.companion !== void 0) {
+          if (!validate21(data15.companion, { instancePath: instancePath + "/narrative/companion", parentData: data15, parentDataProperty: "companion", rootData, dynamicAnchors })) {
+            vErrors = vErrors === null ? validate21.errors : vErrors.concat(validate21.errors);
+            errors = vErrors.length;
+          }
+        }
+        if (data15.archivist !== void 0) {
+          let data31 = data15.archivist;
+          if (data31 && typeof data31 == "object" && !Array.isArray(data31)) {
+            if (data31.name === void 0) {
+              const err67 = { instancePath: instancePath + "/narrative/archivist", schemaPath: "#/properties/narrative/properties/archivist/required", keyword: "required", params: { missingProperty: "name" }, message: "must have required property 'name'" };
+              if (vErrors === null) {
+                vErrors = [err67];
+              } else {
+                vErrors.push(err67);
               }
-              if (!valid12) {
-                const err68 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+              errors++;
+            }
+            for (const key4 in data31) {
+              if (!(key4 === "name" || key4 === "portrait")) {
+                const err68 = { instancePath: instancePath + "/narrative/archivist", schemaPath: "#/properties/narrative/properties/archivist/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key4 }, message: "must NOT have additional properties" };
                 if (vErrors === null) {
                   vErrors = [err68];
                 } else {
@@ -7234,190 +7243,218 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 }
                 errors++;
               }
-              const _errs75 = errors;
-              let valid15 = true;
-              const _errs76 = errors;
-              if (data28 && typeof data28 == "object" && !Array.isArray(data28)) {
-                let missing2;
-                if (data28.decorative === void 0 && (missing2 = "decorative")) {
-                  const err69 = {};
+            }
+            if (data31.name !== void 0) {
+              let data32 = data31.name;
+              if (typeof data32 === "string") {
+                if (func1(data32) < 1) {
+                  const err69 = { instancePath: instancePath + "/narrative/archivist/name", schemaPath: "#/properties/narrative/properties/archivist/properties/name/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                   if (vErrors === null) {
                     vErrors = [err69];
                   } else {
                     vErrors.push(err69);
                   }
                   errors++;
+                }
+              } else {
+                const err70 = { instancePath: instancePath + "/narrative/archivist/name", schemaPath: "#/properties/narrative/properties/archivist/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err70];
                 } else {
-                  if (data28.decorative !== void 0) {
-                    if (true !== data28.decorative) {
-                      const err70 = {};
+                  vErrors.push(err70);
+                }
+                errors++;
+              }
+            }
+            if (data31.portrait !== void 0) {
+              let data33 = data31.portrait;
+              const _errs78 = errors;
+              let valid19 = true;
+              const _errs79 = errors;
+              if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
+                let missing4;
+                if (data33.decorative === void 0 && (missing4 = "decorative")) {
+                  const err71 = {};
+                  if (vErrors === null) {
+                    vErrors = [err71];
+                  } else {
+                    vErrors.push(err71);
+                  }
+                  errors++;
+                } else {
+                  if (data33.decorative !== void 0) {
+                    if (false !== data33.decorative) {
+                      const err72 = {};
                       if (vErrors === null) {
-                        vErrors = [err70];
+                        vErrors = [err72];
                       } else {
-                        vErrors.push(err70);
+                        vErrors.push(err72);
                       }
                       errors++;
                     }
                   }
                 }
               }
-              var _valid3 = _errs76 === errors;
-              errors = _errs75;
+              var _valid3 = _errs79 === errors;
+              errors = _errs78;
               if (vErrors !== null) {
-                if (_errs75) {
-                  vErrors.length = _errs75;
+                if (_errs78) {
+                  vErrors.length = _errs78;
                 } else {
                   vErrors = null;
                 }
               }
               if (_valid3) {
-                const _errs78 = errors;
-                if (data28 && typeof data28 == "object" && !Array.isArray(data28)) {
-                  if (data28.alt !== void 0) {
-                    if ("" !== data28.alt) {
-                      const err71 = { instancePath: instancePath + "/narrative/archivist/portrait/alt", schemaPath: "#/$defs/image/allOf/1/then/properties/alt/const", keyword: "const", params: { allowedValue: "" }, message: "must be equal to constant" };
-                      if (vErrors === null) {
-                        vErrors = [err71];
-                      } else {
-                        vErrors.push(err71);
+                const _errs81 = errors;
+                if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
+                  if (data33.alt === void 0) {
+                    const err73 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/allOf/0/then/required", keyword: "required", params: { missingProperty: "alt" }, message: "must have required property 'alt'" };
+                    if (vErrors === null) {
+                      vErrors = [err73];
+                    } else {
+                      vErrors.push(err73);
+                    }
+                    errors++;
+                  }
+                  if (data33.alt !== void 0) {
+                    let data35 = data33.alt;
+                    if (typeof data35 === "string") {
+                      if (func1(data35) < 1) {
+                        const err74 = { instancePath: instancePath + "/narrative/archivist/portrait/alt", schemaPath: "#/$defs/image/allOf/0/then/properties/alt/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                        if (vErrors === null) {
+                          vErrors = [err74];
+                        } else {
+                          vErrors.push(err74);
+                        }
+                        errors++;
                       }
-                      errors++;
                     }
                   }
                 }
-                var _valid3 = _errs78 === errors;
-                valid15 = _valid3;
-                if (valid15) {
+                var _valid3 = _errs81 === errors;
+                valid19 = _valid3;
+                if (valid19) {
                   var props1 = {};
                   props1.alt = true;
                   props1.decorative = true;
                 }
               }
-              if (!valid15) {
-                const err72 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/allOf/1/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+              if (!valid19) {
+                const err75 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
                 if (vErrors === null) {
-                  vErrors = [err72];
+                  vErrors = [err75];
                 } else {
-                  vErrors.push(err72);
+                  vErrors.push(err75);
                 }
                 errors++;
               }
-              if (props0 !== true && props1 !== void 0) {
-                if (props1 === true) {
-                  props0 = true;
+              const _errs84 = errors;
+              let valid22 = true;
+              const _errs85 = errors;
+              if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
+                let missing5;
+                if (data33.decorative === void 0 && (missing5 = "decorative")) {
+                  const err76 = {};
+                  if (vErrors === null) {
+                    vErrors = [err76];
+                  } else {
+                    vErrors.push(err76);
+                  }
+                  errors++;
                 } else {
-                  props0 = props0 || {};
-                  Object.assign(props0, props1);
-                }
-              }
-              if (data28 && typeof data28 == "object" && !Array.isArray(data28)) {
-                if (data28.kind === void 0) {
-                  const err73 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/required", keyword: "required", params: { missingProperty: "kind" }, message: "must have required property 'kind'" };
-                  if (vErrors === null) {
-                    vErrors = [err73];
-                  } else {
-                    vErrors.push(err73);
-                  }
-                  errors++;
-                }
-                if (data28.src === void 0) {
-                  const err74 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/required", keyword: "required", params: { missingProperty: "src" }, message: "must have required property 'src'" };
-                  if (vErrors === null) {
-                    vErrors = [err74];
-                  } else {
-                    vErrors.push(err74);
-                  }
-                  errors++;
-                }
-                if (data28.decorative === void 0) {
-                  const err75 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/required", keyword: "required", params: { missingProperty: "decorative" }, message: "must have required property 'decorative'" };
-                  if (vErrors === null) {
-                    vErrors = [err75];
-                  } else {
-                    vErrors.push(err75);
-                  }
-                  errors++;
-                }
-                for (const key5 in data28) {
-                  if (!(key5 === "kind" || key5 === "id" || key5 === "src" || key5 === "decorative" || key5 === "alt" || key5 === "longDescription" || key5 === "credit")) {
-                    const err76 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key5 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err76];
-                    } else {
-                      vErrors.push(err76);
-                    }
-                    errors++;
-                  }
-                }
-                if (data28.kind !== void 0) {
-                  if ("image" !== data28.kind) {
-                    const err77 = { instancePath: instancePath + "/narrative/archivist/portrait/kind", schemaPath: "#/$defs/image/properties/kind/const", keyword: "const", params: { allowedValue: "image" }, message: "must be equal to constant" };
-                    if (vErrors === null) {
-                      vErrors = [err77];
-                    } else {
-                      vErrors.push(err77);
-                    }
-                    errors++;
-                  }
-                }
-                if (data28.id !== void 0) {
-                  if (typeof data28.id !== "string") {
-                    const err78 = { instancePath: instancePath + "/narrative/archivist/portrait/id", schemaPath: "#/$defs/image/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err78];
-                    } else {
-                      vErrors.push(err78);
-                    }
-                    errors++;
-                  }
-                }
-                if (data28.src !== void 0) {
-                  let data35 = data28.src;
-                  if (typeof data35 === "string") {
-                    if (func1(data35) < 1) {
-                      const err79 = { instancePath: instancePath + "/narrative/archivist/portrait/src", schemaPath: "#/$defs/image/properties/src/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (data33.decorative !== void 0) {
+                    if (true !== data33.decorative) {
+                      const err77 = {};
                       if (vErrors === null) {
-                        vErrors = [err79];
+                        vErrors = [err77];
                       } else {
-                        vErrors.push(err79);
+                        vErrors.push(err77);
                       }
                       errors++;
                     }
+                  }
+                }
+              }
+              var _valid4 = _errs85 === errors;
+              errors = _errs84;
+              if (vErrors !== null) {
+                if (_errs84) {
+                  vErrors.length = _errs84;
+                } else {
+                  vErrors = null;
+                }
+              }
+              if (_valid4) {
+                const _errs87 = errors;
+                if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
+                  if (data33.alt !== void 0) {
+                    if ("" !== data33.alt) {
+                      const err78 = { instancePath: instancePath + "/narrative/archivist/portrait/alt", schemaPath: "#/$defs/image/allOf/1/then/properties/alt/const", keyword: "const", params: { allowedValue: "" }, message: "must be equal to constant" };
+                      if (vErrors === null) {
+                        vErrors = [err78];
+                      } else {
+                        vErrors.push(err78);
+                      }
+                      errors++;
+                    }
+                  }
+                }
+                var _valid4 = _errs87 === errors;
+                valid22 = _valid4;
+                if (valid22) {
+                  var props2 = {};
+                  props2.alt = true;
+                  props2.decorative = true;
+                }
+              }
+              if (!valid22) {
+                const err79 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/allOf/1/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+                if (vErrors === null) {
+                  vErrors = [err79];
+                } else {
+                  vErrors.push(err79);
+                }
+                errors++;
+              }
+              if (props1 !== true && props2 !== void 0) {
+                if (props2 === true) {
+                  props1 = true;
+                } else {
+                  props1 = props1 || {};
+                  Object.assign(props1, props2);
+                }
+              }
+              if (data33 && typeof data33 == "object" && !Array.isArray(data33)) {
+                if (data33.kind === void 0) {
+                  const err80 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/required", keyword: "required", params: { missingProperty: "kind" }, message: "must have required property 'kind'" };
+                  if (vErrors === null) {
+                    vErrors = [err80];
                   } else {
-                    const err80 = { instancePath: instancePath + "/narrative/archivist/portrait/src", schemaPath: "#/$defs/image/properties/src/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err80];
-                    } else {
-                      vErrors.push(err80);
-                    }
-                    errors++;
+                    vErrors.push(err80);
                   }
+                  errors++;
                 }
-                if (data28.decorative !== void 0) {
-                  if (typeof data28.decorative !== "boolean") {
-                    const err81 = { instancePath: instancePath + "/narrative/archivist/portrait/decorative", schemaPath: "#/$defs/image/properties/decorative/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                    if (vErrors === null) {
-                      vErrors = [err81];
-                    } else {
-                      vErrors.push(err81);
-                    }
-                    errors++;
+                if (data33.src === void 0) {
+                  const err81 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/required", keyword: "required", params: { missingProperty: "src" }, message: "must have required property 'src'" };
+                  if (vErrors === null) {
+                    vErrors = [err81];
+                  } else {
+                    vErrors.push(err81);
                   }
+                  errors++;
                 }
-                if (data28.alt !== void 0) {
-                  if (typeof data28.alt !== "string") {
-                    const err82 = { instancePath: instancePath + "/narrative/archivist/portrait/alt", schemaPath: "#/$defs/image/properties/alt/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err82];
-                    } else {
-                      vErrors.push(err82);
-                    }
-                    errors++;
+                if (data33.decorative === void 0) {
+                  const err82 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/required", keyword: "required", params: { missingProperty: "decorative" }, message: "must have required property 'decorative'" };
+                  if (vErrors === null) {
+                    vErrors = [err82];
+                  } else {
+                    vErrors.push(err82);
                   }
+                  errors++;
                 }
-                if (data28.longDescription !== void 0) {
-                  if (typeof data28.longDescription !== "string") {
-                    const err83 = { instancePath: instancePath + "/narrative/archivist/portrait/longDescription", schemaPath: "#/$defs/image/properties/longDescription/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                for (const key5 in data33) {
+                  if (!(key5 === "kind" || key5 === "id" || key5 === "src" || key5 === "decorative" || key5 === "alt" || key5 === "longDescription" || key5 === "credit")) {
+                    const err83 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key5 }, message: "must NOT have additional properties" };
                     if (vErrors === null) {
                       vErrors = [err83];
                     } else {
@@ -7426,9 +7463,9 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     errors++;
                   }
                 }
-                if (data28.credit !== void 0) {
-                  if (typeof data28.credit !== "string") {
-                    const err84 = { instancePath: instancePath + "/narrative/archivist/portrait/credit", schemaPath: "#/$defs/image/properties/credit/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (data33.kind !== void 0) {
+                  if ("image" !== data33.kind) {
+                    const err84 = { instancePath: instancePath + "/narrative/archivist/portrait/kind", schemaPath: "#/$defs/image/properties/kind/const", keyword: "const", params: { allowedValue: "image" }, message: "must be equal to constant" };
                     if (vErrors === null) {
                       vErrors = [err84];
                     } else {
@@ -7437,216 +7474,191 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     errors++;
                   }
                 }
+                if (data33.id !== void 0) {
+                  if (typeof data33.id !== "string") {
+                    const err85 = { instancePath: instancePath + "/narrative/archivist/portrait/id", schemaPath: "#/$defs/image/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err85];
+                    } else {
+                      vErrors.push(err85);
+                    }
+                    errors++;
+                  }
+                }
+                if (data33.src !== void 0) {
+                  let data40 = data33.src;
+                  if (typeof data40 === "string") {
+                    if (func1(data40) < 1) {
+                      const err86 = { instancePath: instancePath + "/narrative/archivist/portrait/src", schemaPath: "#/$defs/image/properties/src/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                      if (vErrors === null) {
+                        vErrors = [err86];
+                      } else {
+                        vErrors.push(err86);
+                      }
+                      errors++;
+                    }
+                  } else {
+                    const err87 = { instancePath: instancePath + "/narrative/archivist/portrait/src", schemaPath: "#/$defs/image/properties/src/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err87];
+                    } else {
+                      vErrors.push(err87);
+                    }
+                    errors++;
+                  }
+                }
+                if (data33.decorative !== void 0) {
+                  if (typeof data33.decorative !== "boolean") {
+                    const err88 = { instancePath: instancePath + "/narrative/archivist/portrait/decorative", schemaPath: "#/$defs/image/properties/decorative/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
+                    if (vErrors === null) {
+                      vErrors = [err88];
+                    } else {
+                      vErrors.push(err88);
+                    }
+                    errors++;
+                  }
+                }
+                if (data33.alt !== void 0) {
+                  if (typeof data33.alt !== "string") {
+                    const err89 = { instancePath: instancePath + "/narrative/archivist/portrait/alt", schemaPath: "#/$defs/image/properties/alt/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err89];
+                    } else {
+                      vErrors.push(err89);
+                    }
+                    errors++;
+                  }
+                }
+                if (data33.longDescription !== void 0) {
+                  if (typeof data33.longDescription !== "string") {
+                    const err90 = { instancePath: instancePath + "/narrative/archivist/portrait/longDescription", schemaPath: "#/$defs/image/properties/longDescription/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err90];
+                    } else {
+                      vErrors.push(err90);
+                    }
+                    errors++;
+                  }
+                }
+                if (data33.credit !== void 0) {
+                  if (typeof data33.credit !== "string") {
+                    const err91 = { instancePath: instancePath + "/narrative/archivist/portrait/credit", schemaPath: "#/$defs/image/properties/credit/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err91];
+                    } else {
+                      vErrors.push(err91);
+                    }
+                    errors++;
+                  }
+                }
               } else {
-                const err85 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+                const err92 = { instancePath: instancePath + "/narrative/archivist/portrait", schemaPath: "#/$defs/image/type", keyword: "type", params: { type: "object" }, message: "must be object" };
                 if (vErrors === null) {
-                  vErrors = [err85];
+                  vErrors = [err92];
                 } else {
-                  vErrors.push(err85);
+                  vErrors.push(err92);
                 }
                 errors++;
               }
             }
           } else {
-            const err86 = { instancePath: instancePath + "/narrative/archivist", schemaPath: "#/properties/narrative/properties/archivist/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+            const err93 = { instancePath: instancePath + "/narrative/archivist", schemaPath: "#/properties/narrative/properties/archivist/type", keyword: "type", params: { type: "object" }, message: "must be object" };
             if (vErrors === null) {
-              vErrors = [err86];
+              vErrors = [err93];
             } else {
-              vErrors.push(err86);
+              vErrors.push(err93);
             }
             errors++;
           }
         }
-      } else {
-        const err87 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err87];
-        } else {
-          vErrors.push(err87);
-        }
-        errors++;
-      }
-    }
-    if (data.levels !== void 0) {
-      let data40 = data.levels;
-      if (Array.isArray(data40)) {
-        if (data40.length > 8) {
-          const err88 = { instancePath: instancePath + "/levels", schemaPath: "#/properties/levels/maxItems", keyword: "maxItems", params: { limit: 8 }, message: "must NOT have more than 8 items" };
-          if (vErrors === null) {
-            vErrors = [err88];
-          } else {
-            vErrors.push(err88);
-          }
-          errors++;
-        }
-        if (data40.length < 1) {
-          const err89 = { instancePath: instancePath + "/levels", schemaPath: "#/properties/levels/minItems", keyword: "minItems", params: { limit: 1 }, message: "must NOT have fewer than 1 items" };
-          if (vErrors === null) {
-            vErrors = [err89];
-          } else {
-            vErrors.push(err89);
-          }
-          errors++;
-        }
-        const len0 = data40.length;
-        for (let i0 = 0; i0 < len0; i0++) {
-          if (!validate23(data40[i0], { instancePath: instancePath + "/levels/" + i0, parentData: data40, parentDataProperty: i0, rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate23.errors : vErrors.concat(validate23.errors);
-            errors = vErrors.length;
-          }
-        }
-      } else {
-        const err90 = { instancePath: instancePath + "/levels", schemaPath: "#/properties/levels/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-        if (vErrors === null) {
-          vErrors = [err90];
-        } else {
-          vErrors.push(err90);
-        }
-        errors++;
-      }
-    }
-    if (data.finale !== void 0) {
-      let data42 = data.finale;
-      if (data42 && typeof data42 == "object" && !Array.isArray(data42)) {
-        if (data42.title === void 0) {
-          const err91 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/required", keyword: "required", params: { missingProperty: "title" }, message: "must have required property 'title'" };
-          if (vErrors === null) {
-            vErrors = [err91];
-          } else {
-            vErrors.push(err91);
-          }
-          errors++;
-        }
-        if (data42.prompt === void 0) {
-          const err92 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/required", keyword: "required", params: { missingProperty: "prompt" }, message: "must have required property 'prompt'" };
-          if (vErrors === null) {
-            vErrors = [err92];
-          } else {
-            vErrors.push(err92);
-          }
-          errors++;
-        }
-        if (data42.rubric === void 0) {
-          const err93 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/required", keyword: "required", params: { missingProperty: "rubric" }, message: "must have required property 'rubric'" };
-          if (vErrors === null) {
-            vErrors = [err93];
-          } else {
-            vErrors.push(err93);
-          }
-          errors++;
-        }
-        if (data42.closingText === void 0) {
-          const err94 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/required", keyword: "required", params: { missingProperty: "closingText" }, message: "must have required property 'closingText'" };
-          if (vErrors === null) {
-            vErrors = [err94];
-          } else {
-            vErrors.push(err94);
-          }
-          errors++;
-        }
-        for (const key6 in data42) {
-          if (!func7.call(schema31.properties.finale.properties, key6)) {
-            const err95 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key6 }, message: "must NOT have additional properties" };
-            if (vErrors === null) {
-              vErrors = [err95];
-            } else {
-              vErrors.push(err95);
-            }
-            errors++;
-          }
-        }
-        if (data42.title !== void 0) {
-          if (typeof data42.title !== "string") {
-            const err96 = { instancePath: instancePath + "/finale/title", schemaPath: "#/properties/finale/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err96];
-            } else {
-              vErrors.push(err96);
-            }
-            errors++;
-          }
-        }
-        if (data42.setup !== void 0) {
-          if (typeof data42.setup !== "string") {
-            const err97 = { instancePath: instancePath + "/finale/setup", schemaPath: "#/properties/finale/properties/setup/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err97];
-            } else {
-              vErrors.push(err97);
-            }
-            errors++;
-          }
-        }
-        if (data42.prompt !== void 0) {
-          let data45 = data42.prompt;
-          if (typeof data45 === "string") {
-            if (func1(data45) < 1) {
-              const err98 = { instancePath: instancePath + "/finale/prompt", schemaPath: "#/properties/finale/properties/prompt/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+        if (data15.ambience !== void 0) {
+          let data45 = data15.ambience;
+          if (data45 && typeof data45 == "object" && !Array.isArray(data45)) {
+            if (data45.kind === void 0) {
+              const err94 = { instancePath: instancePath + "/narrative/ambience", schemaPath: "#/$defs/ambience/required", keyword: "required", params: { missingProperty: "kind" }, message: "must have required property 'kind'" };
               if (vErrors === null) {
-                vErrors = [err98];
+                vErrors = [err94];
               } else {
-                vErrors.push(err98);
+                vErrors.push(err94);
               }
               errors++;
             }
-          } else {
-            const err99 = { instancePath: instancePath + "/finale/prompt", schemaPath: "#/properties/finale/properties/prompt/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err99];
-            } else {
-              vErrors.push(err99);
-            }
-            errors++;
-          }
-        }
-        if (data42.replayEvidence !== void 0) {
-          if (typeof data42.replayEvidence !== "boolean") {
-            const err100 = { instancePath: instancePath + "/finale/replayEvidence", schemaPath: "#/properties/finale/properties/replayEvidence/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err100];
-            } else {
-              vErrors.push(err100);
-            }
-            errors++;
-          }
-        }
-        if (data42.metaLock !== void 0) {
-          if (!validate47(data42.metaLock, { instancePath: instancePath + "/finale/metaLock", parentData: data42, parentDataProperty: "metaLock", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate47.errors : vErrors.concat(validate47.errors);
-            errors = vErrors.length;
-          }
-        }
-        if (data42.companionAssessment !== void 0) {
-          let data48 = data42.companionAssessment;
-          const _errs113 = errors;
-          let valid24 = true;
-          const _errs114 = errors;
-          if (data48 && typeof data48 == "object" && !Array.isArray(data48)) {
-            let missing3;
-            if (data48.audioSrc === void 0 && (missing3 = "audioSrc")) {
-              const err101 = {};
+            if (data45.src === void 0) {
+              const err95 = { instancePath: instancePath + "/narrative/ambience", schemaPath: "#/$defs/ambience/required", keyword: "required", params: { missingProperty: "src" }, message: "must have required property 'src'" };
               if (vErrors === null) {
-                vErrors = [err101];
+                vErrors = [err95];
               } else {
-                vErrors.push(err101);
+                vErrors.push(err95);
               }
               errors++;
             }
-          }
-          var _valid4 = _errs114 === errors;
-          errors = _errs113;
-          if (vErrors !== null) {
-            if (_errs113) {
-              vErrors.length = _errs113;
-            } else {
-              vErrors = null;
+            if (data45.autoplay === void 0) {
+              const err96 = { instancePath: instancePath + "/narrative/ambience", schemaPath: "#/$defs/ambience/required", keyword: "required", params: { missingProperty: "autoplay" }, message: "must have required property 'autoplay'" };
+              if (vErrors === null) {
+                vErrors = [err96];
+              } else {
+                vErrors.push(err96);
+              }
+              errors++;
             }
-          }
-          if (_valid4) {
-            const _errs115 = errors;
-            if (data48 && typeof data48 == "object" && !Array.isArray(data48)) {
-              if (data48.captionsSrc === void 0) {
-                const err102 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/0/then/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
+            for (const key6 in data45) {
+              if (!(key6 === "kind" || key6 === "src" || key6 === "title" || key6 === "loop" || key6 === "autoplay")) {
+                const err97 = { instancePath: instancePath + "/narrative/ambience", schemaPath: "#/$defs/ambience/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key6 }, message: "must NOT have additional properties" };
+                if (vErrors === null) {
+                  vErrors = [err97];
+                } else {
+                  vErrors.push(err97);
+                }
+                errors++;
+              }
+            }
+            if (data45.kind !== void 0) {
+              if ("audio" !== data45.kind) {
+                const err98 = { instancePath: instancePath + "/narrative/ambience/kind", schemaPath: "#/$defs/ambience/properties/kind/const", keyword: "const", params: { allowedValue: "audio" }, message: "must be equal to constant" };
+                if (vErrors === null) {
+                  vErrors = [err98];
+                } else {
+                  vErrors.push(err98);
+                }
+                errors++;
+              }
+            }
+            if (data45.src !== void 0) {
+              let data47 = data45.src;
+              if (typeof data47 === "string") {
+                if (func1(data47) < 1) {
+                  const err99 = { instancePath: instancePath + "/narrative/ambience/src", schemaPath: "#/$defs/ambience/properties/src/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (vErrors === null) {
+                    vErrors = [err99];
+                  } else {
+                    vErrors.push(err99);
+                  }
+                  errors++;
+                }
+              } else {
+                const err100 = { instancePath: instancePath + "/narrative/ambience/src", schemaPath: "#/$defs/ambience/properties/src/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err100];
+                } else {
+                  vErrors.push(err100);
+                }
+                errors++;
+              }
+            }
+            if (data45.title !== void 0) {
+              if (typeof data45.title !== "string") {
+                const err101 = { instancePath: instancePath + "/narrative/ambience/title", schemaPath: "#/$defs/ambience/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err101];
+                } else {
+                  vErrors.push(err101);
+                }
+                errors++;
+              }
+            }
+            if (data45.loop !== void 0) {
+              if (typeof data45.loop !== "boolean") {
+                const err102 = { instancePath: instancePath + "/narrative/ambience/loop", schemaPath: "#/$defs/ambience/properties/loop/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
                 if (vErrors === null) {
                   vErrors = [err102];
                 } else {
@@ -7655,207 +7667,217 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            var _valid4 = _errs115 === errors;
-            valid24 = _valid4;
-          }
-          if (!valid24) {
-            const err103 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+            if (data45.autoplay !== void 0) {
+              if (typeof data45.autoplay !== "boolean") {
+                const err103 = { instancePath: instancePath + "/narrative/ambience/autoplay", schemaPath: "#/$defs/ambience/properties/autoplay/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
+                if (vErrors === null) {
+                  vErrors = [err103];
+                } else {
+                  vErrors.push(err103);
+                }
+                errors++;
+              }
+            }
+          } else {
+            const err104 = { instancePath: instancePath + "/narrative/ambience", schemaPath: "#/$defs/ambience/type", keyword: "type", params: { type: "object" }, message: "must be object" };
             if (vErrors === null) {
-              vErrors = [err103];
+              vErrors = [err104];
             } else {
-              vErrors.push(err103);
+              vErrors.push(err104);
             }
             errors++;
           }
-          const _errs117 = errors;
-          let valid25 = true;
-          const _errs118 = errors;
-          if (data48 && typeof data48 == "object" && !Array.isArray(data48)) {
-            let missing4;
-            if (data48.accurate === void 0 && (missing4 = "accurate")) {
-              const err104 = {};
+        }
+      } else {
+        const err105 = { instancePath: instancePath + "/narrative", schemaPath: "#/properties/narrative/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+        if (vErrors === null) {
+          vErrors = [err105];
+        } else {
+          vErrors.push(err105);
+        }
+        errors++;
+      }
+    }
+    if (data.levels !== void 0) {
+      let data51 = data.levels;
+      if (Array.isArray(data51)) {
+        if (data51.length > 8) {
+          const err106 = { instancePath: instancePath + "/levels", schemaPath: "#/properties/levels/maxItems", keyword: "maxItems", params: { limit: 8 }, message: "must NOT have more than 8 items" };
+          if (vErrors === null) {
+            vErrors = [err106];
+          } else {
+            vErrors.push(err106);
+          }
+          errors++;
+        }
+        if (data51.length < 1) {
+          const err107 = { instancePath: instancePath + "/levels", schemaPath: "#/properties/levels/minItems", keyword: "minItems", params: { limit: 1 }, message: "must NOT have fewer than 1 items" };
+          if (vErrors === null) {
+            vErrors = [err107];
+          } else {
+            vErrors.push(err107);
+          }
+          errors++;
+        }
+        const len0 = data51.length;
+        for (let i0 = 0; i0 < len0; i0++) {
+          if (!validate23(data51[i0], { instancePath: instancePath + "/levels/" + i0, parentData: data51, parentDataProperty: i0, rootData, dynamicAnchors })) {
+            vErrors = vErrors === null ? validate23.errors : vErrors.concat(validate23.errors);
+            errors = vErrors.length;
+          }
+        }
+      } else {
+        const err108 = { instancePath: instancePath + "/levels", schemaPath: "#/properties/levels/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+        if (vErrors === null) {
+          vErrors = [err108];
+        } else {
+          vErrors.push(err108);
+        }
+        errors++;
+      }
+    }
+    if (data.finale !== void 0) {
+      let data53 = data.finale;
+      if (data53 && typeof data53 == "object" && !Array.isArray(data53)) {
+        if (data53.title === void 0) {
+          const err109 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/required", keyword: "required", params: { missingProperty: "title" }, message: "must have required property 'title'" };
+          if (vErrors === null) {
+            vErrors = [err109];
+          } else {
+            vErrors.push(err109);
+          }
+          errors++;
+        }
+        if (data53.prompt === void 0) {
+          const err110 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/required", keyword: "required", params: { missingProperty: "prompt" }, message: "must have required property 'prompt'" };
+          if (vErrors === null) {
+            vErrors = [err110];
+          } else {
+            vErrors.push(err110);
+          }
+          errors++;
+        }
+        if (data53.rubric === void 0) {
+          const err111 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/required", keyword: "required", params: { missingProperty: "rubric" }, message: "must have required property 'rubric'" };
+          if (vErrors === null) {
+            vErrors = [err111];
+          } else {
+            vErrors.push(err111);
+          }
+          errors++;
+        }
+        if (data53.closingText === void 0) {
+          const err112 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/required", keyword: "required", params: { missingProperty: "closingText" }, message: "must have required property 'closingText'" };
+          if (vErrors === null) {
+            vErrors = [err112];
+          } else {
+            vErrors.push(err112);
+          }
+          errors++;
+        }
+        for (const key7 in data53) {
+          if (!func7.call(schema31.properties.finale.properties, key7)) {
+            const err113 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key7 }, message: "must NOT have additional properties" };
+            if (vErrors === null) {
+              vErrors = [err113];
+            } else {
+              vErrors.push(err113);
+            }
+            errors++;
+          }
+        }
+        if (data53.title !== void 0) {
+          if (typeof data53.title !== "string") {
+            const err114 = { instancePath: instancePath + "/finale/title", schemaPath: "#/properties/finale/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err114];
+            } else {
+              vErrors.push(err114);
+            }
+            errors++;
+          }
+        }
+        if (data53.setup !== void 0) {
+          if (typeof data53.setup !== "string") {
+            const err115 = { instancePath: instancePath + "/finale/setup", schemaPath: "#/properties/finale/properties/setup/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err115];
+            } else {
+              vErrors.push(err115);
+            }
+            errors++;
+          }
+        }
+        if (data53.prompt !== void 0) {
+          let data56 = data53.prompt;
+          if (typeof data56 === "string") {
+            if (func1(data56) < 1) {
+              const err116 = { instancePath: instancePath + "/finale/prompt", schemaPath: "#/properties/finale/properties/prompt/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
               if (vErrors === null) {
-                vErrors = [err104];
+                vErrors = [err116];
               } else {
-                vErrors.push(err104);
+                vErrors.push(err116);
               }
               errors++;
+            }
+          } else {
+            const err117 = { instancePath: instancePath + "/finale/prompt", schemaPath: "#/properties/finale/properties/prompt/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err117];
             } else {
-              if (data48.accurate !== void 0) {
-                if (false !== data48.accurate) {
-                  const err105 = {};
-                  if (vErrors === null) {
-                    vErrors = [err105];
-                  } else {
-                    vErrors.push(err105);
-                  }
-                  errors++;
-                }
+              vErrors.push(err117);
+            }
+            errors++;
+          }
+        }
+        if (data53.replayEvidence !== void 0) {
+          if (typeof data53.replayEvidence !== "boolean") {
+            const err118 = { instancePath: instancePath + "/finale/replayEvidence", schemaPath: "#/properties/finale/properties/replayEvidence/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
+            if (vErrors === null) {
+              vErrors = [err118];
+            } else {
+              vErrors.push(err118);
+            }
+            errors++;
+          }
+        }
+        if (data53.metaLock !== void 0) {
+          if (!validate47(data53.metaLock, { instancePath: instancePath + "/finale/metaLock", parentData: data53, parentDataProperty: "metaLock", rootData, dynamicAnchors })) {
+            vErrors = vErrors === null ? validate47.errors : vErrors.concat(validate47.errors);
+            errors = vErrors.length;
+          }
+        }
+        if (data53.companionAssessment !== void 0) {
+          let data59 = data53.companionAssessment;
+          const _errs135 = errors;
+          let valid33 = true;
+          const _errs136 = errors;
+          if (data59 && typeof data59 == "object" && !Array.isArray(data59)) {
+            let missing6;
+            if (data59.audioSrc === void 0 && (missing6 = "audioSrc")) {
+              const err119 = {};
+              if (vErrors === null) {
+                vErrors = [err119];
+              } else {
+                vErrors.push(err119);
               }
+              errors++;
             }
           }
-          var _valid5 = _errs118 === errors;
-          errors = _errs117;
+          var _valid5 = _errs136 === errors;
+          errors = _errs135;
           if (vErrors !== null) {
-            if (_errs117) {
-              vErrors.length = _errs117;
+            if (_errs135) {
+              vErrors.length = _errs135;
             } else {
               vErrors = null;
             }
           }
           if (_valid5) {
-            const _errs120 = errors;
-            if (data48 && typeof data48 == "object" && !Array.isArray(data48)) {
-              if (data48.tell === void 0) {
-                const err106 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/1/then/required", keyword: "required", params: { missingProperty: "tell" }, message: "must have required property 'tell'" };
-                if (vErrors === null) {
-                  vErrors = [err106];
-                } else {
-                  vErrors.push(err106);
-                }
-                errors++;
-              }
-            }
-            var _valid5 = _errs120 === errors;
-            valid25 = _valid5;
-          }
-          if (!valid25) {
-            const err107 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/1/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
-            if (vErrors === null) {
-              vErrors = [err107];
-            } else {
-              vErrors.push(err107);
-            }
-            errors++;
-          }
-          if (data48 && typeof data48 == "object" && !Array.isArray(data48)) {
-            if (data48.id === void 0) {
-              const err108 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "id" }, message: "must have required property 'id'" };
-              if (vErrors === null) {
-                vErrors = [err108];
-              } else {
-                vErrors.push(err108);
-              }
-              errors++;
-            }
-            if (data48.text === void 0) {
-              const err109 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
-              if (vErrors === null) {
-                vErrors = [err109];
-              } else {
-                vErrors.push(err109);
-              }
-              errors++;
-            }
-            if (data48.accurate === void 0) {
-              const err110 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "accurate" }, message: "must have required property 'accurate'" };
-              if (vErrors === null) {
-                vErrors = [err110];
-              } else {
-                vErrors.push(err110);
-              }
-              errors++;
-            }
-            for (const key7 in data48) {
-              if (!(key7 === "id" || key7 === "text" || key7 === "confidence" || key7 === "accurate" || key7 === "tell" || key7 === "audioSrc" || key7 === "captionsSrc")) {
-                const err111 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key7 }, message: "must NOT have additional properties" };
-                if (vErrors === null) {
-                  vErrors = [err111];
-                } else {
-                  vErrors.push(err111);
-                }
-                errors++;
-              }
-            }
-            if (data48.id !== void 0) {
-              if (typeof data48.id !== "string") {
-                const err112 = { instancePath: instancePath + "/finale/companionAssessment/id", schemaPath: "#/$defs/companionLine/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err112];
-                } else {
-                  vErrors.push(err112);
-                }
-                errors++;
-              }
-            }
-            if (data48.text !== void 0) {
-              let data51 = data48.text;
-              if (typeof data51 === "string") {
-                if (func1(data51) < 1) {
-                  const err113 = { instancePath: instancePath + "/finale/companionAssessment/text", schemaPath: "#/$defs/companionLine/properties/text/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                  if (vErrors === null) {
-                    vErrors = [err113];
-                  } else {
-                    vErrors.push(err113);
-                  }
-                  errors++;
-                }
-              } else {
-                const err114 = { instancePath: instancePath + "/finale/companionAssessment/text", schemaPath: "#/$defs/companionLine/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err114];
-                } else {
-                  vErrors.push(err114);
-                }
-                errors++;
-              }
-            }
-            if (data48.confidence !== void 0) {
-              let data52 = data48.confidence;
-              if (typeof data52 == "number") {
-                if (data52 > 100 || isNaN(data52)) {
-                  const err115 = { instancePath: instancePath + "/finale/companionAssessment/confidence", schemaPath: "#/$defs/companionLine/properties/confidence/maximum", keyword: "maximum", params: { comparison: "<=", limit: 100 }, message: "must be <= 100" };
-                  if (vErrors === null) {
-                    vErrors = [err115];
-                  } else {
-                    vErrors.push(err115);
-                  }
-                  errors++;
-                }
-                if (data52 < 0 || isNaN(data52)) {
-                  const err116 = { instancePath: instancePath + "/finale/companionAssessment/confidence", schemaPath: "#/$defs/companionLine/properties/confidence/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-                  if (vErrors === null) {
-                    vErrors = [err116];
-                  } else {
-                    vErrors.push(err116);
-                  }
-                  errors++;
-                }
-              } else {
-                const err117 = { instancePath: instancePath + "/finale/companionAssessment/confidence", schemaPath: "#/$defs/companionLine/properties/confidence/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-                if (vErrors === null) {
-                  vErrors = [err117];
-                } else {
-                  vErrors.push(err117);
-                }
-                errors++;
-              }
-            }
-            if (data48.accurate !== void 0) {
-              if (typeof data48.accurate !== "boolean") {
-                const err118 = { instancePath: instancePath + "/finale/companionAssessment/accurate", schemaPath: "#/$defs/companionLine/properties/accurate/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err118];
-                } else {
-                  vErrors.push(err118);
-                }
-                errors++;
-              }
-            }
-            if (data48.tell !== void 0) {
-              if (typeof data48.tell !== "string") {
-                const err119 = { instancePath: instancePath + "/finale/companionAssessment/tell", schemaPath: "#/$defs/companionLine/properties/tell/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err119];
-                } else {
-                  vErrors.push(err119);
-                }
-                errors++;
-              }
-            }
-            if (data48.audioSrc !== void 0) {
-              if (typeof data48.audioSrc !== "string") {
-                const err120 = { instancePath: instancePath + "/finale/companionAssessment/audioSrc", schemaPath: "#/$defs/companionLine/properties/audioSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            const _errs137 = errors;
+            if (data59 && typeof data59 == "object" && !Array.isArray(data59)) {
+              if (data59.captionsSrc === void 0) {
+                const err120 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/0/then/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
                 if (vErrors === null) {
                   vErrors = [err120];
                 } else {
@@ -7864,129 +7886,143 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data48.captionsSrc !== void 0) {
-              if (typeof data48.captionsSrc !== "string") {
-                const err121 = { instancePath: instancePath + "/finale/companionAssessment/captionsSrc", schemaPath: "#/$defs/companionLine/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            var _valid5 = _errs137 === errors;
+            valid33 = _valid5;
+          }
+          if (!valid33) {
+            const err121 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+            if (vErrors === null) {
+              vErrors = [err121];
+            } else {
+              vErrors.push(err121);
+            }
+            errors++;
+          }
+          const _errs139 = errors;
+          let valid34 = true;
+          const _errs140 = errors;
+          if (data59 && typeof data59 == "object" && !Array.isArray(data59)) {
+            let missing7;
+            if (data59.accurate === void 0 && (missing7 = "accurate")) {
+              const err122 = {};
+              if (vErrors === null) {
+                vErrors = [err122];
+              } else {
+                vErrors.push(err122);
+              }
+              errors++;
+            } else {
+              if (data59.accurate !== void 0) {
+                if (false !== data59.accurate) {
+                  const err123 = {};
+                  if (vErrors === null) {
+                    vErrors = [err123];
+                  } else {
+                    vErrors.push(err123);
+                  }
+                  errors++;
+                }
+              }
+            }
+          }
+          var _valid6 = _errs140 === errors;
+          errors = _errs139;
+          if (vErrors !== null) {
+            if (_errs139) {
+              vErrors.length = _errs139;
+            } else {
+              vErrors = null;
+            }
+          }
+          if (_valid6) {
+            const _errs142 = errors;
+            if (data59 && typeof data59 == "object" && !Array.isArray(data59)) {
+              if (data59.tell === void 0) {
+                const err124 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/1/then/required", keyword: "required", params: { missingProperty: "tell" }, message: "must have required property 'tell'" };
                 if (vErrors === null) {
-                  vErrors = [err121];
+                  vErrors = [err124];
                 } else {
-                  vErrors.push(err121);
+                  vErrors.push(err124);
                 }
                 errors++;
               }
             }
-          } else {
-            const err122 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+            var _valid6 = _errs142 === errors;
+            valid34 = _valid6;
+          }
+          if (!valid34) {
+            const err125 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/allOf/1/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
             if (vErrors === null) {
-              vErrors = [err122];
+              vErrors = [err125];
             } else {
-              vErrors.push(err122);
+              vErrors.push(err125);
             }
             errors++;
           }
-        }
-        if (data42.rubric !== void 0) {
-          let data57 = data42.rubric;
-          if (Array.isArray(data57)) {
-            if (data57.length < 2) {
-              const err123 = { instancePath: instancePath + "/finale/rubric", schemaPath: "#/$defs/rubric/minItems", keyword: "minItems", params: { limit: 2 }, message: "must NOT have fewer than 2 items" };
+          if (data59 && typeof data59 == "object" && !Array.isArray(data59)) {
+            if (data59.id === void 0) {
+              const err126 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "id" }, message: "must have required property 'id'" };
               if (vErrors === null) {
-                vErrors = [err123];
+                vErrors = [err126];
               } else {
-                vErrors.push(err123);
+                vErrors.push(err126);
               }
               errors++;
             }
-            const len1 = data57.length;
-            for (let i1 = 0; i1 < len1; i1++) {
-              let data58 = data57[i1];
-              if (data58 && typeof data58 == "object" && !Array.isArray(data58)) {
-                if (data58.criterion === void 0) {
-                  const err124 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/required", keyword: "required", params: { missingProperty: "criterion" }, message: "must have required property 'criterion'" };
+            if (data59.text === void 0) {
+              const err127 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
+              if (vErrors === null) {
+                vErrors = [err127];
+              } else {
+                vErrors.push(err127);
+              }
+              errors++;
+            }
+            if (data59.accurate === void 0) {
+              const err128 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/required", keyword: "required", params: { missingProperty: "accurate" }, message: "must have required property 'accurate'" };
+              if (vErrors === null) {
+                vErrors = [err128];
+              } else {
+                vErrors.push(err128);
+              }
+              errors++;
+            }
+            for (const key8 in data59) {
+              if (!(key8 === "id" || key8 === "text" || key8 === "confidence" || key8 === "accurate" || key8 === "tell" || key8 === "audioSrc" || key8 === "captionsSrc")) {
+                const err129 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key8 }, message: "must NOT have additional properties" };
+                if (vErrors === null) {
+                  vErrors = [err129];
+                } else {
+                  vErrors.push(err129);
+                }
+                errors++;
+              }
+            }
+            if (data59.id !== void 0) {
+              if (typeof data59.id !== "string") {
+                const err130 = { instancePath: instancePath + "/finale/companionAssessment/id", schemaPath: "#/$defs/companionLine/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err130];
+                } else {
+                  vErrors.push(err130);
+                }
+                errors++;
+              }
+            }
+            if (data59.text !== void 0) {
+              let data62 = data59.text;
+              if (typeof data62 === "string") {
+                if (func1(data62) < 1) {
+                  const err131 = { instancePath: instancePath + "/finale/companionAssessment/text", schemaPath: "#/$defs/companionLine/properties/text/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                   if (vErrors === null) {
-                    vErrors = [err124];
+                    vErrors = [err131];
                   } else {
-                    vErrors.push(err124);
+                    vErrors.push(err131);
                   }
                   errors++;
-                }
-                if (data58.lookFor === void 0) {
-                  const err125 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/required", keyword: "required", params: { missingProperty: "lookFor" }, message: "must have required property 'lookFor'" };
-                  if (vErrors === null) {
-                    vErrors = [err125];
-                  } else {
-                    vErrors.push(err125);
-                  }
-                  errors++;
-                }
-                for (const key8 in data58) {
-                  if (!(key8 === "criterion" || key8 === "lookFor" || key8 === "commonMiss")) {
-                    const err126 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key8 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err126];
-                    } else {
-                      vErrors.push(err126);
-                    }
-                    errors++;
-                  }
-                }
-                if (data58.criterion !== void 0) {
-                  let data59 = data58.criterion;
-                  if (typeof data59 === "string") {
-                    if (func1(data59) < 1) {
-                      const err127 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/criterion", schemaPath: "#/$defs/rubric/items/properties/criterion/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                      if (vErrors === null) {
-                        vErrors = [err127];
-                      } else {
-                        vErrors.push(err127);
-                      }
-                      errors++;
-                    }
-                  } else {
-                    const err128 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/criterion", schemaPath: "#/$defs/rubric/items/properties/criterion/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err128];
-                    } else {
-                      vErrors.push(err128);
-                    }
-                    errors++;
-                  }
-                }
-                if (data58.lookFor !== void 0) {
-                  let data60 = data58.lookFor;
-                  if (typeof data60 === "string") {
-                    if (func1(data60) < 1) {
-                      const err129 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/lookFor", schemaPath: "#/$defs/rubric/items/properties/lookFor/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                      if (vErrors === null) {
-                        vErrors = [err129];
-                      } else {
-                        vErrors.push(err129);
-                      }
-                      errors++;
-                    }
-                  } else {
-                    const err130 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/lookFor", schemaPath: "#/$defs/rubric/items/properties/lookFor/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err130];
-                    } else {
-                      vErrors.push(err130);
-                    }
-                    errors++;
-                  }
-                }
-                if (data58.commonMiss !== void 0) {
-                  if (typeof data58.commonMiss !== "string") {
-                    const err131 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/commonMiss", schemaPath: "#/$defs/rubric/items/properties/commonMiss/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err131];
-                    } else {
-                      vErrors.push(err131);
-                    }
-                    errors++;
-                  }
                 }
               } else {
-                const err132 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+                const err132 = { instancePath: instancePath + "/finale/companionAssessment/text", schemaPath: "#/$defs/companionLine/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err132];
                 } else {
@@ -7995,25 +8031,20 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-          } else {
-            const err133 = { instancePath: instancePath + "/finale/rubric", schemaPath: "#/$defs/rubric/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-            if (vErrors === null) {
-              vErrors = [err133];
-            } else {
-              vErrors.push(err133);
-            }
-            errors++;
-          }
-        }
-        if (data42.acceptedPositions !== void 0) {
-          let data62 = data42.acceptedPositions;
-          if (Array.isArray(data62)) {
-            const len2 = data62.length;
-            for (let i2 = 0; i2 < len2; i2++) {
-              let data63 = data62[i2];
-              if (data63 && typeof data63 == "object" && !Array.isArray(data63)) {
-                if (data63.label === void 0) {
-                  const err134 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2, schemaPath: "#/properties/finale/properties/acceptedPositions/items/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
+            if (data59.confidence !== void 0) {
+              let data63 = data59.confidence;
+              if (typeof data63 == "number") {
+                if (data63 > 100 || isNaN(data63)) {
+                  const err133 = { instancePath: instancePath + "/finale/companionAssessment/confidence", schemaPath: "#/$defs/companionLine/properties/confidence/maximum", keyword: "maximum", params: { comparison: "<=", limit: 100 }, message: "must be <= 100" };
+                  if (vErrors === null) {
+                    vErrors = [err133];
+                  } else {
+                    vErrors.push(err133);
+                  }
+                  errors++;
+                }
+                if (data63 < 0 || isNaN(data63)) {
+                  const err134 = { instancePath: instancePath + "/finale/companionAssessment/confidence", schemaPath: "#/$defs/companionLine/properties/confidence/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
                   if (vErrors === null) {
                     vErrors = [err134];
                   } else {
@@ -8021,39 +8052,41 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                   }
                   errors++;
                 }
-                if (data63.summary === void 0) {
-                  const err135 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2, schemaPath: "#/properties/finale/properties/acceptedPositions/items/required", keyword: "required", params: { missingProperty: "summary" }, message: "must have required property 'summary'" };
-                  if (vErrors === null) {
-                    vErrors = [err135];
-                  } else {
-                    vErrors.push(err135);
-                  }
-                  errors++;
-                }
-                if (data63.label !== void 0) {
-                  if (typeof data63.label !== "string") {
-                    const err136 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2 + "/label", schemaPath: "#/properties/finale/properties/acceptedPositions/items/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err136];
-                    } else {
-                      vErrors.push(err136);
-                    }
-                    errors++;
-                  }
-                }
-                if (data63.summary !== void 0) {
-                  if (typeof data63.summary !== "string") {
-                    const err137 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2 + "/summary", schemaPath: "#/properties/finale/properties/acceptedPositions/items/properties/summary/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err137];
-                    } else {
-                      vErrors.push(err137);
-                    }
-                    errors++;
-                  }
-                }
               } else {
-                const err138 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2, schemaPath: "#/properties/finale/properties/acceptedPositions/items/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+                const err135 = { instancePath: instancePath + "/finale/companionAssessment/confidence", schemaPath: "#/$defs/companionLine/properties/confidence/type", keyword: "type", params: { type: "number" }, message: "must be number" };
+                if (vErrors === null) {
+                  vErrors = [err135];
+                } else {
+                  vErrors.push(err135);
+                }
+                errors++;
+              }
+            }
+            if (data59.accurate !== void 0) {
+              if (typeof data59.accurate !== "boolean") {
+                const err136 = { instancePath: instancePath + "/finale/companionAssessment/accurate", schemaPath: "#/$defs/companionLine/properties/accurate/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
+                if (vErrors === null) {
+                  vErrors = [err136];
+                } else {
+                  vErrors.push(err136);
+                }
+                errors++;
+              }
+            }
+            if (data59.tell !== void 0) {
+              if (typeof data59.tell !== "string") {
+                const err137 = { instancePath: instancePath + "/finale/companionAssessment/tell", schemaPath: "#/$defs/companionLine/properties/tell/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err137];
+                } else {
+                  vErrors.push(err137);
+                }
+                errors++;
+              }
+            }
+            if (data59.audioSrc !== void 0) {
+              if (typeof data59.audioSrc !== "string") {
+                const err138 = { instancePath: instancePath + "/finale/companionAssessment/audioSrc", schemaPath: "#/$defs/companionLine/properties/audioSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
                   vErrors = [err138];
                 } else {
@@ -8062,19 +8095,19 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-          } else {
-            const err139 = { instancePath: instancePath + "/finale/acceptedPositions", schemaPath: "#/properties/finale/properties/acceptedPositions/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-            if (vErrors === null) {
-              vErrors = [err139];
-            } else {
-              vErrors.push(err139);
+            if (data59.captionsSrc !== void 0) {
+              if (typeof data59.captionsSrc !== "string") {
+                const err139 = { instancePath: instancePath + "/finale/companionAssessment/captionsSrc", schemaPath: "#/$defs/companionLine/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err139];
+                } else {
+                  vErrors.push(err139);
+                }
+                errors++;
+              }
             }
-            errors++;
-          }
-        }
-        if (data42.closingText !== void 0) {
-          if (typeof data42.closingText !== "string") {
-            const err140 = { instancePath: instancePath + "/finale/closingText", schemaPath: "#/properties/finale/properties/closingText/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+          } else {
+            const err140 = { instancePath: instancePath + "/finale/companionAssessment", schemaPath: "#/$defs/companionLine/type", keyword: "type", params: { type: "object" }, message: "must be object" };
             if (vErrors === null) {
               vErrors = [err140];
             } else {
@@ -8083,25 +8116,24 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             errors++;
           }
         }
-        if (data42.closingMedia !== void 0) {
-          let data67 = data42.closingMedia;
-          const _errs162 = errors;
-          let valid37 = true;
-          const _errs163 = errors;
-          if (data67 && typeof data67 == "object" && !Array.isArray(data67)) {
-            let missing5;
-            if (data67.carriesVisualMeaning === void 0 && (missing5 = "carriesVisualMeaning")) {
-              const err141 = {};
+        if (data53.rubric !== void 0) {
+          let data68 = data53.rubric;
+          if (Array.isArray(data68)) {
+            if (data68.length < 2) {
+              const err141 = { instancePath: instancePath + "/finale/rubric", schemaPath: "#/$defs/rubric/minItems", keyword: "minItems", params: { limit: 2 }, message: "must NOT have fewer than 2 items" };
               if (vErrors === null) {
                 vErrors = [err141];
               } else {
                 vErrors.push(err141);
               }
               errors++;
-            } else {
-              if (data67.carriesVisualMeaning !== void 0) {
-                if (true !== data67.carriesVisualMeaning) {
-                  const err142 = {};
+            }
+            const len1 = data68.length;
+            for (let i1 = 0; i1 < len1; i1++) {
+              let data69 = data68[i1];
+              if (data69 && typeof data69 == "object" && !Array.isArray(data69)) {
+                if (data69.criterion === void 0) {
+                  const err142 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/required", keyword: "required", params: { missingProperty: "criterion" }, message: "must have required property 'criterion'" };
                   if (vErrors === null) {
                     vErrors = [err142];
                   } else {
@@ -8109,175 +8141,150 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                   }
                   errors++;
                 }
-              }
-            }
-          }
-          var _valid6 = _errs163 === errors;
-          errors = _errs162;
-          if (vErrors !== null) {
-            if (_errs162) {
-              vErrors.length = _errs162;
-            } else {
-              vErrors = null;
-            }
-          }
-          if (_valid6) {
-            const _errs165 = errors;
-            const _errs166 = errors;
-            let valid39 = false;
-            const _errs167 = errors;
-            if (data67 && typeof data67 == "object" && !Array.isArray(data67)) {
-              if (data67.audioDescriptionSrc === void 0) {
-                const err143 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/0/required", keyword: "required", params: { missingProperty: "audioDescriptionSrc" }, message: "must have required property 'audioDescriptionSrc'" };
-                if (vErrors === null) {
-                  vErrors = [err143];
-                } else {
-                  vErrors.push(err143);
-                }
-                errors++;
-              }
-            }
-            var _valid7 = _errs167 === errors;
-            valid39 = valid39 || _valid7;
-            const _errs168 = errors;
-            if (data67 && typeof data67 == "object" && !Array.isArray(data67)) {
-              if (data67.describedTranscript === void 0) {
-                const err144 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/1/required", keyword: "required", params: { missingProperty: "describedTranscript" }, message: "must have required property 'describedTranscript'" };
-                if (vErrors === null) {
-                  vErrors = [err144];
-                } else {
-                  vErrors.push(err144);
-                }
-                errors++;
-              }
-            }
-            var _valid7 = _errs168 === errors;
-            valid39 = valid39 || _valid7;
-            if (!valid39) {
-              const err145 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf", keyword: "anyOf", params: {}, message: "must match a schema in anyOf" };
-              if (vErrors === null) {
-                vErrors = [err145];
-              } else {
-                vErrors.push(err145);
-              }
-              errors++;
-            } else {
-              errors = _errs166;
-              if (vErrors !== null) {
-                if (_errs166) {
-                  vErrors.length = _errs166;
-                } else {
-                  vErrors = null;
-                }
-              }
-            }
-            var _valid6 = _errs165 === errors;
-            valid37 = _valid6;
-          }
-          if (!valid37) {
-            const err146 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
-            if (vErrors === null) {
-              vErrors = [err146];
-            } else {
-              vErrors.push(err146);
-            }
-            errors++;
-          }
-          if (data67 && typeof data67 == "object" && !Array.isArray(data67)) {
-            if (data67.kind === void 0) {
-              const err147 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "kind" }, message: "must have required property 'kind'" };
-              if (vErrors === null) {
-                vErrors = [err147];
-              } else {
-                vErrors.push(err147);
-              }
-              errors++;
-            }
-            if (data67.src === void 0) {
-              const err148 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "src" }, message: "must have required property 'src'" };
-              if (vErrors === null) {
-                vErrors = [err148];
-              } else {
-                vErrors.push(err148);
-              }
-              errors++;
-            }
-            if (data67.captionsSrc === void 0) {
-              const err149 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
-              if (vErrors === null) {
-                vErrors = [err149];
-              } else {
-                vErrors.push(err149);
-              }
-              errors++;
-            }
-            if (data67.transcript === void 0) {
-              const err150 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "transcript" }, message: "must have required property 'transcript'" };
-              if (vErrors === null) {
-                vErrors = [err150];
-              } else {
-                vErrors.push(err150);
-              }
-              errors++;
-            }
-            for (const key9 in data67) {
-              if (!func7.call(schema32.properties, key9)) {
-                const err151 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key9 }, message: "must NOT have additional properties" };
-                if (vErrors === null) {
-                  vErrors = [err151];
-                } else {
-                  vErrors.push(err151);
-                }
-                errors++;
-              }
-            }
-            if (data67.kind !== void 0) {
-              if ("video" !== data67.kind) {
-                const err152 = { instancePath: instancePath + "/finale/closingMedia/kind", schemaPath: "#/$defs/video/properties/kind/const", keyword: "const", params: { allowedValue: "video" }, message: "must be equal to constant" };
-                if (vErrors === null) {
-                  vErrors = [err152];
-                } else {
-                  vErrors.push(err152);
-                }
-                errors++;
-              }
-            }
-            if (data67.id !== void 0) {
-              if (typeof data67.id !== "string") {
-                const err153 = { instancePath: instancePath + "/finale/closingMedia/id", schemaPath: "#/$defs/video/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err153];
-                } else {
-                  vErrors.push(err153);
-                }
-                errors++;
-              }
-            }
-            if (data67.src !== void 0) {
-              let data71 = data67.src;
-              if (typeof data71 === "string") {
-                if (func1(data71) < 1) {
-                  const err154 = { instancePath: instancePath + "/finale/closingMedia/src", schemaPath: "#/$defs/video/properties/src/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                if (data69.lookFor === void 0) {
+                  const err143 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/required", keyword: "required", params: { missingProperty: "lookFor" }, message: "must have required property 'lookFor'" };
                   if (vErrors === null) {
-                    vErrors = [err154];
+                    vErrors = [err143];
                   } else {
-                    vErrors.push(err154);
+                    vErrors.push(err143);
                   }
                   errors++;
                 }
+                for (const key9 in data69) {
+                  if (!(key9 === "criterion" || key9 === "lookFor" || key9 === "commonMiss")) {
+                    const err144 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key9 }, message: "must NOT have additional properties" };
+                    if (vErrors === null) {
+                      vErrors = [err144];
+                    } else {
+                      vErrors.push(err144);
+                    }
+                    errors++;
+                  }
+                }
+                if (data69.criterion !== void 0) {
+                  let data70 = data69.criterion;
+                  if (typeof data70 === "string") {
+                    if (func1(data70) < 1) {
+                      const err145 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/criterion", schemaPath: "#/$defs/rubric/items/properties/criterion/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                      if (vErrors === null) {
+                        vErrors = [err145];
+                      } else {
+                        vErrors.push(err145);
+                      }
+                      errors++;
+                    }
+                  } else {
+                    const err146 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/criterion", schemaPath: "#/$defs/rubric/items/properties/criterion/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err146];
+                    } else {
+                      vErrors.push(err146);
+                    }
+                    errors++;
+                  }
+                }
+                if (data69.lookFor !== void 0) {
+                  let data71 = data69.lookFor;
+                  if (typeof data71 === "string") {
+                    if (func1(data71) < 1) {
+                      const err147 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/lookFor", schemaPath: "#/$defs/rubric/items/properties/lookFor/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                      if (vErrors === null) {
+                        vErrors = [err147];
+                      } else {
+                        vErrors.push(err147);
+                      }
+                      errors++;
+                    }
+                  } else {
+                    const err148 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/lookFor", schemaPath: "#/$defs/rubric/items/properties/lookFor/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err148];
+                    } else {
+                      vErrors.push(err148);
+                    }
+                    errors++;
+                  }
+                }
+                if (data69.commonMiss !== void 0) {
+                  if (typeof data69.commonMiss !== "string") {
+                    const err149 = { instancePath: instancePath + "/finale/rubric/" + i1 + "/commonMiss", schemaPath: "#/$defs/rubric/items/properties/commonMiss/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err149];
+                    } else {
+                      vErrors.push(err149);
+                    }
+                    errors++;
+                  }
+                }
               } else {
-                const err155 = { instancePath: instancePath + "/finale/closingMedia/src", schemaPath: "#/$defs/video/properties/src/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                const err150 = { instancePath: instancePath + "/finale/rubric/" + i1, schemaPath: "#/$defs/rubric/items/type", keyword: "type", params: { type: "object" }, message: "must be object" };
                 if (vErrors === null) {
-                  vErrors = [err155];
+                  vErrors = [err150];
                 } else {
-                  vErrors.push(err155);
+                  vErrors.push(err150);
                 }
                 errors++;
               }
             }
-            if (data67.poster !== void 0) {
-              if (typeof data67.poster !== "string") {
-                const err156 = { instancePath: instancePath + "/finale/closingMedia/poster", schemaPath: "#/$defs/video/properties/poster/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+          } else {
+            const err151 = { instancePath: instancePath + "/finale/rubric", schemaPath: "#/$defs/rubric/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+            if (vErrors === null) {
+              vErrors = [err151];
+            } else {
+              vErrors.push(err151);
+            }
+            errors++;
+          }
+        }
+        if (data53.acceptedPositions !== void 0) {
+          let data73 = data53.acceptedPositions;
+          if (Array.isArray(data73)) {
+            const len2 = data73.length;
+            for (let i2 = 0; i2 < len2; i2++) {
+              let data74 = data73[i2];
+              if (data74 && typeof data74 == "object" && !Array.isArray(data74)) {
+                if (data74.label === void 0) {
+                  const err152 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2, schemaPath: "#/properties/finale/properties/acceptedPositions/items/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
+                  if (vErrors === null) {
+                    vErrors = [err152];
+                  } else {
+                    vErrors.push(err152);
+                  }
+                  errors++;
+                }
+                if (data74.summary === void 0) {
+                  const err153 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2, schemaPath: "#/properties/finale/properties/acceptedPositions/items/required", keyword: "required", params: { missingProperty: "summary" }, message: "must have required property 'summary'" };
+                  if (vErrors === null) {
+                    vErrors = [err153];
+                  } else {
+                    vErrors.push(err153);
+                  }
+                  errors++;
+                }
+                if (data74.label !== void 0) {
+                  if (typeof data74.label !== "string") {
+                    const err154 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2 + "/label", schemaPath: "#/properties/finale/properties/acceptedPositions/items/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err154];
+                    } else {
+                      vErrors.push(err154);
+                    }
+                    errors++;
+                  }
+                }
+                if (data74.summary !== void 0) {
+                  if (typeof data74.summary !== "string") {
+                    const err155 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2 + "/summary", schemaPath: "#/properties/finale/properties/acceptedPositions/items/properties/summary/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                    if (vErrors === null) {
+                      vErrors = [err155];
+                    } else {
+                      vErrors.push(err155);
+                    }
+                    errors++;
+                  }
+                }
+              } else {
+                const err156 = { instancePath: instancePath + "/finale/acceptedPositions/" + i2, schemaPath: "#/properties/finale/properties/acceptedPositions/items/type", keyword: "type", params: { type: "object" }, message: "must be object" };
                 if (vErrors === null) {
                   vErrors = [err156];
                 } else {
@@ -8286,53 +8293,73 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data67.captionsSrc !== void 0) {
-              let data73 = data67.captionsSrc;
-              if (typeof data73 === "string") {
-                if (func1(data73) < 1) {
-                  const err157 = { instancePath: instancePath + "/finale/closingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+          } else {
+            const err157 = { instancePath: instancePath + "/finale/acceptedPositions", schemaPath: "#/properties/finale/properties/acceptedPositions/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+            if (vErrors === null) {
+              vErrors = [err157];
+            } else {
+              vErrors.push(err157);
+            }
+            errors++;
+          }
+        }
+        if (data53.closingText !== void 0) {
+          if (typeof data53.closingText !== "string") {
+            const err158 = { instancePath: instancePath + "/finale/closingText", schemaPath: "#/properties/finale/properties/closingText/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            if (vErrors === null) {
+              vErrors = [err158];
+            } else {
+              vErrors.push(err158);
+            }
+            errors++;
+          }
+        }
+        if (data53.closingMedia !== void 0) {
+          let data78 = data53.closingMedia;
+          const _errs184 = errors;
+          let valid46 = true;
+          const _errs185 = errors;
+          if (data78 && typeof data78 == "object" && !Array.isArray(data78)) {
+            let missing8;
+            if (data78.carriesVisualMeaning === void 0 && (missing8 = "carriesVisualMeaning")) {
+              const err159 = {};
+              if (vErrors === null) {
+                vErrors = [err159];
+              } else {
+                vErrors.push(err159);
+              }
+              errors++;
+            } else {
+              if (data78.carriesVisualMeaning !== void 0) {
+                if (true !== data78.carriesVisualMeaning) {
+                  const err160 = {};
                   if (vErrors === null) {
-                    vErrors = [err157];
+                    vErrors = [err160];
                   } else {
-                    vErrors.push(err157);
+                    vErrors.push(err160);
                   }
                   errors++;
                 }
-              } else {
-                const err158 = { instancePath: instancePath + "/finale/closingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err158];
-                } else {
-                  vErrors.push(err158);
-                }
-                errors++;
               }
             }
-            if (data67.transcript !== void 0) {
-              let data74 = data67.transcript;
-              if (typeof data74 === "string") {
-                if (func1(data74) < 1) {
-                  const err159 = { instancePath: instancePath + "/finale/closingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                  if (vErrors === null) {
-                    vErrors = [err159];
-                  } else {
-                    vErrors.push(err159);
-                  }
-                  errors++;
-                }
-              } else {
-                const err160 = { instancePath: instancePath + "/finale/closingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err160];
-                } else {
-                  vErrors.push(err160);
-                }
-                errors++;
-              }
+          }
+          var _valid7 = _errs185 === errors;
+          errors = _errs184;
+          if (vErrors !== null) {
+            if (_errs184) {
+              vErrors.length = _errs184;
+            } else {
+              vErrors = null;
             }
-            if (data67.audioDescriptionSrc !== void 0) {
-              if (typeof data67.audioDescriptionSrc !== "string") {
-                const err161 = { instancePath: instancePath + "/finale/closingMedia/audioDescriptionSrc", schemaPath: "#/$defs/video/properties/audioDescriptionSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+          }
+          if (_valid7) {
+            const _errs187 = errors;
+            const _errs188 = errors;
+            let valid48 = false;
+            const _errs189 = errors;
+            if (data78 && typeof data78 == "object" && !Array.isArray(data78)) {
+              if (data78.audioDescriptionSrc === void 0) {
+                const err161 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/0/required", keyword: "required", params: { missingProperty: "audioDescriptionSrc" }, message: "must have required property 'audioDescriptionSrc'" };
                 if (vErrors === null) {
                   vErrors = [err161];
                 } else {
@@ -8341,9 +8368,12 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data67.describedTranscript !== void 0) {
-              if (typeof data67.describedTranscript !== "string") {
-                const err162 = { instancePath: instancePath + "/finale/closingMedia/describedTranscript", schemaPath: "#/$defs/video/properties/describedTranscript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+            var _valid8 = _errs189 === errors;
+            valid48 = valid48 || _valid8;
+            const _errs190 = errors;
+            if (data78 && typeof data78 == "object" && !Array.isArray(data78)) {
+              if (data78.describedTranscript === void 0) {
+                const err162 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf/1/required", keyword: "required", params: { missingProperty: "describedTranscript" }, message: "must have required property 'describedTranscript'" };
                 if (vErrors === null) {
                   vErrors = [err162];
                 } else {
@@ -8352,19 +8382,31 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data67.carriesVisualMeaning !== void 0) {
-              if (typeof data67.carriesVisualMeaning !== "boolean") {
-                const err163 = { instancePath: instancePath + "/finale/closingMedia/carriesVisualMeaning", schemaPath: "#/$defs/video/properties/carriesVisualMeaning/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err163];
+            var _valid8 = _errs190 === errors;
+            valid48 = valid48 || _valid8;
+            if (!valid48) {
+              const err163 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/then/anyOf", keyword: "anyOf", params: {}, message: "must match a schema in anyOf" };
+              if (vErrors === null) {
+                vErrors = [err163];
+              } else {
+                vErrors.push(err163);
+              }
+              errors++;
+            } else {
+              errors = _errs188;
+              if (vErrors !== null) {
+                if (_errs188) {
+                  vErrors.length = _errs188;
                 } else {
-                  vErrors.push(err163);
+                  vErrors = null;
                 }
-                errors++;
               }
             }
-          } else {
-            const err164 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+            var _valid7 = _errs187 === errors;
+            valid46 = _valid7;
+          }
+          if (!valid46) {
+            const err164 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
             if (vErrors === null) {
               vErrors = [err164];
             } else {
@@ -8372,12 +8414,9 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
             }
             errors++;
           }
-        }
-        if (data42.epilogue !== void 0) {
-          let data78 = data42.epilogue;
           if (data78 && typeof data78 == "object" && !Array.isArray(data78)) {
-            if (data78.title === void 0) {
-              const err165 = { instancePath: instancePath + "/finale/epilogue", schemaPath: "#/properties/finale/properties/epilogue/required", keyword: "required", params: { missingProperty: "title" }, message: "must have required property 'title'" };
+            if (data78.kind === void 0) {
+              const err165 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "kind" }, message: "must have required property 'kind'" };
               if (vErrors === null) {
                 vErrors = [err165];
               } else {
@@ -8385,8 +8424,8 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            if (data78.beats === void 0) {
-              const err166 = { instancePath: instancePath + "/finale/epilogue", schemaPath: "#/properties/finale/properties/epilogue/required", keyword: "required", params: { missingProperty: "beats" }, message: "must have required property 'beats'" };
+            if (data78.src === void 0) {
+              const err166 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "src" }, message: "must have required property 'src'" };
               if (vErrors === null) {
                 vErrors = [err166];
               } else {
@@ -8394,31 +8433,27 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               }
               errors++;
             }
-            for (const key10 in data78) {
-              if (!(key10 === "title" || key10 === "beats")) {
-                const err167 = { instancePath: instancePath + "/finale/epilogue", schemaPath: "#/properties/finale/properties/epilogue/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key10 }, message: "must NOT have additional properties" };
-                if (vErrors === null) {
-                  vErrors = [err167];
-                } else {
-                  vErrors.push(err167);
-                }
-                errors++;
-              }
-            }
-            if (data78.title !== void 0) {
-              let data79 = data78.title;
-              if (typeof data79 === "string") {
-                if (func1(data79) < 1) {
-                  const err168 = { instancePath: instancePath + "/finale/epilogue/title", schemaPath: "#/properties/finale/properties/epilogue/properties/title/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                  if (vErrors === null) {
-                    vErrors = [err168];
-                  } else {
-                    vErrors.push(err168);
-                  }
-                  errors++;
-                }
+            if (data78.captionsSrc === void 0) {
+              const err167 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
+              if (vErrors === null) {
+                vErrors = [err167];
               } else {
-                const err169 = { instancePath: instancePath + "/finale/epilogue/title", schemaPath: "#/properties/finale/properties/epilogue/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                vErrors.push(err167);
+              }
+              errors++;
+            }
+            if (data78.transcript === void 0) {
+              const err168 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/required", keyword: "required", params: { missingProperty: "transcript" }, message: "must have required property 'transcript'" };
+              if (vErrors === null) {
+                vErrors = [err168];
+              } else {
+                vErrors.push(err168);
+              }
+              errors++;
+            }
+            for (const key10 in data78) {
+              if (!func7.call(schema32.properties, key10)) {
+                const err169 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key10 }, message: "must NOT have additional properties" };
                 if (vErrors === null) {
                   vErrors = [err169];
                 } else {
@@ -8427,346 +8462,543 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 errors++;
               }
             }
-            if (data78.beats !== void 0) {
-              let data80 = data78.beats;
-              if (Array.isArray(data80)) {
-                if (data80.length > 8) {
-                  const err170 = { instancePath: instancePath + "/finale/epilogue/beats", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/maxItems", keyword: "maxItems", params: { limit: 8 }, message: "must NOT have more than 8 items" };
+            if (data78.kind !== void 0) {
+              if ("video" !== data78.kind) {
+                const err170 = { instancePath: instancePath + "/finale/closingMedia/kind", schemaPath: "#/$defs/video/properties/kind/const", keyword: "const", params: { allowedValue: "video" }, message: "must be equal to constant" };
+                if (vErrors === null) {
+                  vErrors = [err170];
+                } else {
+                  vErrors.push(err170);
+                }
+                errors++;
+              }
+            }
+            if (data78.id !== void 0) {
+              if (typeof data78.id !== "string") {
+                const err171 = { instancePath: instancePath + "/finale/closingMedia/id", schemaPath: "#/$defs/video/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err171];
+                } else {
+                  vErrors.push(err171);
+                }
+                errors++;
+              }
+            }
+            if (data78.src !== void 0) {
+              let data82 = data78.src;
+              if (typeof data82 === "string") {
+                if (func1(data82) < 1) {
+                  const err172 = { instancePath: instancePath + "/finale/closingMedia/src", schemaPath: "#/$defs/video/properties/src/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                   if (vErrors === null) {
-                    vErrors = [err170];
+                    vErrors = [err172];
                   } else {
-                    vErrors.push(err170);
+                    vErrors.push(err172);
                   }
                   errors++;
-                }
-                if (data80.length < 1) {
-                  const err171 = { instancePath: instancePath + "/finale/epilogue/beats", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/minItems", keyword: "minItems", params: { limit: 1 }, message: "must NOT have fewer than 1 items" };
-                  if (vErrors === null) {
-                    vErrors = [err171];
-                  } else {
-                    vErrors.push(err171);
-                  }
-                  errors++;
-                }
-                const len3 = data80.length;
-                for (let i3 = 0; i3 < len3; i3++) {
-                  let data81 = data80[i3];
-                  const _errs197 = errors;
-                  let valid45 = true;
-                  const _errs198 = errors;
-                  if (data81 && typeof data81 == "object" && !Array.isArray(data81)) {
-                    let missing6;
-                    if (data81.audioSrc === void 0 && (missing6 = "audioSrc")) {
-                      const err172 = {};
-                      if (vErrors === null) {
-                        vErrors = [err172];
-                      } else {
-                        vErrors.push(err172);
-                      }
-                      errors++;
-                    }
-                  }
-                  var _valid8 = _errs198 === errors;
-                  errors = _errs197;
-                  if (vErrors !== null) {
-                    if (_errs197) {
-                      vErrors.length = _errs197;
-                    } else {
-                      vErrors = null;
-                    }
-                  }
-                  if (_valid8) {
-                    const _errs199 = errors;
-                    if (data81 && typeof data81 == "object" && !Array.isArray(data81)) {
-                      if (data81.captionsSrc === void 0) {
-                        const err173 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/allOf/0/then/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
-                        if (vErrors === null) {
-                          vErrors = [err173];
-                        } else {
-                          vErrors.push(err173);
-                        }
-                        errors++;
-                      }
-                    }
-                    var _valid8 = _errs199 === errors;
-                    valid45 = _valid8;
-                  }
-                  if (!valid45) {
-                    const err174 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
-                    if (vErrors === null) {
-                      vErrors = [err174];
-                    } else {
-                      vErrors.push(err174);
-                    }
-                    errors++;
-                  }
-                  if (data81 && typeof data81 == "object" && !Array.isArray(data81)) {
-                    if (data81.speaker === void 0) {
-                      const err175 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/required", keyword: "required", params: { missingProperty: "speaker" }, message: "must have required property 'speaker'" };
-                      if (vErrors === null) {
-                        vErrors = [err175];
-                      } else {
-                        vErrors.push(err175);
-                      }
-                      errors++;
-                    }
-                    if (data81.text === void 0) {
-                      const err176 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
-                      if (vErrors === null) {
-                        vErrors = [err176];
-                      } else {
-                        vErrors.push(err176);
-                      }
-                      errors++;
-                    }
-                    for (const key11 in data81) {
-                      if (!(key11 === "speaker" || key11 === "text" || key11 === "audioSrc" || key11 === "captionsSrc")) {
-                        const err177 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key11 }, message: "must NOT have additional properties" };
-                        if (vErrors === null) {
-                          vErrors = [err177];
-                        } else {
-                          vErrors.push(err177);
-                        }
-                        errors++;
-                      }
-                    }
-                    if (data81.speaker !== void 0) {
-                      let data82 = data81.speaker;
-                      if (!(data82 === "archivist" || data82 === "aura" || data82 === "narrator")) {
-                        const err178 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/speaker", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/speaker/enum", keyword: "enum", params: { allowedValues: schema31.properties.finale.properties.epilogue.properties.beats.items.properties.speaker.enum }, message: "must be equal to one of the allowed values" };
-                        if (vErrors === null) {
-                          vErrors = [err178];
-                        } else {
-                          vErrors.push(err178);
-                        }
-                        errors++;
-                      }
-                    }
-                    if (data81.text !== void 0) {
-                      let data83 = data81.text;
-                      if (typeof data83 === "string") {
-                        if (func1(data83) < 1) {
-                          const err179 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/text", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/text/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                          if (vErrors === null) {
-                            vErrors = [err179];
-                          } else {
-                            vErrors.push(err179);
-                          }
-                          errors++;
-                        }
-                      } else {
-                        const err180 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/text", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                        if (vErrors === null) {
-                          vErrors = [err180];
-                        } else {
-                          vErrors.push(err180);
-                        }
-                        errors++;
-                      }
-                    }
-                    if (data81.audioSrc !== void 0) {
-                      if (typeof data81.audioSrc !== "string") {
-                        const err181 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/audioSrc", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/audioSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                        if (vErrors === null) {
-                          vErrors = [err181];
-                        } else {
-                          vErrors.push(err181);
-                        }
-                        errors++;
-                      }
-                    }
-                    if (data81.captionsSrc !== void 0) {
-                      if (typeof data81.captionsSrc !== "string") {
-                        const err182 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/captionsSrc", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                        if (vErrors === null) {
-                          vErrors = [err182];
-                        } else {
-                          vErrors.push(err182);
-                        }
-                        errors++;
-                      }
-                    }
-                  } else {
-                    const err183 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                    if (vErrors === null) {
-                      vErrors = [err183];
-                    } else {
-                      vErrors.push(err183);
-                    }
-                    errors++;
-                  }
                 }
               } else {
-                const err184 = { instancePath: instancePath + "/finale/epilogue/beats", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+                const err173 = { instancePath: instancePath + "/finale/closingMedia/src", schemaPath: "#/$defs/video/properties/src/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                 if (vErrors === null) {
-                  vErrors = [err184];
+                  vErrors = [err173];
                 } else {
-                  vErrors.push(err184);
+                  vErrors.push(err173);
+                }
+                errors++;
+              }
+            }
+            if (data78.poster !== void 0) {
+              if (typeof data78.poster !== "string") {
+                const err174 = { instancePath: instancePath + "/finale/closingMedia/poster", schemaPath: "#/$defs/video/properties/poster/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err174];
+                } else {
+                  vErrors.push(err174);
+                }
+                errors++;
+              }
+            }
+            if (data78.captionsSrc !== void 0) {
+              let data84 = data78.captionsSrc;
+              if (typeof data84 === "string") {
+                if (func1(data84) < 1) {
+                  const err175 = { instancePath: instancePath + "/finale/closingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (vErrors === null) {
+                    vErrors = [err175];
+                  } else {
+                    vErrors.push(err175);
+                  }
+                  errors++;
+                }
+              } else {
+                const err176 = { instancePath: instancePath + "/finale/closingMedia/captionsSrc", schemaPath: "#/$defs/video/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err176];
+                } else {
+                  vErrors.push(err176);
+                }
+                errors++;
+              }
+            }
+            if (data78.transcript !== void 0) {
+              let data85 = data78.transcript;
+              if (typeof data85 === "string") {
+                if (func1(data85) < 1) {
+                  const err177 = { instancePath: instancePath + "/finale/closingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (vErrors === null) {
+                    vErrors = [err177];
+                  } else {
+                    vErrors.push(err177);
+                  }
+                  errors++;
+                }
+              } else {
+                const err178 = { instancePath: instancePath + "/finale/closingMedia/transcript", schemaPath: "#/$defs/video/properties/transcript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err178];
+                } else {
+                  vErrors.push(err178);
+                }
+                errors++;
+              }
+            }
+            if (data78.audioDescriptionSrc !== void 0) {
+              if (typeof data78.audioDescriptionSrc !== "string") {
+                const err179 = { instancePath: instancePath + "/finale/closingMedia/audioDescriptionSrc", schemaPath: "#/$defs/video/properties/audioDescriptionSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err179];
+                } else {
+                  vErrors.push(err179);
+                }
+                errors++;
+              }
+            }
+            if (data78.describedTranscript !== void 0) {
+              if (typeof data78.describedTranscript !== "string") {
+                const err180 = { instancePath: instancePath + "/finale/closingMedia/describedTranscript", schemaPath: "#/$defs/video/properties/describedTranscript/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err180];
+                } else {
+                  vErrors.push(err180);
+                }
+                errors++;
+              }
+            }
+            if (data78.carriesVisualMeaning !== void 0) {
+              if (typeof data78.carriesVisualMeaning !== "boolean") {
+                const err181 = { instancePath: instancePath + "/finale/closingMedia/carriesVisualMeaning", schemaPath: "#/$defs/video/properties/carriesVisualMeaning/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
+                if (vErrors === null) {
+                  vErrors = [err181];
+                } else {
+                  vErrors.push(err181);
                 }
                 errors++;
               }
             }
           } else {
-            const err185 = { instancePath: instancePath + "/finale/epilogue", schemaPath: "#/properties/finale/properties/epilogue/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+            const err182 = { instancePath: instancePath + "/finale/closingMedia", schemaPath: "#/$defs/video/type", keyword: "type", params: { type: "object" }, message: "must be object" };
             if (vErrors === null) {
-              vErrors = [err185];
+              vErrors = [err182];
             } else {
-              vErrors.push(err185);
+              vErrors.push(err182);
+            }
+            errors++;
+          }
+        }
+        if (data53.epilogue !== void 0) {
+          let data89 = data53.epilogue;
+          if (data89 && typeof data89 == "object" && !Array.isArray(data89)) {
+            if (data89.title === void 0) {
+              const err183 = { instancePath: instancePath + "/finale/epilogue", schemaPath: "#/properties/finale/properties/epilogue/required", keyword: "required", params: { missingProperty: "title" }, message: "must have required property 'title'" };
+              if (vErrors === null) {
+                vErrors = [err183];
+              } else {
+                vErrors.push(err183);
+              }
+              errors++;
+            }
+            if (data89.beats === void 0) {
+              const err184 = { instancePath: instancePath + "/finale/epilogue", schemaPath: "#/properties/finale/properties/epilogue/required", keyword: "required", params: { missingProperty: "beats" }, message: "must have required property 'beats'" };
+              if (vErrors === null) {
+                vErrors = [err184];
+              } else {
+                vErrors.push(err184);
+              }
+              errors++;
+            }
+            for (const key11 in data89) {
+              if (!(key11 === "title" || key11 === "beats")) {
+                const err185 = { instancePath: instancePath + "/finale/epilogue", schemaPath: "#/properties/finale/properties/epilogue/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key11 }, message: "must NOT have additional properties" };
+                if (vErrors === null) {
+                  vErrors = [err185];
+                } else {
+                  vErrors.push(err185);
+                }
+                errors++;
+              }
+            }
+            if (data89.title !== void 0) {
+              let data90 = data89.title;
+              if (typeof data90 === "string") {
+                if (func1(data90) < 1) {
+                  const err186 = { instancePath: instancePath + "/finale/epilogue/title", schemaPath: "#/properties/finale/properties/epilogue/properties/title/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                  if (vErrors === null) {
+                    vErrors = [err186];
+                  } else {
+                    vErrors.push(err186);
+                  }
+                  errors++;
+                }
+              } else {
+                const err187 = { instancePath: instancePath + "/finale/epilogue/title", schemaPath: "#/properties/finale/properties/epilogue/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                if (vErrors === null) {
+                  vErrors = [err187];
+                } else {
+                  vErrors.push(err187);
+                }
+                errors++;
+              }
+            }
+            if (data89.beats !== void 0) {
+              let data91 = data89.beats;
+              if (Array.isArray(data91)) {
+                if (data91.length > 8) {
+                  const err188 = { instancePath: instancePath + "/finale/epilogue/beats", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/maxItems", keyword: "maxItems", params: { limit: 8 }, message: "must NOT have more than 8 items" };
+                  if (vErrors === null) {
+                    vErrors = [err188];
+                  } else {
+                    vErrors.push(err188);
+                  }
+                  errors++;
+                }
+                if (data91.length < 1) {
+                  const err189 = { instancePath: instancePath + "/finale/epilogue/beats", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/minItems", keyword: "minItems", params: { limit: 1 }, message: "must NOT have fewer than 1 items" };
+                  if (vErrors === null) {
+                    vErrors = [err189];
+                  } else {
+                    vErrors.push(err189);
+                  }
+                  errors++;
+                }
+                const len3 = data91.length;
+                for (let i3 = 0; i3 < len3; i3++) {
+                  let data92 = data91[i3];
+                  const _errs219 = errors;
+                  let valid54 = true;
+                  const _errs220 = errors;
+                  if (data92 && typeof data92 == "object" && !Array.isArray(data92)) {
+                    let missing9;
+                    if (data92.audioSrc === void 0 && (missing9 = "audioSrc")) {
+                      const err190 = {};
+                      if (vErrors === null) {
+                        vErrors = [err190];
+                      } else {
+                        vErrors.push(err190);
+                      }
+                      errors++;
+                    }
+                  }
+                  var _valid9 = _errs220 === errors;
+                  errors = _errs219;
+                  if (vErrors !== null) {
+                    if (_errs219) {
+                      vErrors.length = _errs219;
+                    } else {
+                      vErrors = null;
+                    }
+                  }
+                  if (_valid9) {
+                    const _errs221 = errors;
+                    if (data92 && typeof data92 == "object" && !Array.isArray(data92)) {
+                      if (data92.captionsSrc === void 0) {
+                        const err191 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/allOf/0/then/required", keyword: "required", params: { missingProperty: "captionsSrc" }, message: "must have required property 'captionsSrc'" };
+                        if (vErrors === null) {
+                          vErrors = [err191];
+                        } else {
+                          vErrors.push(err191);
+                        }
+                        errors++;
+                      }
+                    }
+                    var _valid9 = _errs221 === errors;
+                    valid54 = _valid9;
+                  }
+                  if (!valid54) {
+                    const err192 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/allOf/0/if", keyword: "if", params: { failingKeyword: "then" }, message: 'must match "then" schema' };
+                    if (vErrors === null) {
+                      vErrors = [err192];
+                    } else {
+                      vErrors.push(err192);
+                    }
+                    errors++;
+                  }
+                  if (data92 && typeof data92 == "object" && !Array.isArray(data92)) {
+                    if (data92.speaker === void 0) {
+                      const err193 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/required", keyword: "required", params: { missingProperty: "speaker" }, message: "must have required property 'speaker'" };
+                      if (vErrors === null) {
+                        vErrors = [err193];
+                      } else {
+                        vErrors.push(err193);
+                      }
+                      errors++;
+                    }
+                    if (data92.text === void 0) {
+                      const err194 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
+                      if (vErrors === null) {
+                        vErrors = [err194];
+                      } else {
+                        vErrors.push(err194);
+                      }
+                      errors++;
+                    }
+                    for (const key12 in data92) {
+                      if (!(key12 === "speaker" || key12 === "text" || key12 === "audioSrc" || key12 === "captionsSrc")) {
+                        const err195 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key12 }, message: "must NOT have additional properties" };
+                        if (vErrors === null) {
+                          vErrors = [err195];
+                        } else {
+                          vErrors.push(err195);
+                        }
+                        errors++;
+                      }
+                    }
+                    if (data92.speaker !== void 0) {
+                      let data93 = data92.speaker;
+                      if (!(data93 === "archivist" || data93 === "aura" || data93 === "narrator")) {
+                        const err196 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/speaker", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/speaker/enum", keyword: "enum", params: { allowedValues: schema31.properties.finale.properties.epilogue.properties.beats.items.properties.speaker.enum }, message: "must be equal to one of the allowed values" };
+                        if (vErrors === null) {
+                          vErrors = [err196];
+                        } else {
+                          vErrors.push(err196);
+                        }
+                        errors++;
+                      }
+                    }
+                    if (data92.text !== void 0) {
+                      let data94 = data92.text;
+                      if (typeof data94 === "string") {
+                        if (func1(data94) < 1) {
+                          const err197 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/text", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/text/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                          if (vErrors === null) {
+                            vErrors = [err197];
+                          } else {
+                            vErrors.push(err197);
+                          }
+                          errors++;
+                        }
+                      } else {
+                        const err198 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/text", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                        if (vErrors === null) {
+                          vErrors = [err198];
+                        } else {
+                          vErrors.push(err198);
+                        }
+                        errors++;
+                      }
+                    }
+                    if (data92.audioSrc !== void 0) {
+                      if (typeof data92.audioSrc !== "string") {
+                        const err199 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/audioSrc", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/audioSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                        if (vErrors === null) {
+                          vErrors = [err199];
+                        } else {
+                          vErrors.push(err199);
+                        }
+                        errors++;
+                      }
+                    }
+                    if (data92.captionsSrc !== void 0) {
+                      if (typeof data92.captionsSrc !== "string") {
+                        const err200 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3 + "/captionsSrc", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/properties/captionsSrc/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                        if (vErrors === null) {
+                          vErrors = [err200];
+                        } else {
+                          vErrors.push(err200);
+                        }
+                        errors++;
+                      }
+                    }
+                  } else {
+                    const err201 = { instancePath: instancePath + "/finale/epilogue/beats/" + i3, schemaPath: "#/properties/finale/properties/epilogue/properties/beats/items/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+                    if (vErrors === null) {
+                      vErrors = [err201];
+                    } else {
+                      vErrors.push(err201);
+                    }
+                    errors++;
+                  }
+                }
+              } else {
+                const err202 = { instancePath: instancePath + "/finale/epilogue/beats", schemaPath: "#/properties/finale/properties/epilogue/properties/beats/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+                if (vErrors === null) {
+                  vErrors = [err202];
+                } else {
+                  vErrors.push(err202);
+                }
+                errors++;
+              }
+            }
+          } else {
+            const err203 = { instancePath: instancePath + "/finale/epilogue", schemaPath: "#/properties/finale/properties/epilogue/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+            if (vErrors === null) {
+              vErrors = [err203];
+            } else {
+              vErrors.push(err203);
             }
             errors++;
           }
         }
       } else {
-        const err186 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+        const err204 = { instancePath: instancePath + "/finale", schemaPath: "#/properties/finale/type", keyword: "type", params: { type: "object" }, message: "must be object" };
         if (vErrors === null) {
-          vErrors = [err186];
+          vErrors = [err204];
         } else {
-          vErrors.push(err186);
+          vErrors.push(err204);
         }
         errors++;
       }
     }
     if (data.a11y !== void 0) {
-      let data86 = data.a11y;
-      if (data86 && typeof data86 == "object" && !Array.isArray(data86)) {
-        if (data86.audioAutoplay === void 0) {
-          const err187 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "audioAutoplay" }, message: "must have required property 'audioAutoplay'" };
+      let data97 = data.a11y;
+      if (data97 && typeof data97 == "object" && !Array.isArray(data97)) {
+        if (data97.audioAutoplay === void 0) {
+          const err205 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "audioAutoplay" }, message: "must have required property 'audioAutoplay'" };
           if (vErrors === null) {
-            vErrors = [err187];
+            vErrors = [err205];
           } else {
-            vErrors.push(err187);
+            vErrors.push(err205);
           }
           errors++;
         }
-        if (data86.colorOnlySignals === void 0) {
-          const err188 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "colorOnlySignals" }, message: "must have required property 'colorOnlySignals'" };
+        if (data97.colorOnlySignals === void 0) {
+          const err206 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "colorOnlySignals" }, message: "must have required property 'colorOnlySignals'" };
           if (vErrors === null) {
-            vErrors = [err188];
+            vErrors = [err206];
           } else {
-            vErrors.push(err188);
+            vErrors.push(err206);
           }
           errors++;
         }
-        if (data86.keyboardAlternatives === void 0) {
-          const err189 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "keyboardAlternatives" }, message: "must have required property 'keyboardAlternatives'" };
+        if (data97.keyboardAlternatives === void 0) {
+          const err207 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "keyboardAlternatives" }, message: "must have required property 'keyboardAlternatives'" };
           if (vErrors === null) {
-            vErrors = [err189];
+            vErrors = [err207];
           } else {
-            vErrors.push(err189);
+            vErrors.push(err207);
           }
           errors++;
         }
-        if (data86.reducedMotion === void 0) {
-          const err190 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "reducedMotion" }, message: "must have required property 'reducedMotion'" };
+        if (data97.reducedMotion === void 0) {
+          const err208 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "reducedMotion" }, message: "must have required property 'reducedMotion'" };
           if (vErrors === null) {
-            vErrors = [err190];
+            vErrors = [err208];
           } else {
-            vErrors.push(err190);
+            vErrors.push(err208);
           }
           errors++;
         }
-        if (data86.timeLimit === void 0) {
-          const err191 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "timeLimit" }, message: "must have required property 'timeLimit'" };
+        if (data97.timeLimit === void 0) {
+          const err209 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/required", keyword: "required", params: { missingProperty: "timeLimit" }, message: "must have required property 'timeLimit'" };
           if (vErrors === null) {
-            vErrors = [err191];
+            vErrors = [err209];
           } else {
-            vErrors.push(err191);
+            vErrors.push(err209);
           }
           errors++;
         }
-        for (const key12 in data86) {
-          if (!(key12 === "audioAutoplay" || key12 === "colorOnlySignals" || key12 === "keyboardAlternatives" || key12 === "reducedMotion" || key12 === "timeLimit" || key12 === "targetLevel")) {
-            const err192 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key12 }, message: "must NOT have additional properties" };
+        for (const key13 in data97) {
+          if (!(key13 === "audioAutoplay" || key13 === "colorOnlySignals" || key13 === "keyboardAlternatives" || key13 === "reducedMotion" || key13 === "timeLimit" || key13 === "targetLevel")) {
+            const err210 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key13 }, message: "must NOT have additional properties" };
             if (vErrors === null) {
-              vErrors = [err192];
+              vErrors = [err210];
             } else {
-              vErrors.push(err192);
+              vErrors.push(err210);
             }
             errors++;
           }
         }
-        if (data86.audioAutoplay !== void 0) {
-          if (false !== data86.audioAutoplay) {
-            const err193 = { instancePath: instancePath + "/a11y/audioAutoplay", schemaPath: "#/properties/a11y/properties/audioAutoplay/const", keyword: "const", params: { allowedValue: false }, message: "must be equal to constant" };
+        if (data97.audioAutoplay !== void 0) {
+          let data98 = data97.audioAutoplay;
+          if (!(data98 === false || data98 === "ambient-with-stop-control")) {
+            const err211 = { instancePath: instancePath + "/a11y/audioAutoplay", schemaPath: "#/properties/a11y/properties/audioAutoplay/enum", keyword: "enum", params: { allowedValues: schema31.properties.a11y.properties.audioAutoplay.enum }, message: "must be equal to one of the allowed values" };
             if (vErrors === null) {
-              vErrors = [err193];
+              vErrors = [err211];
             } else {
-              vErrors.push(err193);
+              vErrors.push(err211);
             }
             errors++;
           }
         }
-        if (data86.colorOnlySignals !== void 0) {
-          if (false !== data86.colorOnlySignals) {
-            const err194 = { instancePath: instancePath + "/a11y/colorOnlySignals", schemaPath: "#/properties/a11y/properties/colorOnlySignals/const", keyword: "const", params: { allowedValue: false }, message: "must be equal to constant" };
+        if (data97.colorOnlySignals !== void 0) {
+          if (false !== data97.colorOnlySignals) {
+            const err212 = { instancePath: instancePath + "/a11y/colorOnlySignals", schemaPath: "#/properties/a11y/properties/colorOnlySignals/const", keyword: "const", params: { allowedValue: false }, message: "must be equal to constant" };
             if (vErrors === null) {
-              vErrors = [err194];
+              vErrors = [err212];
             } else {
-              vErrors.push(err194);
+              vErrors.push(err212);
             }
             errors++;
           }
         }
-        if (data86.keyboardAlternatives !== void 0) {
-          if (true !== data86.keyboardAlternatives) {
-            const err195 = { instancePath: instancePath + "/a11y/keyboardAlternatives", schemaPath: "#/properties/a11y/properties/keyboardAlternatives/const", keyword: "const", params: { allowedValue: true }, message: "must be equal to constant" };
+        if (data97.keyboardAlternatives !== void 0) {
+          if (true !== data97.keyboardAlternatives) {
+            const err213 = { instancePath: instancePath + "/a11y/keyboardAlternatives", schemaPath: "#/properties/a11y/properties/keyboardAlternatives/const", keyword: "const", params: { allowedValue: true }, message: "must be equal to constant" };
             if (vErrors === null) {
-              vErrors = [err195];
+              vErrors = [err213];
             } else {
-              vErrors.push(err195);
+              vErrors.push(err213);
             }
             errors++;
           }
         }
-        if (data86.reducedMotion !== void 0) {
-          if ("respected" !== data86.reducedMotion) {
-            const err196 = { instancePath: instancePath + "/a11y/reducedMotion", schemaPath: "#/properties/a11y/properties/reducedMotion/const", keyword: "const", params: { allowedValue: "respected" }, message: "must be equal to constant" };
+        if (data97.reducedMotion !== void 0) {
+          if ("respected" !== data97.reducedMotion) {
+            const err214 = { instancePath: instancePath + "/a11y/reducedMotion", schemaPath: "#/properties/a11y/properties/reducedMotion/const", keyword: "const", params: { allowedValue: "respected" }, message: "must be equal to constant" };
             if (vErrors === null) {
-              vErrors = [err196];
+              vErrors = [err214];
             } else {
-              vErrors.push(err196);
+              vErrors.push(err214);
             }
             errors++;
           }
         }
-        if (data86.timeLimit !== void 0) {
-          if ("none" !== data86.timeLimit) {
-            const err197 = { instancePath: instancePath + "/a11y/timeLimit", schemaPath: "#/properties/a11y/properties/timeLimit/const", keyword: "const", params: { allowedValue: "none" }, message: "must be equal to constant" };
+        if (data97.timeLimit !== void 0) {
+          if ("none" !== data97.timeLimit) {
+            const err215 = { instancePath: instancePath + "/a11y/timeLimit", schemaPath: "#/properties/a11y/properties/timeLimit/const", keyword: "const", params: { allowedValue: "none" }, message: "must be equal to constant" };
             if (vErrors === null) {
-              vErrors = [err197];
+              vErrors = [err215];
             } else {
-              vErrors.push(err197);
+              vErrors.push(err215);
             }
             errors++;
           }
         }
-        if (data86.targetLevel !== void 0) {
-          if ("WCAG 2.1 AA" !== data86.targetLevel) {
-            const err198 = { instancePath: instancePath + "/a11y/targetLevel", schemaPath: "#/properties/a11y/properties/targetLevel/const", keyword: "const", params: { allowedValue: "WCAG 2.1 AA" }, message: "must be equal to constant" };
+        if (data97.targetLevel !== void 0) {
+          if ("WCAG 2.1 AA" !== data97.targetLevel) {
+            const err216 = { instancePath: instancePath + "/a11y/targetLevel", schemaPath: "#/properties/a11y/properties/targetLevel/const", keyword: "const", params: { allowedValue: "WCAG 2.1 AA" }, message: "must be equal to constant" };
             if (vErrors === null) {
-              vErrors = [err198];
+              vErrors = [err216];
             } else {
-              vErrors.push(err198);
+              vErrors.push(err216);
             }
             errors++;
           }
         }
       } else {
-        const err199 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+        const err217 = { instancePath: instancePath + "/a11y", schemaPath: "#/properties/a11y/type", keyword: "type", params: { type: "object" }, message: "must be object" };
         if (vErrors === null) {
-          vErrors = [err199];
+          vErrors = [err217];
         } else {
-          vErrors.push(err199);
+          vErrors.push(err217);
         }
         errors++;
       }
     }
   } else {
-    const err200 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+    const err218 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
     if (vErrors === null) {
-      vErrors = [err200];
+      vErrors = [err218];
     } else {
-      vErrors.push(err200);
+      vErrors.push(err218);
     }
     errors++;
   }

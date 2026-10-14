@@ -33,6 +33,11 @@ export function voiceControl(audioSrc, speakerName) {
   };
   audio.addEventListener("error", () => { stop(); controls.delete(control); wrap.remove(); });
   audio.addEventListener("ended", () => (btn.textContent = idleLabel));
+  // Detached Audio never reaches the document, so tell the ambience directly
+  // when a voice starts and stops; it lowers itself under speech.
+  const tell = (playing) => document.dispatchEvent(new CustomEvent("vault:voice", { detail: { media: audio, playing } }));
+  audio.addEventListener("play", () => tell(true));
+  for (const type of ["pause", "ended"]) audio.addEventListener(type, () => tell(false));
   btn.addEventListener("click", () => audio.paused ? play() : stop());
   return { node: wrap, play, stop };
 }

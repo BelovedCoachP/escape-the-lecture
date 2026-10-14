@@ -58,7 +58,8 @@
             "name": { "type": "string", "minLength": 1 },
             "portrait": { "$ref": "#/$defs/image" }
           }
-        }
+        },
+        "ambience": { "$ref": "#/$defs/ambience" }
       }
     },
 
@@ -142,7 +143,7 @@
       "required": ["audioAutoplay", "colorOnlySignals", "keyboardAlternatives", "reducedMotion", "timeLimit"],
       "additionalProperties": false,
       "properties": {
-        "audioAutoplay": { "const": false, "description": "WCAG 1.4.2. Audio that starts on its own competes with a screen reader and cannot be expressed in valid content." },
+        "audioAutoplay": { "enum": [false, "ambient-with-stop-control"], "description": "WCAG 1.4.2. Speech and cue audio never start on their own. Only narrative.ambience may, and only with a persistent, remembered stop control and ducking under speech; content that does so must declare \"ambient-with-stop-control\" here." },
         "colorOnlySignals": { "const": false, "description": "WCAG 1.4.1. Every state change carries a text or shape signal alongside color." },
         "keyboardAlternatives": { "const": true, "description": "WCAG 2.1.1. Applies hardest to the sequence challenge, which must be operable without dragging." },
         "reducedMotion": { "const": "respected", "description": "prefers-reduced-motion disables ambient motion and transitions." },
@@ -152,7 +153,29 @@
     }
   },
 
+  "allOf": [
+    {
+      "description": "An ambience that starts on its own must be declared in the accessibility assertions.",
+      "if": { "required": ["narrative"], "properties": { "narrative": { "required": ["ambience"], "properties": { "ambience": { "required": ["autoplay"], "properties": { "autoplay": { "const": true } } } } } } },
+      "then": { "required": ["a11y"], "properties": { "a11y": { "properties": { "audioAutoplay": { "const": "ambient-with-stop-control" } } } } }
+    }
+  ],
+
   "$defs": {
+
+    "ambience": {
+      "type": "object",
+      "description": "v1.1, added October 2026. One ambience track for the whole game. It may start on its own only because the renderer always shows a control that stops it, remembers that choice across rooms and visits, and lowers the ambience whenever speech or video plays.",
+      "required": ["kind", "src", "autoplay"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "audio" },
+        "src": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "description": "Player-facing label on the control." },
+        "loop": { "type": "boolean", "default": true },
+        "autoplay": { "type": "boolean" }
+      }
+    },
 
     "lock": {
       "type": "object",

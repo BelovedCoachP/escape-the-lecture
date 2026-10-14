@@ -18,6 +18,7 @@ import { announce, moveFocusTo, prefersReducedMotion } from "../a11y.js";
 import { el, normalize, answerMatches } from "./dom.js";
 import { renderContrastChecker } from "./tool.contrast.js";
 import { voiceControl, stopVoices } from "./voice.js";
+import { createAmbience } from "./ambience.js";
 import { renderChoice } from "./challenge.choice.js";
 import { renderSort } from "./challenge.sort.js";
 import { renderHunt } from "./challenge.hunt.js";
@@ -77,6 +78,7 @@ export function mountShell(rootEl, content) {
   // speaks in the current room, docked under her face. One place, said once.
   const companion = content.narrative.companion;
   let companionLineSlot = null;
+  let ambience = null;
   if (companion) {
     const panel = el("section", { className: "panel companion-panel" });
     panel.append(
@@ -120,6 +122,12 @@ export function mountShell(rootEl, content) {
         }),
       );
     }
+    // The game-wide ambience control sits under AURA's controls on every
+    // page, so the way to stop the music is always in the same place.
+    if (content.narrative.ambience) {
+      ambience = createAmbience(content.narrative.ambience);
+      panel.append(ambience.node);
+    }
     companionLineSlot = el("div", { className: "companion-line-slot" });
     panel.append(companionLineSlot);
     rail.append(panel);
@@ -154,6 +162,7 @@ export function mountShell(rootEl, content) {
   }
 
   rootEl.append(header, layout, footer);
+  ambience?.start();
   return { main, companionLineSlot, spineSummary, spineList, keysSummary, keysList, homeBtn };
 }
 

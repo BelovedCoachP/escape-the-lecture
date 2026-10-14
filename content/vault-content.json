@@ -46,6 +46,13 @@
       "transcript": "THE ARCHIVIST: I have indexed four hundred million learning objects. I have preserved every one. Last night I attempted to read them as a person using a screen reader would read them. I got through eleven percent. The vault is sealed. Send someone who can fix this.",
       "carriesVisualMeaning": true,
       "describedTranscript": "Rows of towering archive shelves glow blue and violet, receding down a long hall. The lights go dark from the far end toward the viewer, aisle by aisle, until only one thing remains lit: a massive circular vault door at the end of the hall, sealed, ringed in cold red light, its glow reflected in the dark floor. The image holds on the sealed door and fades to black."
+    },
+    "ambience": {
+      "kind": "audio",
+      "src": "assets/audio/archive-hall.mp3",
+      "title": "Archive hall ambience",
+      "loop": true,
+      "autoplay": true
     }
   },
   "levels": [
@@ -61,15 +68,6 @@
         "Long descriptions for data and diagrams",
         "Detecting fabricated detail in AI-generated alt text"
       ],
-      "ambientAudio": {
-        "kind": "audio",
-        "id": "amb-archive",
-        "src": "assets/audio/archive-hall.mp3",
-        "role": "ambient",
-        "autoplay": false,
-        "loop": true,
-        "title": "Archive hall ambience"
-      },
       "media": [
         {
           "kind": "image",
@@ -1188,7 +1186,7 @@
     }
   },
   "a11y": {
-    "audioAutoplay": false,
+    "audioAutoplay": "ambient-with-stop-control",
     "colorOnlySignals": false,
     "keyboardAlternatives": true,
     "reducedMotion": "respected",
