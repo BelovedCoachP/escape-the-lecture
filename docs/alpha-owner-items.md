@@ -32,7 +32,7 @@ Page decided on October 14 to skip the spoken screen-reader pass for this alpha 
 
 ## Optional
 
-Page supplied the archive-hall ambience track (The Midnight Library) on October 14. It is published in Wing 1, normalized to about -30 LUFS so it sits under the voice lines.
+Page supplied the archive-hall ambience track (The Midnight Library) on October 14. It plays across the whole game from the first page, starting on its own with a Stop button under AURA's portrait that is remembered, and it dips under every voice and video. The file is normalized to about -30 LUFS.
 
 ## Locations
 
