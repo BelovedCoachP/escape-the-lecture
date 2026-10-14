@@ -14,7 +14,7 @@ import {
 } from "./state.js";
 import { mountShell } from "./render/shell.js";
 import { showIntro, goToLevel, openFinale, advance } from "./router.js";
-import { initAnnouncer, moveFocusTo } from "./a11y.js";
+import { initAnnouncer, moveFocusTo, announce } from "./a11y.js";
 
 const CONTENT_URL = "../content/vault-content.json";
 
@@ -71,11 +71,15 @@ async function boot(rootEl) {
     else if (target?.view === "level") goToLevel(ctx, target.order);
     else ctx.actions.begin();
   };
+  // Erasing a run lands on a fresh home page (with "Enter the vault"), not
+  // straight into Wing 1: the player chooses when the new run begins.
   ctx.actions.startOver = () => {
     clearSavedRun();
     ctx.run = createRun();
     ctx.hasSavedRun = false;
-    ctx.actions.begin();
+    ctx.resumeTarget = null;
+    showIntro(ctx);
+    announce("Your run was erased. You are back in the main hall.");
   };
   ctx.actions.goHome = () => {
     // Capture the position before showIntro rewrites run.view, so the
