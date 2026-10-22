@@ -17,7 +17,7 @@ import {
 import { announce, moveFocusTo, prefersReducedMotion } from "../a11y.js";
 import { el, normalize, answerMatches } from "./dom.js";
 import { renderContrastChecker } from "./tool.contrast.js";
-import { voiceControl, stopVoices } from "./voice.js";
+import { voiceControl, voiceSequence, stopVoices } from "./voice.js";
 import { createAmbience } from "./ambience.js";
 import { instructionList, readableParagraphs, challengeTitles } from "./instructions.js";
 import { renderChoice } from "./challenge.choice.js";
@@ -1126,6 +1126,12 @@ function renderEpilogue(ctx) {
 
   const archivistName = content.narrative.archivist?.name ?? "The Archivist";
   const companionName = content.narrative.companion?.name ?? "Companion";
+  const recordings = ep.beats.filter(beat => beat.audioSrc).map(beat => ({
+    audioSrc: beat.audioSrc,
+    speakerName: beat.speaker === "aura" ? companionName : beat.speaker === "archivist" ? archivistName : "Narrator",
+  }));
+  const narration = recordings.length ? voiceSequence(recordings) : null;
+  if (narration) view.append(narration.node);
   ep.beats.forEach((beat) => {
     if (beat.speaker === "archivist") {
       const card = el("section", { className: "card" });
@@ -1133,7 +1139,7 @@ function renderEpilogue(ctx) {
         el("p", { className: "archivist-name", textContent: archivistName }),
         el("p", { className: "archivist-voice", textContent: beat.text }),
       );
-      if (beat.audioSrc) card.append(voiceControl(beat.audioSrc, archivistName).node);
+
       view.append(card);
     } else if (beat.speaker === "aura") {
       // Her uncertain moment: no confidence badge, cyan fallen toward navy,
@@ -1146,7 +1152,7 @@ function renderEpilogue(ctx) {
         el("p", { className: "speaker", textContent: companionName }),
         el("p", { textContent: beat.text }),
       );
-      if (beat.audioSrc) card.append(voiceControl(beat.audioSrc, companionName).node);
+
       view.append(card);
     } else {
       view.append(el("p", { textContent: beat.text }));
@@ -1164,6 +1170,7 @@ function renderEpilogue(ctx) {
   refs.main.append(view);
   announce("The vault is open. You step inside.");
   moveFocusTo(view.querySelector("h2"));
+  void narration?.play();
 }
 
 /* ---------- Progress spine ---------- */
