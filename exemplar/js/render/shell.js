@@ -98,7 +98,7 @@ export function mountShell(rootEl, content) {
       });
       idle.append(el("source", { src: companion.idleVideoSrc }));
       if (companion.portrait) idle.poster = companion.portrait.src;
-      const toggle = el("button", { className: "secondary", textContent: "Pause AURA animation" });
+      const toggle = el("button", { className: "secondary aura-animation-btn", textContent: "Pause AURA animation" });
       toggle.addEventListener("click", async () => {
         if (idle.paused) { try { await idle.play(); } catch {} }
         else idle.pause();
