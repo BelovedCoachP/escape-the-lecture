@@ -6,6 +6,7 @@
 // pointer users (and a second keyboard path) the same power.
 
 import { el } from "./dom.js";
+import { instructionList } from "./instructions.js";
 import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 export function renderSequence(challenge, done, api) {
@@ -17,7 +18,7 @@ export function renderSequence(challenge, done, api) {
   }
 
   wrap.append(
-    el("p", { className: "placeholder-note", textContent: challenge.keyboardInstructions }),
+    el("details", { className: "instruction-help" }, el("summary", { textContent: "How to use these controls" }), instructionList(challenge.keyboardInstructions)),
   );
 
   const list = el("ol", {

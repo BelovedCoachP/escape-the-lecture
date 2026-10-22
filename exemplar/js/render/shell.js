@@ -19,6 +19,7 @@ import { el, normalize, answerMatches } from "./dom.js";
 import { renderContrastChecker } from "./tool.contrast.js";
 import { voiceControl, stopVoices } from "./voice.js";
 import { createAmbience } from "./ambience.js";
+import { instructionList, readableParagraphs, challengeTitles } from "./instructions.js";
 import { renderChoice } from "./challenge.choice.js";
 import { renderSort } from "./challenge.sort.js";
 import { renderHunt } from "./challenge.hunt.js";
@@ -192,10 +193,10 @@ export function renderIntro(ctx) {
   view.append(
     el("p", { className: "view-eyebrow", textContent: "The Archive · Main Hall" }),
     el("h2", { className: "view-title", textContent: n.roleTitle }),
-    el("p", { textContent: n.premise }),
+    readableParagraphs(n.premise),
   );
 
-  view.append(el("p", { className: "play-guide", textContent: "Work through five wings, solve each room's challenges, then use its hints to find a one-word key. There is no timer or penalty for retries. Your answers and progress save in this browser when storage is available. AURA is a scripted character whose claims need checking." }));
+  view.append(el("h3", { textContent: "How to play" }), instructionList("Work through five wings, solve each room's challenges, then use its hints to find a one-word key. There is no timer or penalty for retries. Your answers and progress save in this browser when storage is available. AURA is a scripted character whose claims need checking.", "play-guide"));
   const success = el("div", { className: "callout" });
   success.append(el("p", { textContent: n.successCondition }));
   view.append(success);
@@ -269,7 +270,7 @@ export function renderLevel(level, ctx) {
       textContent: `The Archive · Wing ${level.order} of ${ctx.content.levels.length}`,
     }),
     el("h2", { className: "view-title", textContent: level.title }),
-    el("p", { textContent: level.brief }),
+    readableParagraphs(level.brief),
   );
 
   if (level.skillTaught?.length) {
@@ -419,7 +420,7 @@ function renderChallengeCard(challenge, num, total, level, ctx, viewEl) {
     }),
   );
   const workCol = el("div", { className: "challenge-work" });
-  workCol.append(el("h3", { textContent: challenge.prompt }));
+  workCol.append(el("h3", { textContent: challengeTitles[challenge.id] ?? `Challenge ${num}` }), instructionList(challenge.prompt));
 
   const done = (run.completed[level.id] ?? []).includes(challenge.id);
   const api = {
@@ -574,7 +575,7 @@ function renderLockCard(level, ctx, viewEl, opts = {}) {
     );
     workCol.append(speakerRow);
   }
-  workCol.append(el("p", { className: "archivist-voice", textContent: lock.prompt }));
+  workCol.append(readableParagraphs(lock.prompt, "archivist-voice"));
 
   if (lock.source) {
     workCol.append(
@@ -805,7 +806,7 @@ export function renderFinale(ctx, opts = {}) {
   const form = el("section", { className: "card" });
   form.append(
     el("h3", { textContent: "Your recommendation" }),
-    el("p", { textContent: finale.prompt }),
+    instructionList(finale.prompt),
   );
 
   const stances = (finale.acceptedPositions ?? []).map((p) => ({
@@ -903,7 +904,7 @@ function renderMetaLock(metaLock, ctx) {
   card.append(
     el("p", { className: "card-eyebrow", textContent: "The last door" }),
     el("h3", { textContent: "Five keyways" }),
-    el("p", { className: "archivist-voice", textContent: metaLock.prompt }),
+    readableParagraphs(metaLock.prompt, "archivist-voice"),
   );
 
   const archivist = ctx.content.narrative.archivist;

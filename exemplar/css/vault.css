@@ -1350,3 +1350,11 @@ label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
   .level-work-flow { width: 100%; }
 }
 .card { overflow-wrap: anywhere; }
+
+/* Short titles, scannable directions, and optional control help. */
+.instruction-list { padding-inline-start: 1.35rem; margin: 0.75rem 0 1.25rem; max-width: 68ch; line-height: 1.65; }
+.instruction-list > li { padding-inline-start: 0.2rem; margin-block: 0.55rem; }
+.readable-copy { max-width: 72ch; line-height: 1.65; }
+.readable-copy > p { margin: 0 0 0.85rem; }
+.instruction-help { margin-block: 0.75rem 1.25rem; }
+.instruction-help > summary { font-weight: 600; }

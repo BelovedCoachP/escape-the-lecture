@@ -3,6 +3,7 @@
 // items can be moved again freely. Nothing is judged until Verify.
 
 import { el } from "./dom.js";
+import { instructionList } from "./instructions.js";
 import { mercy, MERCY_NOTICE } from "./mercy.js";
 
 export function renderSort(challenge, done, api) {
@@ -14,7 +15,7 @@ export function renderSort(challenge, done, api) {
   }
 
   wrap.append(
-    el("p", { className: "placeholder-note", textContent: challenge.keyboardInstructions }),
+    el("details", { className: "instruction-help" }, el("summary", { textContent: "How to use these controls" }), instructionList(challenge.keyboardInstructions)),
   );
 
   // placement state: itemId -> binId (or undefined while in the tray)
